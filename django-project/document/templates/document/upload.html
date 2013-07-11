@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload</title>
+</head>
+<body>
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+
+    <form action="{% url "documents:upload" %}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			<p>{{ form.non_field_errors }}</p>
+			<p>
+				{{ form.doc_file.errors }}
+				{{ form.doc_file }}
+			</p>
+			<p><input type="submit" value="Upload" /></p>
+	</form>
+
+</body>
+</html>
