@@ -8,7 +8,7 @@
         <p>{{ error_message }}</p>
     {% endif %}
 
-    <form action="{% url "documents:upload" %}" method="post" enctype="multipart/form-data">
+    <form action="{% url "document:upload" %}" method="post" enctype="multipart/form-data">
 			{% csrf_token %}
 			<p>{{ form.non_field_errors }}</p>
 			<p>

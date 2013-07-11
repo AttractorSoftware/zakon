@@ -26,5 +26,5 @@ def upload_file(request):
 
     form = UploadForm()
     #render to the "upload" page
-    return render(request, 'documents/upload.html', {'form': form, 'error_message': error_message})
+    return render(request, 'document/upload.html', {'form': form, 'error_message': error_message})
 
