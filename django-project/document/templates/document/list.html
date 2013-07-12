@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Documents</title>
+	</head>
+
+	<body>
+		<!-- List of uploaded documents -->
+		{% if documents %}
+			<ul>
+			{% for document in documents %}
+				<li>{{ document.file.name }}</li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<p>No documents.</p>
+		{% endif %}
+
+        <a href={% url 'document:upload' %}>Upload Document</a>
+		
+	</body>
+
+</html> 

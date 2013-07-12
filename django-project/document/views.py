@@ -19,7 +19,7 @@ def upload_file(request):
             doc = request.FILES['doc_file']
             new_doc = Document(name = doc_name, content = doc_content, uploaded_date = doc_uploaded_date, file = doc)
             new_doc.save()
-            return HttpResponse('File added!')
+            return render(request, 'document/list.html', {'documents':Document.objects.all()})
         else:
             #Fill the error message
             error_message = 'Please select a file.'
@@ -27,4 +27,8 @@ def upload_file(request):
     form = UploadForm()
     #render to the "upload" page
     return render(request, 'document/upload.html', {'form': form, 'error_message': error_message})
+
+def list(request):
+
+    return render(request, 'document/list.html', {'documents':Document.objects.all()})
 
