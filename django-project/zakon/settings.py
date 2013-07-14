@@ -46,7 +46,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, '..', 'media')
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -106,7 +106,7 @@ ROOT_URLCONF = 'zakon.urls'
 WSGI_APPLICATION = 'zakon.wsgi.application'
 
 
-TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, '..', 'templates').replace('\\','/'),)
+TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, 'templates').replace('\\','/'),)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
