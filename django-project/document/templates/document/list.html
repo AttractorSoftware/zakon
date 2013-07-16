@@ -8,11 +8,11 @@
 	<body>
 		<!-- List of uploaded documents -->
 		{% if documents %}
-			<ul>
+			<ol>
 			{% for document in documents %}
-				<li>{{ document.file.name }}</li>
+				<a href = '#'><li>{{ document.file.name }}</li></a>
 			{% endfor %}
-			</ul>
+			</ol>
 		{% else %}
 			<p>No documents.</p>
 		{% endif %}
