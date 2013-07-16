@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    {% load staticfiles %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'document/css/bootstrap.css' %}"/>
+
+</head>
+<body>
+<center>
+    <div id="list" style="width: 940px; background: #ffc">
+
+            <h1 style="padding-top: 60px">{{ document.name }}</h1>
+            <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
+        <div style="margin-top: 100px; padding-bottom: 50px;">
+            {{ document.content }}
+        </div>
+
+
+
+    </div>
+</center>
+
+</body>
+</html>
