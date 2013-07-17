@@ -1,9 +1,11 @@
 from django.core.files.uploadedfile import UploadedFile
-from django.http import  HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from forms import UploadForm
 from models import Document
+from pyth.plugins.rtf15.reader import Rtf15Reader
+from pyth.plugins.xhtml.writer import XHTMLWriter
+import os
 
 def upload_file(request):
 
@@ -12,12 +14,19 @@ def upload_file(request):
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
             doc_name = UploadedFile(request.FILES['doc_file'])
-            # Read content of uploaded file. Must be changed latter
+            # Read content of uploaded file. Must be changed later
             doc_content = UploadedFile(request.FILES['doc_file']).read()
             #Read an information to fill data base row
             doc_uploaded_date = timezone.now()
             doc = request.FILES['doc_file']
-            new_doc = Document(name = doc_name, content = doc_content, uploaded_date = doc_uploaded_date, file = doc)
+
+
+
+            new_doc = Document(name = doc_name, content = '', uploaded_date = doc_uploaded_date, file = doc)
+            new_doc.save()
+
+            result = Rtf15Reader.read(open(os.path.realpath('')+new_doc.file.url, "rb"))
+            new_doc.content = XHTMLWriter.write(result, pretty=True).read()
             new_doc.save()
             return render(request, 'document/list.html', {'documents':Document.objects.all()})
         else:
