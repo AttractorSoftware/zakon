@@ -1,6 +1,6 @@
 from django.core.files.uploadedfile import UploadedFile
 from django.http import  HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from forms import UploadForm
 from models import Document
@@ -32,3 +32,6 @@ def list(request):
 
     return render(request, 'document/list.html', {'documents':Document.objects.all()})
 
+def law_detail(request, doc_id):
+    law = get_object_or_404(Document, pk=doc_id)
+    return render(request, 'document/document_view.html', {'document':law})

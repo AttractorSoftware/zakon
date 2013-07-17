@@ -10,7 +10,7 @@
 		{% if documents %}
 			<ol>
 			{% for document in documents %}
-				<a href = '#'><li>{{ document.file.name }}</li></a>
+				<a href = "{% url 'document:law' document.id %}"><li>{{ document.file.name }}</li></a>
 			{% endfor %}
 			</ol>
 		{% else %}
