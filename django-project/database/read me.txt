@@ -1,0 +1,1 @@
+use syncdb command to create a database file in this directory

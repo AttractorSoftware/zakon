@@ -13,7 +13,9 @@
             <h1 style="padding-top: 60px">{{ document.name }}</h1>
             <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
         <div style="margin-top: 100px; padding-bottom: 50px;">
+            {% autoescape off %}
             {{ document.content }}
+            {% endautoescape %}
         </div>
 
     </div>
