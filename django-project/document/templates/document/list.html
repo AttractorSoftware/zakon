@@ -3,18 +3,20 @@
 
 {% block title %} Главная {% endblock %}
 {% block content %}
-		<!-- List of uploaded documents -->
-		{% if documents %}
-			<ol>
-			{% for document in documents %}
-				<a href = "{% url 'document:law' document.id %}"><li>{{ document.file.name }}</li></a>
-			{% endfor %}
-			</ol>
-		{% else %}
-			<p>No documents.</p>
-		{% endif %}
+    <!-- List of uploaded documents -->
+    {% if documents %}
+        <ol>
+            {% for document in documents %}
+                <a href="{% url 'document:law' document.id %}">
+                    <li>{{ document.file.name }}</li>
+                </a>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p>No documents.</p>
+    {% endif %}
 
-        <a href={% url 'document:upload' %}>Upload Document</a>
+    <a href={% url 'document:upload' %}>Upload Document</a>
 
 {% endblock %}
 {% block footer %}  {% endblock %}

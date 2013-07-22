@@ -1,20 +1,41 @@
 {% extends "document/base.html" %}
 <!DOCTYPE html>
 {% block title %} Загрузить документ {% endblock %}
-    {% block content %}
-        {% if error_message %}
-            <p>{{ error_message }}</p>
-        {% endif %}
+{% block content %}
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+    <form class="upload" action="{% url "document:upload" %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.non_field_errors }}</p>
 
-        <form action="{% url "document:upload" %}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <p>{{ form.non_field_errors }}</p>
-                <p>
-                    {{ form.doc_file.errors }}
-                    {{ form.doc_file }}
-                </p>
-                <p><input type="submit" value="Upload" /></p>
-        </form>
-    {% endblock %}
+        <p>
+            {{ form.doc_file.errors }}
+            {{ form.doc_file }}
+        </p>
+        <span id="label" class="label label-warning"></span>
 
-{% block footer %}  {% endblock %}
+        <p><input class="btn btn-primary" type="submit" value="Загрузить" disabled/></p>
+    </form>
+
+{% endblock %}
+
+{% block footer %}
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            var filesExt = ['rtf', 'txt']; // массив расширений
+            $('input[type=file]').change(function () {
+                var parts = $(this).val().split('.');
+                if (filesExt.join().search(parts[parts.length - 1]) != -1) {
+                    $('input[type=submit]').attr('disabled', false);
+                    $('input[type=submit]').addClass('btn-success');
+                    $('#label').html('');
+                } else {
+                    $('#label').html('Выберите файл формата RTF или TXT');
+                    $('input[type=submit]').attr('disabled', true);
+                    $('input[type=submit]').addClass('btn-danger');
+                    $('input[type=submit]').removeClass('btn-success');
+                }
+            });
+        });
+    </script> {% endblock %}

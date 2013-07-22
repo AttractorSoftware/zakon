@@ -1,0 +1,68 @@
+[java]  INFO 16:02:32,577 - [id] 12915 [type] null [name] esdp [description] esdp-description
+URL 0 is http://www.worksnaps.net/repository_server3/mys3/prod_vn1/u_agent.php
+[java] ERROR 16:02:32,893 - [Client Log] [showSelectProjectUI] initialized SelectProjectUI
+[java] ERROR 16:02:32,897 - [Client Log] [showSelectProjectUI] finish SelectProjectUI
+[java] ERROR 16:02:43,424 - [Client Log] [ProjectSelectHandler.onProjectSelect] before showSelectActivityUI
+[java] ERROR 16:02:43,425 - [Client Log] [showSelectActivityUI] Selected project 12915
+[java] ERROR 16:02:43,425 - [Client Log] [showSelectActivityUI] Before getting tasks for project 12915
+[java] ERROR 16:02:47,701 - [Client Log] [showSelectActivityUI] Finish getting tasks for project 12915
+[java] ERROR 16:02:47,702 - [Client Log] [showSelectActivityUI] Before showing SelectTaskUI for project 12915
+[java] ERROR 16:02:47,810 - [Client Log] [showSelectActivityUI] Finish showing SelectTaskUI for project 12915
+[java] ERROR 16:02:47,811 - [Client Log] [ProjectSelectHandler.onProjectSelect] finish showSelectActivityUI
+[java] ERROR 16:02:50,955 - [Client Log] [MyTaskSelectHandler.taskSelected] Selected task 39531 for project 12915
+[java] ERROR 16:02:50,957 - [Client Log] [MyTaskSelectHandler.taskSelected] Start Manager
+[java] ERROR 16:02:50,963 - [Client Log] [SysHook.static] Before loadLibrary syshook
+[java] ERROR 16:02:50,963 - java.lang.UnsatisfiedLinkError: /home/esdp/Worksnaps/bin/lib/libsyshook.so: /home/esdp/Worksnaps/bin/lib/libsyshook.so: wrong ELF class: ELFCLASS32 (Possible cause: architecture word width mismatch)
+[java] ERROR 16:02:50,963 - [Client Log] [SysHook.static] Before loadLibrary syshook1
+Exception in thread "AWT-EventQueue-0" java.lang.UnsatisfiedLinkError: /home/esdp/Worksnaps/bin/lib/libsyshook1.so: /home/esdp/Worksnaps/bin/lib/libsyshook1.so: wrong ELF class: ELFCLASS32 (Possible cause: architecture word width mismatch)
+	at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+	at java.lang.ClassLoader.loadLibrary1(ClassLoader.java:1957)
+	at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1882)
+	at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1872)
+	at java.lang.Runtime.loadLibrary0(Runtime.java:849)
+	at java.lang.System.loadLibrary(System.java:1087)
+	at sys.SysHook.<clinit>(SourceFile:41)
+	at com.timetracking.core.EventCollector.<init>(SourceFile:22)
+	at com.timetracking.core.x.<init>(SourceFile:49)
+	at com.timetracking.core.CoreManager.a(SourceFile:75)
+	at com.timetracking.core.CoreController.a(SourceFile:46)
+	at com.timetracking.core.l.a(SourceFile:298)
+	at com.timetracking.ui.SelectTaskUI.d(SourceFile:36)
+	at com.timetracking.ui.aw.actionPerformed(SourceFile:377)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+	at java.awt.Component.processMouseEvent(Component.java:6505)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3321)
+	at java.awt.Component.processEvent(Component.java:6270)
+	at java.awt.Container.processEvent(Container.java:2229)
+	at java.awt.Component.dispatchEventImpl(Component.java:4861)
+	at java.awt.Container.dispatchEventImpl(Container.java:2287)
+	at java.awt.Component.dispatchEvent(Component.java:4687)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+	at java.awt.Container.dispatchEventImpl(Container.java:2273)
+	at java.awt.Window.dispatchEventImpl(Window.java:2719)
+	at java.awt.Component.dispatchEvent(Component.java:4687)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:735)
+	at java.awt.EventQueue.access$200(EventQueue.java:103)
+	at java.awt.EventQueue$3.run(EventQueue.java:694)
+	at java.awt.EventQueue$3.run(EventQueue.java:692)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.awt.EventQueue$4.run(EventQueue.java:708)
+	at java.awt.EventQueue$4.run(EventQueue.java:706)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:705)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:242)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:161)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:150)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:146)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:91)
+
