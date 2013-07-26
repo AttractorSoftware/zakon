@@ -1,4 +1,7 @@
 # Django settings for zakon project.
+import os
+import document
+PROJECT_MODULE_PATH=os.path.dirname(os.path.realpath(document.__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -120,6 +123,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'document',
+    'document.selenium_tests',
+    'lettuce.django'
+
 )
 
 # A sample logging configuration. The only tangible logging
