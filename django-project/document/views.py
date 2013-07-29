@@ -4,8 +4,8 @@ from django.utils import timezone
 from forms import UploadForm
 from models import Document
 from pyth.plugins.rtf15.reader import Rtf15Reader
-from pyth.plugins.xhtml.writer import XHTMLWriter
-
+from pyth.plugins.plaintext.writer import PlaintextWriter
+from LawParser.LawHtmlParser import LawHtmlParser
 
 def upload_file(request):
 
@@ -17,12 +17,10 @@ def upload_file(request):
             doc_uploaded_date = timezone.now()
             doc = request.FILES['doc_file']
 
-
-
             result = Rtf15Reader.read(request.FILES['doc_file'])
-            doc_content = XHTMLWriter.write(result, pretty=True).read()
-
-            new_doc = Document(name = doc_name, content = doc_content, uploaded_date = doc_uploaded_date, file = doc)
+            parser = LawHtmlParser(PlaintextWriter.write(result).read())
+            parsed_doc_content = parser.get_parsed_text()
+            new_doc = Document(name = doc_name, content = parsed_doc_content, uploaded_date = doc_uploaded_date, file = doc)
             new_doc.save()
 
             return render(request, 'document/list.html', {'documents':Document.objects.all()})
