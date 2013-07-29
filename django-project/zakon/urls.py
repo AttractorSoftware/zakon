@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
+    # url(r'^$', ),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^home/', include('document.urls', namespace='document')),
+    url(r'', include('document.urls', namespace='document')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
