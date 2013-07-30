@@ -14,6 +14,10 @@ framework.
 
 """
 import os
+import sys
+
+sys.path.append('/home/itattractor/projects/zakon/www/demo/django-project')
+sys.path.append('/home/itattractor/projects/zakon/www/demo')
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zakon.settings")
 
