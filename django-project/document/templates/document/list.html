@@ -10,7 +10,7 @@
         <ol>
             {% for document in documents %}
                 <a href="{% url 'document:law' document.id %}">
-                    <li>{{ document.file.name }}</li>
+                    <li>{{ document.name }}</li>
                 </a>
             {% endfor %}
         </ol>

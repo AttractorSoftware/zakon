@@ -1,6 +1,6 @@
 {% extends "document/base.html" %}
 <!DOCTYPE html>
-{% block title %} Загрузить документ {% endblock %}
+{% block title %} Загрузка закона {% endblock %}
 {% block content %}
     {% if error_message %}
         <p>{{ error_message }}</p>
@@ -15,7 +15,7 @@
         </p>
         <span id="label" class="label label-warning"></span>
 
-        <p><input class="btn btn-primary" type="submit" value="Загрузить" disabled/></p>
+        <p><input id='btn_upload' class="btn btn-primary" type="submit" value="Загрузить" disabled/></p>
     </form>
 
 {% endblock %}
