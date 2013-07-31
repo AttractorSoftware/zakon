@@ -1,4 +1,6 @@
 from django.core.files.uploadedfile import UploadedFile
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from forms import UploadForm
@@ -6,6 +8,7 @@ from models import Document
 from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth.plugins.plaintext.writer import PlaintextWriter
 from LawParser.LawHtmlParser import LawHtmlParser
+import document.urls
 
 def upload_file(request):
 
@@ -23,7 +26,7 @@ def upload_file(request):
             new_doc = Document(name = doc_name, content = parsed_doc_content, uploaded_date = doc_uploaded_date, file = doc)
             new_doc.save()
 
-            return render(request, 'document/list.html', {'documents':Document.objects.all()})
+            return HttpResponseRedirect(reverse('document:list'))
         else:
             error_message = 'Please select a file.'
 
