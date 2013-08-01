@@ -19,7 +19,7 @@ import sys
 sys.path.append('/home/itattractor/projects/zakon/www/demo/django-project')
 sys.path.append('/home/itattractor/projects/zakon/www/demo')
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zakon.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "zakon.settings_production")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
