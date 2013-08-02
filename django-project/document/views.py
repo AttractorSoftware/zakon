@@ -10,8 +10,17 @@ from pyth.plugins.plaintext.writer import PlaintextWriter
 from LawParser.LawHtmlParser import LawHtmlParser
 import document.urls
 
-def upload_file(request):
 
+def get_file_type(url):
+    file_types = [".txt", ".rtf"]
+    name_file = str(url)
+    for i in file_types:
+        if name_file.endswith(i):
+            return i
+    return "invalid file type"
+
+
+def upload_file(request):
     error_message = ''
     if request.method == 'POST':
         form = UploadForm(request.POST, request.FILES)
@@ -20,12 +29,14 @@ def upload_file(request):
             doc_uploaded_date = timezone.now()
             doc = request.FILES['doc_file']
 
-            result = Rtf15Reader.read(request.FILES['doc_file'])
-            parser = LawHtmlParser(PlaintextWriter.write(result).read())
+            if get_file_type(doc_name) == ".rtf":
+                result = Rtf15Reader.read(doc)
+                parser = LawHtmlParser(PlaintextWriter.write(result).read())
+            elif get_file_type(doc_name) == ".txt":
+                parser = LawHtmlParser(doc.read())
             parsed_doc_content = parser.get_parsed_text()
-            new_doc = Document(name = doc_name, content = parsed_doc_content, uploaded_date = doc_uploaded_date, file = doc)
+            new_doc = Document(name=doc_name, content=parsed_doc_content, uploaded_date=doc_uploaded_date, file=doc)
             new_doc.save()
-
             return HttpResponseRedirect(reverse('document:list'))
         else:
             error_message = 'Please select a file.'
@@ -33,10 +44,11 @@ def upload_file(request):
     form = UploadForm()
     return render(request, 'document/upload.html', {'form': form, 'error_message': error_message})
 
-def list(request):
 
-    return render(request, 'document/list.html', {'documents':Document.objects.all()})
+def list(request):
+    return render(request, 'document/list.html', {'documents': Document.objects.all()})
+
 
 def law_detail(request, doc_id):
     law = get_object_or_404(Document, pk=doc_id)
-    return render(request, 'document/document_view.html', {'document':law})
+    return render(request, 'document/document_view.html', {'document': law})
