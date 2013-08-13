@@ -30,7 +30,7 @@ def upload_file(request):
             doc = request.FILES['doc_file']
 
             if get_file_type(doc_name) == ".rtf":
-                result = Rtf15Reader.read(doc)
+                result = Rtf15Reader.read(doc, errors='ignore')
                 parser = LawHtmlParser(PlaintextWriter.write(result).read())
             elif get_file_type(doc_name) == ".txt":
                 parser = LawHtmlParser(doc.read())
