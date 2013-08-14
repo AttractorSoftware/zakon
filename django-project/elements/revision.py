@@ -1,6 +1,3 @@
-__author__ = 'esdp'
-
-
 class Revision(object):
     def __init__(self, date, place, id):
         self._date = date

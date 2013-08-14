@@ -1,6 +1,3 @@
-__author__ = 'esdp'
-
-
 class DocumentDescription(object):
     def __init__(self, documentName, revision):
         self._revision = revision

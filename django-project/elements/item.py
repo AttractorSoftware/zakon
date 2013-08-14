@@ -1,7 +1,7 @@
 class Item(object):
-    def __init__(self):
+    def __init__(self, text, id):
         self._items = []
-        self._id = ""
+        self._id = id
 
     @property
     def items(self):
@@ -10,3 +10,7 @@ class Item(object):
     @property
     def id(self):
         return self._id
+
+    @id.setter
+    def id(self, value):
+        self._id = value
