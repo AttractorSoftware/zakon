@@ -1,3 +1,6 @@
+from lxml import etree
+
+
 class Section(object):
     def __init__(self, level, name, number):
         self._sections = []
@@ -29,3 +32,14 @@ class Section(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def _build_id(self):
+        return self._level + ":" + self._number
+
+    def to_xml(self):
+        root = etree.Element("section", id=self._build_id(), level=self._level,
+                             name=self._name, number=self._number)
+
+        for item in self._sections:
+            root.append(etree.XML(item.to_xml()))
+        return etree.tostring(root)
