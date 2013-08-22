@@ -1,5 +1,5 @@
 from lxml import etree
-from section import Section
+
 
 class Document(object):
     def __init__(self, id, description=None):
