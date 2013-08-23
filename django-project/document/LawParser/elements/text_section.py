@@ -1,5 +1,6 @@
 from lxml import etree
 from section import Section
+
 class TextSection(Section):
     def __init__(self, level, number, name=None, text=None):
         super(TextSection, self).__init__(level, name, number)

@@ -7,7 +7,7 @@ from forms import UploadForm
 from models import Document
 from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth.plugins.plaintext.writer import PlaintextWriter
-from LawParser.LawHtmlParser import LawHtmlParser
+from LawParser.HtmlParser import Parser
 import document.urls
 
 
@@ -31,9 +31,9 @@ def upload_file(request):
 
             if get_file_type(doc_name) == ".rtf":
                 result = Rtf15Reader.read(doc, errors='ignore')
-                parser = LawHtmlParser(PlaintextWriter.write(result).read())
+                parser = Parser(PlaintextWriter.write(result).read())
             elif get_file_type(doc_name) == ".txt":
-                parser = LawHtmlParser(doc.read())
+                parser = Parser(doc.read())
             parsed_doc_content = parser.get_parsed_text()
             new_doc = Document(name=doc_name, content=parsed_doc_content, uploaded_date=doc_uploaded_date, file=doc)
             new_doc.save()

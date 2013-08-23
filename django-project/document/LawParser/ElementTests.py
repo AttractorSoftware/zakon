@@ -134,8 +134,8 @@ class ElementTests(TestCase):
         chapter.sections.append(article)
         part.sections.append(chapter)
         part.sections.append(Section("chapter", "name", "2"))
-        item_text = TextSection
-        item_text.text = "test test test"
+        # item_text = TextSection
+        # item_text.text = "test test test"
         xml = '<section id="part:1" level="part" name="name" number="1">' \
               '<section id="chapter:1" level="chapter" name="name" number="1">' \
               '<article id="article:1" name="name">' \
