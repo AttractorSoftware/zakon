@@ -119,37 +119,6 @@ class ElementTests(TestCase):
         self.assertEqual(xml, part.to_xml())
 
 
-    def test_section_with_two_articles_with_items_with_text(self):
-        part = Section("part", "name", "1")
-        chapter = Section("chapter", "name", "1")
-        article = TextSection("article", "1", "name")
-        item = TextSection("item", "1")
-        item.text = "djkshkaskjdsaj"
-        article.subsections.append(item)
-        chapter.sections.append(article)
-        article = TextSection("article", "2", "name1")
-        item = TextSection("item", "1")
-        item.text = "I am first item of second article!!!"
-        article.subsections.append(item)
-        chapter.sections.append(article)
-        part.sections.append(chapter)
-        part.sections.append(Section("chapter", "name", "2"))
-        # item_text = TextSection
-        # item_text.text = "test test test"
-        xml = '<section id="part:1" level="part" name="name" number="1">' \
-              '<section id="chapter:1" level="chapter" name="name" number="1">' \
-              '<article id="article:1" name="name">' \
-              '<item id="item:1">djkshkaskjdsaj</item>' \
-              '</article>' \
-              '<article id="article:2" name="name1">' \
-              '<item id="item:1">I am first item of second article!!!</item>' \
-              '</article>' \
-              '</section>' \
-              '<section id="chapter:2" level="chapter" name="name" number="2"/>' \
-              '</section>'
-        self.assertEqual(xml, part.to_xml())
-
-
     def test_document_with_sections(self):
         description = Description("name", "place")
         document = Document(1, description)
@@ -157,3 +126,16 @@ class ElementTests(TestCase):
         document.sections.append(section)
         xml = '<document id="1"><description><name>name</name><place>place</place></description></document>'
         self.assertEqual(xml, document.to_xml())
+
+    def test_article_with_item(self):
+        article = TextSection("article", "1", "Article")
+        item = TextSection("item", "1")
+        item.text = "dslkdsaldsads"
+
+        article.subsections.append(item)
+        xml = '<article id="article:1" name="Article">' \
+              '<item id="item:1">' \
+              'dslkdsaldsads' \
+              '</item>' \
+              '</article>'
+        self.assertEqual(xml, article.to_xml())

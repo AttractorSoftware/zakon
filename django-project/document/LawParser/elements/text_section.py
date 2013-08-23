@@ -20,6 +20,7 @@ class TextSection(Section):
         self._text = value
 
     def to_xml(self):
+        root = None
         if self._level == "article":
             root = etree.Element(self._level, name=self._name, id=self._build_id())
         elif self._level == "item":
