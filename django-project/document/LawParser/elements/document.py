@@ -25,4 +25,4 @@ class Document(object):
             root.append(etree.XML(self._description.to_xml()))
         for section in self._sections:
             root.append(etree.XML(section.to_xml()))
-        return etree.tostring(root)
+        return etree.tostring(root, xml_declaration=True, encoding='utf-8')

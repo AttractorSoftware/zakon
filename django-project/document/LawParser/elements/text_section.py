@@ -5,11 +5,6 @@ class TextSection(Section):
     def __init__(self, level, number, name=None, text=None):
         super(TextSection, self).__init__(level, name, number)
         self._text = text
-        self._subsections = []
-
-    @property
-    def subsections(self):
-        return self._subsections
 
     @property
     def text(self):
@@ -28,6 +23,6 @@ class TextSection(Section):
 
         root.text = self._text
 
-        for element in self._subsections:
+        for element in self._sections:
             root.append(etree.XML(element.to_xml()))
         return etree.tostring(root)

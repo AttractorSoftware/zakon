@@ -8,7 +8,7 @@ from elements.text_section import TextSection
 class ElementTests(TestCase):
     def testDocumenttoXml(self):
         document = Document(1)
-        self.assertEqual('<document id="1"/>', document.to_xml())
+        self.assertEqual('<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document id="1"/>', document.to_xml())
 
     def test_description_to_xml(self):
         description = Description("name", "place")
@@ -26,7 +26,9 @@ class ElementTests(TestCase):
     def test_document_with_description(self):
         description = Description("name", "place")
         document = Document(1, description)
-        xml = '<document id="1"><description><name>name</name><place>place</place></description></document>'
+        xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document id="1">' \
+              '<description><name>name</name><place>place</place></description>' \
+              '</document>'
         self.assertEqual(xml, document.to_xml())
 
     def test_empty_section(self):
@@ -81,7 +83,7 @@ class ElementTests(TestCase):
         chapter = Section("chapter", "name", "1")
         article = TextSection("article", "1", "name")
         item = TextSection("item", "1")
-        article.subsections.append(item)
+        article.sections.append(item)
         chapter.sections.append(article)
         # part.sections.append(Item("item", "name", "1"))
         part.sections.append(chapter)
@@ -102,7 +104,7 @@ class ElementTests(TestCase):
         article = TextSection("article", "1", "name")
         item = TextSection("item", "1")
         item.text = "djkshkaskjdsaj"
-        article.subsections.append(item)
+        article.sections.append(item)
         chapter.sections.append(article)
         part.sections.append(chapter)
         part.sections.append(Section("chapter", "name", "2"))
@@ -124,8 +126,10 @@ class ElementTests(TestCase):
         document = Document(1, description)
         section = Section("part", "name", "1")
         document.sections.append(section)
-        xml = '<document id="1"><description><name>name</name><place>place</place></description>' \
-              '<section id="part:1" level="part" name="name" number="1"/></document>'
+        xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document id="1">' \
+              '<description><name>name</name><place>place</place></description>' \
+              '<section id="part:1" level="part" name="name" number="1"/>' \
+              '</document>'
         self.assertEqual(xml, document.to_xml())
 
     def test_article_with_item(self):
@@ -133,7 +137,7 @@ class ElementTests(TestCase):
         item = TextSection("item", "1")
         item.text = "dslkdsaldsads"
 
-        article.subsections.append(item)
+        article.sections.append(item)
         xml = '<article id="article:1" name="Article">' \
               '<item id="item:1">' \
               'dslkdsaldsads' \
