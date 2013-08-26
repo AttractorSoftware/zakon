@@ -124,7 +124,8 @@ class ElementTests(TestCase):
         document = Document(1, description)
         section = Section("part", "name", "1")
         document.sections.append(section)
-        xml = '<document id="1"><description><name>name</name><place>place</place></description></document>'
+        xml = '<document id="1"><description><name>name</name><place>place</place></description>' \
+              '<section id="part:1" level="part" name="name" number="1"/></document>'
         self.assertEqual(xml, document.to_xml())
 
     def test_article_with_item(self):

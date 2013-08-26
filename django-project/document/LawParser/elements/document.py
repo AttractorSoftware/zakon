@@ -23,4 +23,6 @@ class Document(object):
         root = etree.Element("document", id=str(self._id))
         if self._description != None:
             root.append(etree.XML(self._description.to_xml()))
+        for section in self._sections:
+            root.append(etree.XML(section.to_xml()))
         return etree.tostring(root)
