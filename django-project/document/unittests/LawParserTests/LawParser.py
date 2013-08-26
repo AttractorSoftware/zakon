@@ -1,6 +1,6 @@
 #coding=utf-8
 from unittest import TestCase
-from document.LawParser.HtmlParser import Parser
+from document.LawParser.HTMLParser import Parser
 
 
 class LawParserTests(TestCase):

@@ -36,6 +36,14 @@ DOCUMENT_NAME_BUILD_WITH_MULTI_LINE_TEST_TEXT = u"""
 (В редакции Законов КР от 15 июля 2009 года N 207,
 18 декабря 2009 года N 313, 21 декабря 2011 года N 241,"""
 
+DOCUMENT_NAME_BUILD_WITH_LINE_FOLDING = u"""
+ЗАКОН КЫРГЫЗСКОЙ РЕСПУБЛИКИ
+
+О государственной регистрации юридических
+лиц, филиалов (представительств)
+
+(В"""
+
 REVISIONS_BUILD_TEST_TEXT = u"""
 г.Бишкек
 от 17 октября 2008 года N 230
@@ -203,14 +211,20 @@ class BuilderTest(TestCase):
             builder.build_document_name()
         )
 
+    def test_build_document_name_with_line_folding(self):
+        builder = Builder(DOCUMENT_NAME_BUILD_WITH_LINE_FOLDING)
+        self.assertEqual(
+            u'ЗАКОН КЫРГЫЗСКОЙ РЕСПУБЛИКИ  О государственной регистрации юридических лиц, филиалов (представительств)',
+            builder.build_document_name()
+        )
+
     def test_build_revisions(self):
         REVISIONS_BUILD_TEST_TEXT
         builder = Builder(REVISIONS_BUILD_TEST_TEXT)
         self.assertEqual(REVISIONS_BUILD_ECPECTED_TEXT, builder.build_revisions())
 
     def test_build_taking_place(self):
-        test_text = u"""
-г.Бишкек
+        test_text = u"""г.Бишкек
 от 17 октября 2008 года N 230
 
 НАЛОГОВЫЙ КОДЕКС КЫРГЫЗСКОЙ РЕСПУБЛИКИ

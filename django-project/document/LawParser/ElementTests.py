@@ -6,9 +6,9 @@ from elements.text_section import TextSection
 
 
 class ElementTests(TestCase):
-    def testDocumenttoXml(self):
-        document = Document(1)
-        self.assertEqual('<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document id="1"/>', document.to_xml())
+    def test_document_to_xml(self):
+        document = Document()
+        self.assertEqual('<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document/>', document.to_xml())
 
     def test_description_to_xml(self):
         description = Description("name", "place")
@@ -25,8 +25,8 @@ class ElementTests(TestCase):
 
     def test_document_with_description(self):
         description = Description("name", "place")
-        document = Document(1, description)
-        xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document id="1">' \
+        document = Document(description)
+        xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document>' \
               '<description><name>name</name><place>place</place></description>' \
               '</document>'
         self.assertEqual(xml, document.to_xml())
@@ -123,10 +123,10 @@ class ElementTests(TestCase):
 
     def test_document_with_sections(self):
         description = Description("name", "place")
-        document = Document(1, description)
+        document = Document(description)
         section = Section("part", "name", "1")
         document.sections.append(section)
-        xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document id="1">' \
+        xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document>' \
               '<description><name>name</name><place>place</place></description>' \
               '<section id="part:1" level="part" name="name" number="1"/>' \
               '</document>'
@@ -144,3 +144,4 @@ class ElementTests(TestCase):
               '</item>' \
               '</article>'
         self.assertEqual(xml, article.to_xml())
+

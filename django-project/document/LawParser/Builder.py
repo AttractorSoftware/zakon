@@ -11,9 +11,9 @@ class Builder(object):
         self._end_of_content_of_a_building_sections = []
         self._text = text
         self._search_flags = re.M | re.I | re.DOTALL | re.U
-        self._name_pattern = u'^[ а-яА-Я]+?КЫРГЫЗСКОЙ РЕСПУБЛИКИ.*?(?=(^\(.+?Закон))'
+        self._name_pattern = u'^[ а-яА-Я]+?КЫРГЫЗСКОЙ РЕСПУБЛИКИ.*?(?=\n[ \t]*?\n\()'
         self._revisions_pattern = u'^\(В редакции Законов КР от .+?\)'
-        self._taking_place_pattern = u'г\.[а-яА-Я]+\nот.+?$'
+        self._taking_place_pattern = u'^г\.[а-яА-Я]+\n*?от.+?$'
         self._article_pattern = u'^ *Статья (?P<number>\d+)\.(?P<name>.+?(?=\n[ \t]*?\n))'
         self._item_of_an_article_pattern_without_checking_end = u'^(?P<number>\d+)\.(?P<text>.+'
         self._not_last_items_end_pattern = u'?)(?=^\d+\.)'
@@ -83,17 +83,20 @@ class Builder(object):
 
     def build_document_name(self):
         result = re.search(self._name_pattern, self._text, self._search_flags)
-        result = re.sub('\n', ' ', result.group())
-        result = result.strip()
+        if result:
+            result = re.sub('\n', ' ', result.group())
+            result = result.strip()
+        else:
+            result=u'Без имени.'
         return result
 
     def build_revisions(self):
         result = re.search(self._revisions_pattern, self._text, self._search_flags)
-        return result.group()
+        return result.group() if result else u''
 
     def build_taking_place(self):
         result = re.search(self._taking_place_pattern, self._text, self._search_flags)
-        return result.group()
+        return result.group() if result else u''
 
     def build_parts(self):
         parts = self._build_empty_parts_and_save_its_start_and_end_of_content_positions(
@@ -114,7 +117,8 @@ class Builder(object):
             sections.append(Section(level=level_of_section, name=m.group('name').replace('\n', ' ').strip(), number=m.group('number')))
             temp.append(m.start())
             self._start_of_content_of_a_building_sections.append(m.start() + len(m.group()))
-        temp.remove(temp[0])
+        if not temp == []:
+            temp.remove(temp[0])
         i, length = 0, len(temp)
         while i < length:
             self._end_of_content_of_a_building_sections.append(temp[i])
@@ -151,7 +155,8 @@ class Builder(object):
             sections.append(Section(level=level_of_section, name=m.group('name').replace('\n', ' ').strip(), number=m.group('number')))
             temp.append(m.start()+start_of_section)
             self._start_of_content_of_a_building_sections.append(m.start() + start_of_section + len(m.group()))
-        temp.remove(temp[0])
+        if not temp == []:
+            temp.remove(temp[0])
         i, length = 0, len(temp)
         while i < length:
             self._end_of_content_of_a_building_sections.append(temp[i])
@@ -229,7 +234,8 @@ class Builder(object):
             sections.append(Section(level=level, name=m.group('name').replace('\n', ' ').strip(), number=m.group('number')))
             temp.append(m.start()+start_of_section)
             self._start_of_content_of_a_building_sections.append(m.start() + start_of_section + len(m.group()))
-        temp.remove(temp[0])
+        if not temp == []:
+            temp.remove(temp[0])
         i, length = 0, len(temp)
         while i < length:
             self._end_of_content_of_a_building_sections.append(temp[i])
@@ -306,7 +312,8 @@ class Builder(object):
                 level=level, name=m.group('name').replace('\n', ' ').strip(), number=m.group('number')))
             temp.append(m.start()+start_of_section)
             self._start_of_content_of_a_building_sections.append(m.start() + start_of_section + len(m.group()))
-        temp.remove(temp[0])
+        if not temp == []:
+            temp.remove(temp[0])
         i, length = 0, len(temp)
         while i < length:
             self._end_of_content_of_a_building_sections.append(temp[i])

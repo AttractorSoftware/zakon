@@ -1,7 +1,6 @@
 #coding=utf-8
 import re
-from document.LawParser.StructureElement import StructureElement
-
+from StructureElement import StructureElement
 
 DEPTH_LEVEL_5 = 5
 DEPTH_LEVEL_4 = 4
@@ -27,11 +26,14 @@ class Parser(object):
                                 'article', DEPTH_LEVEL_5, '(?P<content>^ *Статья (?P<end_id>\d+)\..+?$)')
         ]
         self._past_tags = "<article id='{0}_\g<end_id>'> <h{1}>\g<content></h{1}> </article>"
+        self._parsed = False
 
-    def parse(self):
-        self._make_html_for_law()
-        self._make_html_content()
-        return self._combine_parts()
+    def get_parsed_text(self):
+        if self._is_not_parsed():
+            self._make_html_for_law()
+            self._make_html_content()
+            self._parsed = True
+        return self._gather_piecemeal()
 
 
     def _make_html_for_law(self):
@@ -49,5 +51,8 @@ class Parser(object):
             self._content += "<a href=\"#{0}\" class='{2}'>{1}</a><br/>".format(
                 match.groups()[0], match.groups()[2], class_name[0])
 
-    def _combine_parts(self):
+    def _gather_piecemeal(self):
         return self._content+self._law_text
+
+    def _is_not_parsed(self):
+        return self._parsed == False
