@@ -1,27 +1,22 @@
-#!/usr/bin/python
-#coding=utf-8
-import sys
-import libxml2
-import libxslt
+# coding=utf-8
+from lxml import etree
+
+class XsltTransformer(object):
+
+    def __init__(self):
+        self._xml_result = ''
+
+    def transform(self, content):
+        f = open('template.xsl')
+        result_xsl = f.read()
+        self._xml_result = etree.XML(content)
+        xslt_root = etree.XML(result_xsl)
+        transform = etree.XSLT(xslt_root)
+        html = transform(self._xml_result)
+        return etree.tostring(html)
 
 
-def getXSLT(xsl_filename):
-    # parse the stylesheet xml file into doc object
-    styledoc = libxml2.parseFile(xsl_filename)
-
-    # process the doc object as xslt
-    style = libxslt.parseStylesheetDoc(styledoc)
-
-    return style
 
 
-if __name__ == '__main__':
-    style = getXSLT("template.xsl")
-    doc = libxml2.parseFile("example.xml")
-    result = style.applyStylesheet(doc, None)
-    result = str(result).decode('utf-8')
 
-    f = open('output.html', 'r+')
-    f.write(str(result))
 
-    print result
