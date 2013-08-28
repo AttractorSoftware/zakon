@@ -4,12 +4,7 @@ from lxml import etree
 class Document(object):
     def __init__(self, description=None, sections=[]):
         self._sections = sections
-        self._id = id
         self._description = description
-
-    @property
-    def id(self):
-        return self._id
 
     @property
     def sections(self):

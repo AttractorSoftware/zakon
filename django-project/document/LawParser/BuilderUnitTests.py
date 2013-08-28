@@ -362,45 +362,45 @@ class BuilderTest(TestCase):
     def _build_expected_articles_with_items(self):
         expected_articles = []
 
-        article = TextSection(level='article', name=u'Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number=u'1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number=u'1')
 
-        item = TextSection(level='item', name='', number=u'1')
+        item = TextSection(level='article1_item', name='', number=u'1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
         article.add_section(item)
 
-        item = TextSection(level='item', name='', number=u'2')
+        item = TextSection(level='article1_item', name='', number=u'2')
         item.text = u'Отношения, регулируемые настоящим Кодексом, являются налоговыми правоотношениями.'
         article.add_section(item)
 
-        item = TextSection(level='item', name='', number=u'3')
+        item = TextSection(level='article1_item', name='', number=u'3')
         item.text = u'К отношениям по взиманию налогов с перемещаемых через таможенную границу...'
         article.add_section(item)
 
         expected_articles.append(article)
 
-        article = TextSection(level='article', name=u'Налоговое законодательство Кыргызской Республики', number=u'2')
+        article = TextSection(level='article', name=u'Статья 2. Налоговое законодательство Кыргызской Республики', number=u'2')
 
-        item = TextSection(level='item', name='', number=u'1')
+        item = TextSection(level='article2_item', name='', number=u'1')
         item.text = u'Налоговое законодательство Кыргызской Республики - это система нормативных правовых...'
         article.add_section(item)
 
-        item = TextSection(level='item', name='', number=u'2')
+        item = TextSection(level='article2_item', name='', number=u'2')
         item.text = u'Налоговое законодательство Кыргызской Республики состоит из следующих нормативных правовых актов:...'
         article.add_section(item)
 
-        item = TextSection(level='item', name='', number=u'3')
+        item = TextSection(level='article2_item', name='', number=u'3')
         item.text = u'Настоящий Кодекс устанавливает:...'
         article.add_section(item)
 
         expected_articles.append(article)
 
-        article = TextSection(level='article', name=u'Действие международных договоров и иных соглашений', number=u'3')
+        article = TextSection(level='article', name=u'Статья 3. Действие международных договоров и иных соглашений', number=u'3')
 
-        item = TextSection(level='item', name='', number=u'1')
+        item = TextSection(level='article3_item', name='', number=u'1')
         item.text = u'Если вступившим в установленном законом порядке международным договором, участником...'
         article.add_section(item)
 
-        item = TextSection(level='item', name='', number=u'2')
+        item = TextSection(level='article3_item', name='', number=u'2')
         item.text = u'Если соглашение, заключенное Правительством Кыргызской Республики, ратифицировано...'
         article.add_section(item)
 
@@ -413,7 +413,7 @@ class BuilderTest(TestCase):
 Налогоплательщиком является субъект, на которого возлагается обязанность
 уплачивать налог при наличии обстоятельств, установленных налоговым законодательством Кыргызской Республики."""
 
-        expected = TextSection(level=u'article', name=u'Налогоплательщик', number=u'41')
+        expected = TextSection(level=u'article', name=u'Статья 41. Налогоплательщик', number=u'41')
         expected.text = u"""Налогоплательщиком является субъект, на которого возлагается обязанность
 уплачивать налог при наличии обстоятельств, установленных налоговым законодательством Кыргызской Республики."""
         builder = Builder(text)
@@ -428,11 +428,11 @@ class BuilderTest(TestCase):
 
     def _build_expected_chapters_without_paragraphs(self):
         expected_chapters = []
-        chapter = Section(level=u'chapter', name=u'Общие положения', number=u'1')
+        chapter = Section(level=u'chapter', name=u'Глава 1 Общие положения', number=u'1')
         articles = self._build_expected_articles_with_items()
         self._add_sub_sections_to_section(chapter, articles)
         expected_chapters.append(chapter)
-        chapter = Section(level=u'chapter', name=u'Налоговая система Кыргызской Республики', number=u'2')
+        chapter = Section(level=u'chapter', name=u'Глава 2 Налоговая система Кыргызской Республики', number=u'2')
         self._add_sub_sections_to_section(chapter, articles)
         expected_chapters.append(chapter)
         return expected_chapters
@@ -446,14 +446,14 @@ class BuilderTest(TestCase):
     def _build_expected_chapters_with_paragraphs(self):
         expected_chapters = []
 
-        chapter = Section(level=u'chapter', name=u'Купля-продажа', number=u'23')
+        chapter = Section(level=u'chapter', name=u'Глава 23 Купля-продажа', number=u'23')
 
-        paragraph = Section(level=u'chapter23_paragraph', name=u'Общие положения о купле-продаже', number=u'1')
+        paragraph = Section(level=u'chapter23_paragraph', name=u'Параграф 1 Общие положения о купле-продаже', number=u'1')
         articles = self._build_expected_articles_with_items()
         self._add_sub_sections_to_section(paragraph, articles)
         chapter.add_section(paragraph)
 
-        paragraph = Section(level=u'chapter23_paragraph', name=u'Розничная купля-продажа', number=u'2')
+        paragraph = Section(level=u'chapter23_paragraph', name=u'Параграф 2 Розничная купля-продажа', number=u'2')
         articles = self._build_expected_articles_with_items()
         self._add_sub_sections_to_section(paragraph, articles)
         chapter.add_section(paragraph)
@@ -469,11 +469,11 @@ class BuilderTest(TestCase):
 
     def _build_expected_divisions_without_sub_divisions(self):
         expected_divisions = []
-        division = Section(level=u'division', name=u'ОБЩИЕ ПОЛОЖЕНИЯ', number=u'I')
+        division = Section(level=u'division', name=u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number=u'I')
         chapters = self._build_expected_chapters_without_paragraphs()
         self._add_sub_sections_to_section(division, chapters)
         expected_divisions.append(division)
-        division = Section(level=u'division', name=u'НАЛОГОВОЕ ОБЯЗАТЕЛЬСТВО И НАЛОГОВАЯ ЗАДОЛЖЕННОСТЬ', number=u'II')
+        division = Section(level=u'division', name=u'РАЗДЕЛ II НАЛОГОВОЕ ОБЯЗАТЕЛЬСТВО И НАЛОГОВАЯ ЗАДОЛЖЕННОСТЬ', number=u'II')
         self._add_sub_sections_to_section(division, chapters)
         expected_divisions.append(division)
         return expected_divisions
@@ -487,11 +487,11 @@ class BuilderTest(TestCase):
     def _build_expected_sub_divisions_without_sub_divisions(self):
         expected_divisions = []
         chapters = self._build_expected_chapters_without_paragraphs()
-        division = Section(level=u'division', name=u'ОБЩИЕ ПОЛОЖЕНИЯ', number=u'I')
-        sub_division = Section(level=u'divisionI_sub_division', name=u'я подраздел 1', number=u'1')
+        division = Section(level=u'division', name=u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number=u'I')
+        sub_division = Section(level=u'divisionI_sub_division', name=u'Подраздел 1. я подраздел 1', number=u'1')
         self._add_sub_sections_to_section(sub_division, chapters)
         division.add_section(sub_division)
-        sub_division = Section(level=u'divisionI_sub_division', name=u'я подраздел 2', number=u'2')
+        sub_division = Section(level=u'divisionI_sub_division', name=u'Подраздел 2. я подраздел 2', number=u'2')
         self._add_sub_sections_to_section(sub_division, chapters)
         division.add_section(sub_division)
         expected_divisions.append(division)
@@ -505,11 +505,11 @@ class BuilderTest(TestCase):
 
     def _build_expected_parts(self):
         expected_parts = []
-        part = Section(level=u'part', name=u'ОБЩАЯ ЧАСТЬ', number=None)
+        part = Section(level=u'part', name=u'ОБЩАЯ ЧАСТЬ', number='1')
         divisions = self._build_expected_divisions_without_sub_divisions()
         self._add_sub_sections_to_section(part, divisions)
         expected_parts.append(part)
-        part = Section(level=u'part', name=u'ОСОБЕННАЯ ЧАСТЬ', number=None)
+        part = Section(level=u'part', name=u'ОСОБЕННАЯ ЧАСТЬ', number='2')
         self._add_sub_sections_to_section(part, divisions)
         expected_parts.append(part)
         return expected_parts

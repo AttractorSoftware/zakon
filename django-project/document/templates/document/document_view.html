@@ -1,3 +1,4 @@
+
 {% extends "document/base.html" %}
 <!DOCTYPE html>
 
@@ -28,16 +29,13 @@
 
     <a href="#modal" role="button" class="btn hide" id='ShowModalWindow' data-toggle="modal"
        style="position: fixed; left: 40px;">Click Me</a>
-
     <div id="list" style="width: 940px; background: #ffc; padding: 0 15px;">
-
-    <h1 style="padding-top: 60px">{{ document.name }}</h1>
 
     <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
 
     <div style="margin-top: 100px; padding-bottom: 50px;" document_id="{{ document_id }}">
         {% autoescape off %}
-            {{ document.content }}
+            {{ content }}
         {% endautoescape %}
     </div>
     <script type="text/javascript">
@@ -128,6 +126,5 @@
 
 
     </script>
-
 {% endblock %}
 {% block footer %} {% endblock %}

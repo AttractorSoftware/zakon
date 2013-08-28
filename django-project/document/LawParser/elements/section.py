@@ -5,7 +5,7 @@ class Section(object):
     def __init__(self, level, name, number):
         self._sections = []
         self._level = level
-        self._number = number
+        self._number = number if number else ''
         self._name = name
 
     @property
@@ -34,7 +34,7 @@ class Section(object):
         return not self.__eq__(other)
 
     def _build_id(self):
-        return self._level + ":" + self._number
+        return self._level + "_" + self._number
 
     def to_xml(self):
         root = etree.Element("section", id=self._build_id(), level=self._level,

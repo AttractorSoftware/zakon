@@ -14,16 +14,17 @@ class Builder(object):
         self._name_pattern = u'^[ а-яА-Я]+?КЫРГЫЗСКОЙ РЕСПУБЛИКИ.*?(?=\n[ \t]*?\n\()'
         self._revisions_pattern = u'^\(В редакции Законов КР от .+?\)'
         self._taking_place_pattern = u'^г\.[а-яА-Я]+\n*?от.+?$'
-        self._article_pattern = u'^ *Статья (?P<number>\d+)\.(?P<name>.+?(?=\n[ \t]*?\n))'
+        self._article_pattern = u'(?P<name>^ *Статья (?P<number>\d+)\..+?(?=\n[ \t]*?\n))'
         self._item_of_an_article_pattern_without_checking_end = u'^(?P<number>\d+)\.(?P<text>.+'
         self._not_last_items_end_pattern = u'?)(?=^\d+\.)'
         self._last_items_end_pattern = u')'
         self._article_text_pattern = u'.+'
-        self._chapter_pattern = u'^ *?Глава (?P<number>\d+)(?P<name> *?\s*.*?$)'
-        self._division_pattern = u'^ *?РАЗДЕЛ (?P<number>[IVXLCDM]+)(?P<name> *?\s*.*?$)'
-        self._sub_division_pattern = u'^ *?Подраздел (?P<number>\d+)\.?(?P<name> *?\s*.*?$)'
+        self._chapter_pattern = u'(?P<name>^ *?Глава (?P<number>\d+) *?\s*.*?$)'
+        self._division_pattern = u'(?P<name>^ *?РАЗДЕЛ (?P<number>[IVXLCDM]+) *?\s*.*?$)'
+        self._sub_division_pattern = u'(?P<name>^ *?Подраздел (?P<number>\d+)\.? *?\s*.*?$)'
         self._part_of_the_document_pattern = u'(?P<name>^[\w ]*? *ЧАСТЬ.*?)(?P<number> )?\n\n'
-        self._paragraph_pattern = u'^ *?Параграф (?P<number>\d+)(?P<name>.+?(?=\n[ \t]*?\n))'
+        self._paragraph_pattern = u'(?P<name>^ *?Параграф (?P<number>\d+).+?(?=\n[ \t]*?\n))'
+        self._part_number = 1 #part usually does't contain number. We have to do number manually
 
     @property
     def text(self):
@@ -106,7 +107,7 @@ class Builder(object):
 
         return parts
 
-    def build_divisions(self, start_of_section, end_of_section):
+    def build_divisions(self, start_of_section, end_of_section, parent_level_parent_number=None):
         divisions = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
             u'division', self._division_pattern, start_of_section,  end_of_section, self.create_Section)
 
@@ -127,7 +128,7 @@ class Builder(object):
                 j.add_section(sub_section)
             i += 1
 
-    def _build_sub_divisions(self, level_name, start_of_section, end_of_section):
+    def _build_sub_divisions(self, level_name, start_of_section, end_of_section, parent_level_parent_number=None):
         sub_divisions = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
             level_name, self._sub_division_pattern, start_of_section, end_of_section, self.create_Section)
 
@@ -135,7 +136,7 @@ class Builder(object):
 
         return sub_divisions
 
-    def build_chapters(self, start_of_section, end_of_section):
+    def build_chapters(self, start_of_section, end_of_section, parent_level_parent_number=None):
         chapters = self._build_empty_chapters_and_save_its_start_and_end_of_content_positions(
             u'chapter', self._chapter_pattern, start_of_section,  end_of_section)
 
@@ -176,7 +177,7 @@ class Builder(object):
                 j.add_section(sub_section)
             i += 1
 
-    def build_paragraphs(self, level_name,  start_of_section, end_of_section):
+    def build_paragraphs(self, level_name,  start_of_section, end_of_section, parent_level_parent_number=None):
         paragraphs = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
             level_name, self._paragraph_pattern, start_of_section, end_of_section, self.create_Section)
 
@@ -184,7 +185,7 @@ class Builder(object):
 
         return paragraphs
 
-    def build_articles(self, start_of_sections, end_of_sections):
+    def build_articles(self, start_of_sections, end_of_sections, parent_id=None):
         articles = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
             u'article',self._article_pattern, start_of_sections,  end_of_sections, subsection_create_function=self.create_TextSection)
 
@@ -192,18 +193,18 @@ class Builder(object):
 
         return articles
 
-    def _build_items(self, start, end):
+    def _build_items(self, start, end, parent_level_parent_number):
         items = []
         matches = self._get_matches_iterator(self._item_of_an_article_pattern_without_checking_end+self._not_last_items_end_pattern, start, end)
         last_item_start = start
         for m in matches:
-            item = TextSection(level='item', name='', number=m.group('number'))
+            item = TextSection(level=parent_level_parent_number+'_item', name='', number=m.group('number'))
             item.text = m.group('text').strip()
             last_item_start += len(item.text)
             items.append(item)
         matches = self._get_matches_iterator(self._item_of_an_article_pattern_without_checking_end + self._last_items_end_pattern, last_item_start, end)
         for m in matches:
-            item = TextSection(level='item', name='', number=m.group('number'))
+            item = TextSection(level=parent_level_parent_number+'_item', name='', number=m.group('number'))
             item.text = m.group('text').strip()
             items.append(item)
         return items
@@ -242,19 +243,24 @@ class Builder(object):
 
     def _add_content_to_built_sections(self, sections, build_children_method, template_method = None):
         i = 0
-        section_content_start_of_a_building_sections = copy.deepcopy(self._start_of_content_of_a_building_sections)
-        section_content_end_of_a_building_sections = copy.deepcopy(self._end_of_content_of_a_building_sections)
+        start_content_of_a_building_sections = copy.deepcopy(self._start_of_content_of_a_building_sections)
+        end_content_of_a_building_sections = copy.deepcopy(self._end_of_content_of_a_building_sections)
         for j in sections:
-            sub_sections = build_children_method(section_content_start_of_a_building_sections[i], section_content_end_of_a_building_sections[i])
+            parent_level_parent_number = j.level+(j.number)
+            sub_sections = build_children_method(start_content_of_a_building_sections[i], end_content_of_a_building_sections[i], parent_level_parent_number)
             if template_method and sub_sections == []:
-                template_method(j, section_content_start_of_a_building_sections[i], section_content_end_of_a_building_sections[i])
+                template_method(j, start_content_of_a_building_sections[i], end_content_of_a_building_sections[i])
             else:
                 for sub_section in sub_sections:
                     j.add_section(sub_section)
             i += 1
 
     def create_Section(self, level, match):
-        return Section(level=level, name=match.group('name').replace('\n', ' ').strip(), number=match.group('number'))
+        number = match.group('number')
+        if not number:
+            number = self._part_number
+            self._part_number += 1
+        return Section(level=level, name=match.group('name').replace('\n', ' ').strip(), number=str(number))
 
     def create_TextSection(self, level, match):
         return TextSection(level=level, name=match.group('name').replace('\n', ' ').strip(), number=match.group('number'))
