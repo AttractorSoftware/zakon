@@ -1,19 +1,133 @@
 {% extends "document/base.html" %}
 <!DOCTYPE html>
+
+
 {% block title %} {{ document.name }} {% endblock %}
 {% block content %}
+    {% load staticfiles %}
 
-        <div id="list" style="width: 940px; background: #ffc">
 
-            <h1 style="padding-top: 60px">{{ document.name }}</h1>
-
-            <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
-
-        <div style="margin-top: 100px; padding-bottom: 50px;">
-            {% autoescape off %}
-            {{ document.content }}
-            {% endautoescape %}
+    <form id="modal" class="modal hide" action="{% url 'document:wrap_text' %}" method="post">
+        {% csrf_token %}
+        <div class="modal-header">
+            <h2>Lorem Ipsum</h2>
         </div>
+        <div class="modal-body">
+            <div class="form-inline">
+                <input type="hidden" name="document_id" value="{{ document_id }}"/>
+                <input type="hidden" name="article_id" value="2112"/>
+                <input type="hidden" name="content" value=""/>
+                <input type="text" name="url" id="url_id" value=""/>
+                <button type="submit" data-dismiss="modal" aria-hidden="true"
+                        onClick="ReplaceSelectedText();return false;">Отправить
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+    <a href="#modal" role="button" class="btn hide" id='ShowModalWindow' data-toggle="modal"
+       style="position: fixed; left: 40px;">Click Me</a>
+
+    <div id="list" style="width: 940px; background: #ffc; padding: 0 15px;">
+
+    <h1 style="padding-top: 60px">{{ document.name }}</h1>
+
+    <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
+
+    <div style="margin-top: 100px; padding-bottom: 50px;" document_id="{{ document_id }}">
+        {% autoescape off %}
+            {{ document.content }}
+        {% endautoescape %}
+    </div>
+    <script type="text/javascript">
+
+        var selected;
+        var selRange;
+        $('document').ready(function () {
+
+
+            $('#ShowModalWindow').click(function () {
+                $('#modal').modal();
+            })
+
+            $('#list').mouseup(function () {
+                showClickMeButton();
+            });
+            $('#list').dblclick(function () {
+                showClickMeButton();
+            });
+
+            $('#list').click(function () {
+                if (selectedText().length <= 0 && !$('#ShowModalWindow').hasClass('hide')) {
+                    $('#ShowModalWindow').addClass('hide');
+                }
+            });
+
+            function showClickMeButton() {
+                if (selectedText().length > 0) {
+                    $('#ShowModalWindow').removeClass('hide');
+                    selected = window.getSelection();
+                    selRange = selected.getRangeAt(0);
+
+                    if(selected.extentNode.parentElement.id === selected.anchorNode.parentElement.id){
+                        console.log('Пользователь выделил один объект.'+ selected.anchorNode.parentElement.id);
+                    }else{
+                        console.log('Пользователь выделил несколько объектов.');
+                    }
+                }
+
+            }
+
+            function selectedText() {
+                if (window.getSelection)
+                    txt = window.getSelection().toString();
+                else if (document.getSelection)
+                    txt = document.getSelection();
+                else if (document.selection)
+                    txt = document.selection.createRange().text;
+                return txt;
+
+            }
+
+
+        });
+
+
+        function ReplaceSelectedText() {
+
+            if (typeof window.getSelection != "undefined") {
+
+                var obj = document.createElement("div");
+
+                obj.innerHTML = '<a href=' + $('#url_id').val() + '>' + selRange.toString() + '</a>';
+                obj.style.display = 'inline';
+
+                selRange.deleteContents();
+                selRange.insertNode(obj);
+            }
+            else {
+                selected = document.selection.createRange();
+                selected.text = '<a href=' + $('#url_id').val() + '>' + selected.text + '</a>';
+            }
+
+            $('#ShowModalWindow').addClass('hide');
+
+{#            $('#modal').submit();#}
+            {#            window.location.reload();#}
+        }
+
+        function sendAjaxQuery() {
+            var data = { choice: 'test-ajax'};
+            var args = { type: "POST",
+                url: "/wrap_text/",
+                data: data
+            };
+            $.ajax(args);
+        }
+
+
+    </script>
 
 {% endblock %}
-{% block footer %}  {% endblock %}
+{% block footer %} {% endblock %}

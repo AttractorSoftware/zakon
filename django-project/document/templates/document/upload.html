@@ -5,6 +5,8 @@
     {% if error_message %}
         <p>{{ error_message }}</p>
     {% endif %}
+
+
     <form class="upload" action="{% url "document:upload" %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <p>{{ form.non_field_errors }}</p>
