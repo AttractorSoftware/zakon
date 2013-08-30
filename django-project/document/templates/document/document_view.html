@@ -1,4 +1,3 @@
-
 {% extends "document/base.html" %}
 <!DOCTYPE html>
 
@@ -22,6 +21,9 @@
                 <button type="submit" data-dismiss="modal" aria-hidden="true"
                         onClick="ReplaceSelectedText();return false;">Отправить
                 </button>
+            </div>
+            <div class="documents-view">
+
             </div>
         </div>
     </form>
@@ -47,6 +49,8 @@
 
             $('#ShowModalWindow').click(function () {
                 $('#modal').modal();
+                getDocuments();
+                $(".documents-view a").attr('onclick', 'return false');
             })
 
             $('#list').mouseup(function () {
@@ -68,9 +72,9 @@
                     selected = window.getSelection();
                     selRange = selected.getRangeAt(0);
 
-                    if(selected.extentNode.parentElement.id === selected.anchorNode.parentElement.id){
-                        console.log('Пользователь выделил один объект.'+ selected.anchorNode.parentElement.id);
-                    }else{
+                    if (selected.extentNode.parentElement.id === selected.anchorNode.parentElement.id) {
+                        console.log('Пользователь выделил один объект.' + selected.anchorNode.parentElement.id);
+                    } else {
                         console.log('Пользователь выделил несколько объектов.');
                     }
                 }
@@ -111,9 +115,35 @@
 
             $('#ShowModalWindow').addClass('hide');
 
-{#            $('#modal').submit();#}
+            {#            $('#modal').submit();#}
             {#            window.location.reload();#}
         }
+
+        function getDocuments() {
+            $(".documents-view").load("/ ol", function () {
+                $(".documents-view ol a").attr('onclick', 'return false');
+                $('.documents-view a').click(function () {
+
+                    if (jQuery(this).attr('href') !== undefined) {
+
+                        console.log(jQuery(this).attr('href'))
+                        fullDocumentView(jQuery(this).attr('href'));
+                    }
+                })
+            });
+        }
+
+        function fullDocumentView(id) {
+            $(".documents-view").load(id + " #contents");
+        }
+
+        function handler(event) {
+            var $target = $(event.target);
+            if ($target.is("a")) {
+                $target.children().toggle();
+            }
+        }
+        $(".documents-view").click(handler).find("ul").hide();
 
         function sendAjaxQuery() {
             var data = { choice: 'test-ajax'};
