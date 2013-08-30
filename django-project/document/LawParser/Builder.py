@@ -59,11 +59,11 @@ class Builder(object):
     def build_sections(self):
         sections = self.build_parts(self._start_of_sections)
         if sections == []:
-            sections = self.build_divisions(self._start_of_sections, len(builder.text))
+            sections = self.build_divisions(self._start_of_sections, len(self.text))
             if sections == []:
-                sections = self.build_chapters(self._start_of_sections, len(builder.text))
+                sections = self.build_chapters(self._start_of_sections, len(self.text))
                 if sections == []:
-                    sections = self.build_articles(self._start_of_sections, len(builder.text))
+                    sections = self.build_articles(self._start_of_sections, len(self.text))
         return sections
 
     def build_document_name(self):

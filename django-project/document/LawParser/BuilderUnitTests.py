@@ -556,7 +556,7 @@ class BuilderTest(TestCase):
 
 текст статьи
         """)
-        actual_parts = builder._build_sections()
+        actual_parts = builder.build_sections()
         article = TextSection(u'article', '415', u'Статья 415. Договор купли-продажи')
         article.text = u'текст статьи'
         paragraph = Section('chapter23_paragraph', u'Параграф 1 Общие положения о купле-продаже', "1")
