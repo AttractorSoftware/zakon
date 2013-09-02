@@ -9,8 +9,7 @@ class Builder(object):
     def __init__(self, text):
         self._start_of_content_of_a_building_sections = []
         self._end_of_content_of_a_building_sections = []
-        self._text = text
-        self._search_flags = re.M | re.I | re.DOTALL | re.U
+        self._search_flags = re.M | re.DOTALL | re.U
         self._name_pattern = u'^[ а-яА-Я]+?КЫРГЫЗСКОЙ РЕСПУБЛИКИ.*?(?=\n[ \t]*?\n\()'
         self._revisions_pattern = u'^\(В редакции Законов КР от .+?\)'
         self._taking_place_pattern = u'^г\.[а-яА-Я]+\n*?от.+?$'
@@ -22,65 +21,50 @@ class Builder(object):
         self._chapter_pattern = u'(?P<name>^ *?Глава (?P<number>\d+) *?\s*.*?$)'
         self._division_pattern = u'(?P<name>^ *?РАЗДЕЛ (?P<number>[IVXLCDM]+) *?\s*.*?$)'
         self._sub_division_pattern = u'(?P<name>^ *?Подраздел (?P<number>\d+)\.? *?\s*.*?$)'
-        self._part_of_the_document_pattern = u'(?P<name>^[\w ]*? *ЧАСТЬ.*?)(?P<number> )?\n\n'
+        self._part_pattern = u'(?P<name>^[\w ]*? *ЧАСТЬ.*?)(?P<number> )?$'
         self._paragraph_pattern = u'(?P<name>^ *?Параграф (?P<number>\d+).+?(?=\n[ \t]*?\n))'
         self._part_number = 1 #part usually does't contain number. We have to do number manually
 
-    @property
-    def text(self):
-        return self._text
+        self._text = text
+        self._start_of_sections = self._determine_start_of_sections()
 
-    @property
-    def name_pattern(self):
-        return self._name_pattern
+    def _get_first_highest_section_match_text(self):
+        result = self._get_match_text_for_this_pattern_if_param_is_None(None, self._part_pattern)
+        result = self._get_match_text_for_this_pattern_if_param_is_None(result, self._division_pattern)
+        result = self._get_match_text_for_this_pattern_if_param_is_None(result, self._chapter_pattern)
+        result = self._get_match_text_for_this_pattern_if_param_is_None(result, self._article_pattern)
+        return result
 
-    @property
-    def revisions_pattern (self):
-        return self._revisions_pattern
+    def _determine_start_of_sections(self):
+        result = self._get_first_highest_section_match_text()
+        if result:
+            matches = self._get_matches_iterator(result, 0, len(self._text))
+            for match in matches:
+                temp = match
+            result = temp.start()
+        return result if result else len(self._text)
 
-    @property
-    def taking_place_pattern(self):
-        return self._taking_place_pattern
+    def _get_match_text_for_this_pattern_if_param_is_None(self, param, pattern):
+        if param == None:
+            match = re.search(pattern, self._text, self._search_flags)
+            param = self._get_text_of_match_object_if_it_not_None(match)
+        return param
 
-    @property
-    def part_pattern(self):
-        return self._part_of_the_document_pattern
+    def _get_text_of_match_object_if_it_not_None(self, match):
+        result = None
+        if match:
+            result = match.group()
+        return result
 
-    @property
-    def division_pattern(self):
-        return self._division_pattern
-
-    @property
-    def chapter_pattern(self):
-        return self._chapter_pattern
-
-    @property
-    def paragraph_pattern(self):
-        return self._paragraph_pattern
-
-    @property
-    def article_pattern(self):
-        return self._article_pattern
-
-    @property
-    def item_of_an_article_pattern_without_checking_end(self):
-        return self._item_of_an_article_pattern_without_checking_end
-
-    @property
-    def not_last_items_end_pattern(self):
-        return self._not_last_items_end_pattern
-
-    @property
-    def last_items_end_pattern(self):
-        return self._last_items_end_pattern
-
-    @property
-    def search_flags(self):
-        return self._search_flags
-
-    @property
-    def article_text_pattern(self):
-        return self._article_text_pattern
+    def build_sections(self):
+        sections = self.build_parts(self._start_of_sections)
+        if sections == []:
+            sections = self.build_divisions(self._start_of_sections, len(self.text))
+            if sections == []:
+                sections = self.build_chapters(self._start_of_sections, len(self.text))
+                if sections == []:
+                    sections = self.build_articles(self._start_of_sections, len(self.text))
+        return sections
 
     def build_document_name(self):
         result = re.search(self._name_pattern, self._text, self._search_flags)
@@ -99,9 +83,9 @@ class Builder(object):
         result = re.search(self._taking_place_pattern, self._text, self._search_flags)
         return result.group() if result else u''
 
-    def build_parts(self):
+    def build_parts(self, start_position):
         parts = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
-            u'part', self._part_of_the_document_pattern, 0,  len(self._text), self.create_Section)
+            u'part', self._part_pattern, start_position,  len(self._text), self.create_Section)
 
         self._add_content_to_built_sections(parts, self.build_divisions)
 
@@ -117,8 +101,8 @@ class Builder(object):
 
     def _add_content_to_built_divisions(self, chapters):
         i = 0
-        section_start_of_content_of_abuilding_sections = copy.deepcopy(self._start_of_content_of_a_building_sections)
-        section_end_of_content_of_abuilding_sections = copy.deepcopy(self._end_of_content_of_a_building_sections)
+        section_start_of_content_of_abuilding_sections = copy.copy(self._start_of_content_of_a_building_sections)
+        section_end_of_content_of_abuilding_sections = copy.copy(self._end_of_content_of_a_building_sections)
         for j in chapters:
             sub_sections = self._build_sub_divisions(
                 j.level+j.number+u'_sub_division', section_start_of_content_of_abuilding_sections[i], section_end_of_content_of_abuilding_sections[i])
@@ -166,8 +150,8 @@ class Builder(object):
 
     def _add_content_to_built_chapters(self, chapters):
         i = 0
-        section_start_of_content_of_abuilding_sections = copy.deepcopy(self._start_of_content_of_a_building_sections)
-        section_end_of_content_of_abuilding_sections = copy.deepcopy(self._end_of_content_of_a_building_sections)
+        section_start_of_content_of_abuilding_sections = copy.copy(self._start_of_content_of_a_building_sections)
+        section_end_of_content_of_abuilding_sections = copy.copy(self._end_of_content_of_a_building_sections)
         for j in chapters:
             sub_sections = self.build_paragraphs(j.level+j.number+u'_paragraph',
                                                  section_start_of_content_of_abuilding_sections[i], section_end_of_content_of_abuilding_sections[i])
@@ -243,8 +227,8 @@ class Builder(object):
 
     def _add_content_to_built_sections(self, sections, build_children_method, template_method = None):
         i = 0
-        start_content_of_a_building_sections = copy.deepcopy(self._start_of_content_of_a_building_sections)
-        end_content_of_a_building_sections = copy.deepcopy(self._end_of_content_of_a_building_sections)
+        start_content_of_a_building_sections = copy.copy(self._start_of_content_of_a_building_sections)
+        end_content_of_a_building_sections = copy.copy(self._end_of_content_of_a_building_sections)
         for j in sections:
             parent_level_parent_number = j.level+(j.number)
             sub_sections = build_children_method(start_content_of_a_building_sections[i], end_content_of_a_building_sections[i], parent_level_parent_number)
@@ -264,3 +248,59 @@ class Builder(object):
 
     def create_TextSection(self, level, match):
         return TextSection(level=level, name=match.group('name').replace('\n', ' ').strip(), number=match.group('number'))
+
+    @property
+    def text(self):
+        return self._text
+
+    @property
+    def name_pattern(self):
+        return self._name_pattern
+
+    @property
+    def revisions_pattern (self):
+        return self._revisions_pattern
+
+    @property
+    def taking_place_pattern(self):
+        return self._taking_place_pattern
+
+    @property
+    def part_pattern(self):
+        return self._part_pattern
+
+    @property
+    def division_pattern(self):
+        return self._division_pattern
+
+    @property
+    def chapter_pattern(self):
+        return self._chapter_pattern
+
+    @property
+    def paragraph_pattern(self):
+        return self._paragraph_pattern
+
+    @property
+    def article_pattern(self):
+        return self._article_pattern
+
+    @property
+    def item_of_an_article_pattern_without_checking_end(self):
+        return self._item_of_an_article_pattern_without_checking_end
+
+    @property
+    def not_last_items_end_pattern(self):
+        return self._not_last_items_end_pattern
+
+    @property
+    def last_items_end_pattern(self):
+        return self._last_items_end_pattern
+
+    @property
+    def search_flags(self):
+        return self._search_flags
+
+    @property
+    def article_text_pattern(self):
+        return self._article_text_pattern

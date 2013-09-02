@@ -1,3 +1,4 @@
+
 {% extends "document/base.html" %}
 <!DOCTYPE html>
 
@@ -15,12 +16,11 @@
         <div class="modal-body">
             <div class="form-inline">
                 <input type="hidden" name="document_id" value="{{ document_id }}"/>
-                <input type="hidden" name="article_item_id" id="article_item_id" value=""/>
-                <input type="hidden" name="start_position" value="" id="start_position"/>
-                <input type="hidden" name="end_position" value="" id="end_position"/>
-                <input type="text" name="reference_url" id="reference_url" value=""/>
+                <input type="hidden" name="article_id" value="2112"/>
+                <input type="hidden" name="content" value=""/>
+                <input type="text" name="url" id="url_id" value=""/>
                 <button type="submit" data-dismiss="modal" aria-hidden="true"
-                        onClick="sendSelectionTextPositions();return false;">Отправить
+                        onClick="ReplaceSelectedText();return false;">Отправить
                 </button>
             </div>
         </div>
@@ -66,8 +66,7 @@
                 if (selectedText().length > 0) {
                     $('#ShowModalWindow').removeClass('hide');
                     selected = window.getSelection();
-                    selRange = selected.getRangeAt(0);
-                }
+                    selRange = selected.getRangeAt(0);                }
 
             }
 
@@ -86,7 +85,22 @@
         });
 
 
-        function sendSelectionTextPositions() {
+        function ReplaceSelectedText() {
+
+            if (typeof window.getSelection != "undefined") {
+
+                var obj = document.createElement("div");
+
+                obj.innerHTML = '<a href=' + $('#url_id').val() + '>' + selRange.toString() + '</a>';
+                obj.style.display = 'inline';
+
+                selRange.deleteContents();
+                selRange.insertNode(obj);
+            }
+            else {
+                selected = document.selection.createRange();
+                selected.text = '<a href=' + $('#url_id').val() + '>' + selected.text + '</a>';
+            }
 
             $('#ShowModalWindow').addClass('hide');
 
@@ -95,7 +109,7 @@
             $('#end_position').val(selRange.endOffset);
 
             $('#modal').submit();
-            {#            window.location.reload();#}
+            {# window.location.reload();#}
         }
 
         function sendAjaxQuery() {

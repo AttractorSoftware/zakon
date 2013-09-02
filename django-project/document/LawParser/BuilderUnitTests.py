@@ -359,6 +359,49 @@ class BuilderTest(TestCase):
         actual = builder.build_articles(start_of_chapter, end_of_chapter)
         self.assertEqual(expected, actual)
 
+    def test_build_article_with_text(self):
+        text = u"""Статья 41. Налогоплательщик
+
+Налогоплательщиком является субъект, на которого возлагается обязанность
+уплачивать налог при наличии обстоятельств, установленных налоговым законодательством Кыргызской Республики."""
+
+        expected = TextSection(level=u'article', name=u'Статья 41. Налогоплательщик', number=u'41')
+        expected.text = u"""Налогоплательщиком является субъект, на которого возлагается обязанность
+уплачивать налог при наличии обстоятельств, установленных налоговым законодательством Кыргызской Республики."""
+        builder = Builder(text)
+        actual = builder.build_articles(0, len(text))[0]
+        self.assertEqual(expected, actual)
+
+    def test_build_chapters_without_paragraph(self):
+        builder = Builder(BUILD_CHAPTERS_WITHOUT_PARAGRAPHS_TEXT)
+        expected_chapters = self._build_expected_chapters_without_paragraphs()
+        actual_chapters = builder.build_chapters(0, len(BUILD_CHAPTERS_WITHOUT_PARAGRAPHS_TEXT))
+        self.assertEqual(expected_chapters, actual_chapters)
+
+    def test_build_chapters_with_paragraph(self):
+        builder = Builder(BUILD_CHAPTERS_WITH_PARAGRAPH_TEXT)
+        expected_chapters = self._build_expected_chapters_with_paragraphs()
+        actual_chapters = builder.build_chapters(0, len(BUILD_CHAPTERS_WITH_PARAGRAPH_TEXT))
+        self.assertEqual(expected_chapters, actual_chapters)
+
+    def test_build_divisions_without_sub_divisions(self):
+        builder = Builder(DIVISIONS_BUILD_TEXT_WITHOUT_SUB_DIVISIONS)
+        expected_divisions = self._build_expected_divisions_without_sub_divisions()
+        actual_divisions = builder.build_divisions(0, len(DIVISIONS_BUILD_TEXT_WITHOUT_SUB_DIVISIONS))
+        self.assertEqual(expected_divisions, actual_divisions)
+
+    def test_build_division_with_sub_divisions(self):
+        builder = Builder(DIVISIONS_WITH_SUB_DIVISIONS_BUILD_TEXT)
+        expected_division = self._build_expected_sub_divisions_without_sub_divisions()
+        actual_division = builder.build_divisions(0, len(DIVISIONS_WITH_SUB_DIVISIONS_BUILD_TEXT))
+        self.assertEqual(expected_division, actual_division)
+
+    def test_build_parts(self):
+        builder = Builder(PARTS_BUILD_TEXT)
+        expected_parts = self._build_expected_parts()
+        actual_parts = builder.build_parts(0)
+        self.assertEqual(expected_parts, actual_parts)
+
     def _build_expected_articles_with_items(self):
         expected_articles = []
 
@@ -407,25 +450,6 @@ class BuilderTest(TestCase):
         expected_articles.append(article)
         return expected_articles
 
-    def test_build_article_with_text(self):
-        text = u"""Статья 41. Налогоплательщик
-
-Налогоплательщиком является субъект, на которого возлагается обязанность
-уплачивать налог при наличии обстоятельств, установленных налоговым законодательством Кыргызской Республики."""
-
-        expected = TextSection(level=u'article', name=u'Статья 41. Налогоплательщик', number=u'41')
-        expected.text = u"""Налогоплательщиком является субъект, на которого возлагается обязанность
-уплачивать налог при наличии обстоятельств, установленных налоговым законодательством Кыргызской Республики."""
-        builder = Builder(text)
-        actual = builder.build_articles(0, len(text))[0]
-        self.assertEqual(expected, actual)
-
-    def test_build_chapters_without_paragraph(self):
-        builder = Builder(BUILD_CHAPTERS_WITHOUT_PARAGRAPHS_TEXT)
-        expected_chapters = self._build_expected_chapters_without_paragraphs()
-        actual_chapters = builder.build_chapters(0, len(BUILD_CHAPTERS_WITHOUT_PARAGRAPHS_TEXT))
-        self.assertEqual(expected_chapters, actual_chapters)
-
     def _build_expected_chapters_without_paragraphs(self):
         expected_chapters = []
         chapter = Section(level=u'chapter', name=u'Глава 1 Общие положения', number=u'1')
@@ -436,12 +460,6 @@ class BuilderTest(TestCase):
         self._add_sub_sections_to_section(chapter, articles)
         expected_chapters.append(chapter)
         return expected_chapters
-
-    def test_build_chapters_with_paragraph(self):
-        builder = Builder(BUILD_CHAPTERS_WITH_PARAGRAPH_TEXT)
-        expected_chapters = self._build_expected_chapters_with_paragraphs()
-        actual_chapters = builder.build_chapters(0, len(BUILD_CHAPTERS_WITH_PARAGRAPH_TEXT))
-        self.assertEqual(expected_chapters, actual_chapters)
 
     def _build_expected_chapters_with_paragraphs(self):
         expected_chapters = []
@@ -461,12 +479,6 @@ class BuilderTest(TestCase):
         expected_chapters.append(chapter)
         return expected_chapters
 
-    def test_build_divisions_without_sub_divisions(self):
-        builder = Builder(DIVISIONS_BUILD_TEXT_WITHOUT_SUB_DIVISIONS)
-        expected_divisions = self._build_expected_divisions_without_sub_divisions()
-        actual_divisions = builder.build_divisions(0, len(DIVISIONS_BUILD_TEXT_WITHOUT_SUB_DIVISIONS))
-        self.assertEqual(expected_divisions, actual_divisions)
-
     def _build_expected_divisions_without_sub_divisions(self):
         expected_divisions = []
         division = Section(level=u'division', name=u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number=u'I')
@@ -477,12 +489,6 @@ class BuilderTest(TestCase):
         self._add_sub_sections_to_section(division, chapters)
         expected_divisions.append(division)
         return expected_divisions
-
-    def test_build_division_with_sub_divisions(self):
-        builder = Builder(DIVISIONS_WITH_SUB_DIVISIONS_BUILD_TEXT)
-        expected_division = self._build_expected_sub_divisions_without_sub_divisions()
-        actual_division = builder.build_divisions(0, len(DIVISIONS_WITH_SUB_DIVISIONS_BUILD_TEXT))
-        self.assertEqual(expected_division, actual_division)
 
     def _build_expected_sub_divisions_without_sub_divisions(self):
         expected_divisions = []
@@ -496,12 +502,6 @@ class BuilderTest(TestCase):
         division.add_section(sub_division)
         expected_divisions.append(division)
         return expected_divisions
-
-    def test_build_parts(self):
-        builder = Builder(PARTS_BUILD_TEXT)
-        expected_parts = self._build_expected_parts()
-        actual_parts = builder.build_parts()
-        self.assertEqual(expected_parts, actual_parts)
 
     def _build_expected_parts(self):
         expected_parts = []
@@ -517,3 +517,57 @@ class BuilderTest(TestCase):
     def _add_sub_sections_to_section(self, section, sections):
         for i in sections:
             section.add_section(i)
+
+    def test_builder_must_ignore_contents_if_it_exist(self):
+        """Построитель должен находить верхний структурный элемент. Здесь это ЧАСТЬ II.
+        И начать строить объекты с последнего совпадения с заголовком "ЧАСТЬ II".
+        Все что до игнорируется"""
+        builder = Builder(u"""
+        г.Бишкек
+от 5 января 1998 года N 1
+
+ГРАЖДАНСКИЙ КОДЕКС КЫРГЫЗСКОЙ РЕСПУБЛИКИ
+
+(тут ревизии и все такое.
+ЧАСТЬ II.
+РАЗДЕЛ IV. ОТДЕЛЬНЫЕ ВИДЫ ОБЯЗАТЕЛЬСТВ
+Глава 23. Купля-продажа
+Параграф 1. Общие положения о купле-продаже
+Параграф 2. Розничная купля-продажа
+Параграф 3. Поставка товаров
+Параграф 4. Энергоснабжение
+Параграф 5. Продажа предприятия. и т.д.
+
+
+А вот то что нужно:
+
+ЧАСТЬ II
+
+РАЗДЕЛ IV
+ОТДЕЛЬНЫЕ ВИДЫ ОБЯЗАТЕЛЬСТВ
+
+Глава 23
+Купля-продажа
+
+Параграф 1
+Общие положения о купле-продаже
+
+Статья 415. Договор купли-продажи
+
+текст статьи
+        """)
+        actual_parts = builder.build_sections()
+        article = TextSection(u'article', '415', u'Статья 415. Договор купли-продажи')
+        article.text = u'текст статьи'
+        paragraph = Section('chapter23_paragraph', u'Параграф 1 Общие положения о купле-продаже', "1")
+        paragraph.add_section(article)
+        chapter = Section('chapter', u'Глава 23 Купля-продажа', "23")
+        chapter.add_section(paragraph)
+        division = Section('division', u'РАЗДЕЛ IV ОТДЕЛЬНЫЕ ВИДЫ ОБЯЗАТЕЛЬСТВ', 'IV')
+        division.add_section(chapter)
+        part = Section('part', u'ЧАСТЬ II', '1')
+        part.add_section(division)
+        expected_parts = []
+        expected_parts.append(part)
+
+        self.assertEqual(expected_parts[0].to_xml(), actual_parts[0].to_xml())

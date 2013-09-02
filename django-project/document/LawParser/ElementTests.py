@@ -33,16 +33,16 @@ class ElementTests(TestCase):
 
     def test_empty_section(self):
         section = Section("part", "name", "1")
-        xml = '<section id="part:1" level="part" name="name" number="1"/>'
+        xml = '<section id="part_1" level="part" name="name" number="1"/>'
         self.assertEqual(xml, section.to_xml())
 
     def test_section_with_subsections(self):
         part = Section("part", "name", "1")
         part.sections.append(Section("chapter", "name", "1"))
         part.sections.append(Section("chapter", "name", "2"))
-        xml = '<section id="part:1" level="part" name="name" number="1">' \
-              '<section id="chapter:1" level="chapter" name="name" number="1"/>' \
-              '<section id="chapter:2" level="chapter" name="name" number="2"/>' \
+        xml = '<section id="part_1" level="part" name="name" number="1">' \
+              '<section id="chapter_1" level="chapter" name="name" number="1"/>' \
+              '<section id="chapter_2" level="chapter" name="name" number="2"/>' \
               '</section>'
         self.assertEqual(xml, part.to_xml())
 
@@ -52,11 +52,11 @@ class ElementTests(TestCase):
         chapter.sections.append(TextSection("article", "1", "name"))
         part.sections.append(chapter)
         part.sections.append(Section("chapter", "name", "2"))
-        xml = '<section id="part:1" level="part" name="name" number="1">' \
-              '<section id="chapter:1" level="chapter" name="name" number="1">' \
-              '<article id="article:1" level="article" name="name" number="1"/>' \
+        xml = '<section id="part_1" level="part" name="name" number="1">' \
+              '<section id="chapter_1" level="chapter" name="name" number="1">' \
+              '<article id="article_1" level="article" name="name" number="1"/>' \
               '</section>' \
-              '<section id="chapter:2" level="chapter" name="name" number="2"/>' \
+              '<section id="chapter_2" level="chapter" name="name" number="2"/>' \
               '</section>'
         self.assertEqual(xml, part.to_xml())
 
@@ -68,13 +68,13 @@ class ElementTests(TestCase):
         chapter.sections.append(article_with_text)
         part.sections.append(chapter)
         part.sections.append(Section("chapter", "name", "2"))
-        xml = '<section id="part:1" level="part" name="name" number="1">' \
-              '<section id="chapter:1" level="chapter" name="name" number="1">' \
-              '<article id="article:1" level="article" name="name" number="1">' \
+        xml = '<section id="part_1" level="part" name="name" number="1">' \
+              '<section id="chapter_1" level="chapter" name="name" number="1">' \
+              '<article id="article_1" level="article" name="name" number="1">' \
               'Hello world!' \
               '</article>' \
               '</section>' \
-              '<section id="chapter:2" level="chapter" name="name" number="2"/>' \
+              '<section id="chapter_2" level="chapter" name="name" number="2"/>' \
               '</section>'
         self.assertEqual(xml, part.to_xml())
 
@@ -88,13 +88,13 @@ class ElementTests(TestCase):
         # part.sections.append(Item("item", "name", "1"))
         part.sections.append(chapter)
         part.sections.append(Section("chapter", "name", "2"))
-        xml = '<section id="part:1" level="part" name="name" number="1">' \
-              '<section id="chapter:1" level="chapter" name="name" number="1">' \
-              '<article id="article:1" level="article" name="name" number="1">' \
-              '<item id="item:1" level="item" number="1"/>' \
+        xml = '<section id="part_1" level="part" name="name" number="1">' \
+              '<section id="chapter_1" level="chapter" name="name" number="1">' \
+              '<article id="article_1" level="article" name="name" number="1">' \
+              '<item id="item_1" level="item" number="1"/>' \
               '</article>' \
               '</section>' \
-              '<section id="chapter:2" level="chapter" name="name" number="2"/>' \
+              '<section id="chapter_2" level="chapter" name="name" number="2"/>' \
               '</section>'
         self.assertEqual(xml, part.to_xml())
 
@@ -110,11 +110,11 @@ class ElementTests(TestCase):
         part.sections.append(Section("chapter", "name", "2"))
         item_text = TextSection
         item_text.text = "test test test"
-        xml = '<section id="part:1" level="part" name="name" number="1">' \
-              '<section id="chapter:1" level="chapter" name="name" number="1">' \
-              '<article id="article:1" level="article" name="name" number="1">' \
-              '<item id="item:1" level="item" number="1">djkshkaskjdsaj</item>' \
-              '</article></section><section id="chapter:2" level="chapter" name="name" number="2"/>' \
+        xml = '<section id="part_1" level="part" name="name" number="1">' \
+              '<section id="chapter_1" level="chapter" name="name" number="1">' \
+              '<article id="article_1" level="article" name="name" number="1">' \
+              '<item id="item_1" level="item" number="1">djkshkaskjdsaj</item>' \
+              '</article></section><section id="chapter_2" level="chapter" name="name" number="2"/>' \
               '</section>'
         self.assertEqual(xml, part.to_xml())
 
@@ -123,10 +123,10 @@ class ElementTests(TestCase):
         description = Description("name", "place")
         document = Document(description)
         section = Section("part", "name", "1")
-        document.sections.append(section)
+        document.add_section(section)
         xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document>' \
               '<description><name>name</name><place>place</place></description>' \
-              '<section id="part:1" level="part" name="name" number="1"/>' \
+              '<section id="part_1" level="part" name="name" number="1"/>' \
               '</document>'
         self.assertEqual(xml, document.to_xml())
 
@@ -136,8 +136,8 @@ class ElementTests(TestCase):
         item.text = "dslkdsaldsads"
 
         article.sections.append(item)
-        xml = '<article id="article:1" level="article" ' \
-              'name="Article" number="1"><item id="item:1" level="item"' \
+        xml = '<article id="article_1" level="article" ' \
+              'name="Article" number="1"><item id="item_1" level="item"' \
               ' number="1">dslkdsaldsads</item></article>'
         self.assertEqual(xml, article.to_xml())
 
