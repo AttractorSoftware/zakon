@@ -8,4 +8,6 @@ class UploadForm(forms.Form):
 class WrapTextForm(forms.Form):
     document_id = forms.HiddenInput()
     article_id = forms.HiddenInput()
-    content = forms.HiddenInput()
+    start_position = forms.HiddenInput()
+    end_position = forms.HiddenInput()
+    reference_url=forms.TextInput()
