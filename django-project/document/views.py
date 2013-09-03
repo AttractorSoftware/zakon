@@ -69,7 +69,7 @@ def wrap_text_in_tag(request):
             doc_id = int(request.POST.get('document_id'))
             object_id = request.POST.get('article_item_id')
             start_position = int(request.POST.get('start_position'))
-            end_position = int(request.POST.get('end_position'))
+            end_position = int(request.POST.get('length')) + start_position
             reference_url = request.POST.get('reference_url')
             doc = Document.objects.get(id=doc_id)
 

@@ -49,14 +49,15 @@
                                         <xsl:choose>
                                             <xsl:when test="./item">
                                                 <xsl:for-each select="./item">
-                                                    <article id="{@id}"><xsl:value-of select="@number"/>.<xsl:value-of
-                                                            select="."/>.
+                                                    <article id="{@id}"><xsl:apply-templates select="@number"/>.
+                                                        <xsl:apply-templates
+                                                                select="."/>.
                                                     </article>
                                                     <br/>
                                                 </xsl:for-each>
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <xsl:value-of select="."/>
+                                                <xsl:apply-templates select="."/>
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </div>
@@ -73,24 +74,16 @@
                                 <xsl:choose>
                                     <xsl:when test="./item">
                                         <xsl:for-each select="./item">
-
-
-                                            <div class="article_id"><xsl:value-of select="@number"/>.
-                                            </div>
                                             <article id="{@id}">
-                                                <xsl:variable name="article_content" select="."/>
-
-                                                <xsl:for-each select="reference">
-                                                    -----
-                                                </xsl:for-each>
-
-                                                <xsl:value-of select="$article_content"/>
+                                                <div class="article_id">
+                                                    <xsl:apply-templates select="@number"/>.</div><xsl:apply-templates
+                                                        select="."/>.
                                             </article>
                                             <br/>
                                         </xsl:for-each>
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:value-of select="."/>
+                                        <xsl:apply-templates select="."/>
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </div>
@@ -100,4 +93,11 @@
             </div>
         </html>
     </xsl:template>
+
+    <xsl:template match="reference">
+        <a href="/{@document_id}/#{@object_id}">
+            <xsl:value-of select="."/>
+        </a>
+    </xsl:template>
+
 </xsl:stylesheet>
