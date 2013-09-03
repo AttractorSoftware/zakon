@@ -3,15 +3,17 @@
 
 {% block title %} Главная {% endblock %}
 
-{% block content %}<a class='btn' href={% url 'document:upload' %} >Загрузить закон</a>
+{% block content %}<a class='btn' href={% url 'document:upload' %}>Загрузить закон</a>
     <h1 align="center">Список законов </h1>
     <!-- List of uploaded documents -->
     {% if documents %}
         <ol>
             {% for document in documents %}
-                <a href="{% url 'document:law' document.id %}">
-                    <li>{{ document.name }}</li>
-                </a>
+                <li>
+                    <a href="{% url 'document:law' document.id %}">
+                        {{ document.name }}
+                    </a>
+                </li>
             {% endfor %}
         </ol>
     {% else %}

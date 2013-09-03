@@ -99,7 +99,7 @@ sub {
 }
 
 img {
-    width: auto\9;
+    width: auto;
     height: auto;
     max-width: 100%;
     vertical-align: middle;
@@ -2937,7 +2937,7 @@ table th[class*="span"],
     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     -webkit-background-clip: padding-box;
-    -moz-background-clip: padding;
+    -moz-background-clip: padding-box;
     background-clip: padding-box;
 }
 
@@ -4695,7 +4695,7 @@ input[type="submit"].btn.btn-mini {
 
 .navbar .btn-navbar:active,
 .navbar .btn-navbar.active {
-    background-color: #cccccc    \9;
+    background-color: #cccccc
 }
 
 .navbar .btn-navbar .icon-bar {
@@ -4960,7 +4960,8 @@ input[type="submit"].btn.btn-mini {
 
 .navbar-inverse .btn-navbar:active,
 .navbar-inverse .btn-navbar.active {
-    background-color: #000000    \9;
+    background-color: #000000
+
 }
 
 .breadcrumb {
@@ -5420,7 +5421,7 @@ input[type="submit"].btn.btn-mini {
     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     -webkit-background-clip: padding-box;
-    -moz-background-clip: padding;
+    -moz-background-clip: padding-box;
     background-clip: padding-box;
 }
 
@@ -6212,7 +6213,23 @@ div [class$=_contents] {
     margin-left: 30px;
 }
 
-.article_id {
-    float: left;
-    margin-right: 5px;
+
+/*.article_id {*/
+    /*float: left;*/
+    /*margin-right: 5px;*/
+
+.spoiler > ol > li > a {
+    border-bottom: 1px dashed;
+    color: #0088cc;
+    font-weight: normal;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.spoiler >  input + .box {
+    display: none;
+}
+
+.spoiler >  input:checked + .box {
+    display: block;
 }

@@ -12,7 +12,17 @@
         <div class="modal-header">
             <h2>Lorem Ipsum</h2>
         </div>
+{#        <div class="form-inline">#}
+{#            <input type="hidden" name="document_id" value="{{ document_id }}"/>#}
+{#            <input type="hidden" name="article_id" value="2112"/>#}
+{#            <input type="hidden" name="content" value=""/>#}
+{#            <input type="text" name="url" id="url_id" value=""/>#}
+{#            <button type="submit" data-dismiss="modal" aria-hidden="true"#}
+{#                    onClick="ReplaceSelectedText();return false;">Отправить#}
+{#            </button>#}
+{#        </div>#}
         <div class="modal-body">
+
             <div class="form-inline">
                 <input type="hidden" name="document_id" value="{{ document_id }}"/>
                 <input type="hidden" name="article_item_id" id="article_item_id" value=""/>
@@ -23,10 +33,19 @@
                         onClick="sendSelectionTextPositions();return false;">Отправить
                 </button>
             </div>
+
+
+
             <div class="documents-view">
 
+                <div class="list">
+
+                </div>
+
             </div>
+
         </div>
+
     </form>
 
 
@@ -34,12 +53,13 @@
        style="position: fixed; left: 40px;">Click Me</a>
     <div id="list" style="width: 940px; background: #ffc; padding: 0 15px;">
 
-    <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
+        <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
 
-    <div style="margin-top: 100px; padding-bottom: 50px;" document_id="{{ document_id }}">
-        {% autoescape off %}
-            {{ content }}
-        {% endautoescape %}
+        <div style="margin-top: 100px; padding-bottom: 50px;" document_id="{{ document_id }}">
+            {% autoescape off %}
+                {{ content }}
+            {% endautoescape %}
+        </div>
     </div>
     <script type="text/javascript">
 
@@ -50,11 +70,14 @@
 
             $('#ShowModalWindow').click(function () {
                 $('#modal').modal();
-                getDocuments();
+
 
                 showCaretPos();
                 $(".documents-view a").attr('onclick', 'return false');
             })
+                getDocumentsList();
+            });
+
 
             $('#list').mouseup(function () {
                 showClickMeButton();
@@ -89,8 +112,7 @@
 
             }
 
-
-        });
+{#        });#}
         {#----------------------------------------------------------------------------------#}
         function getCaretCharacterOffsetWithin(element) {
             var caretOffset = 0;
@@ -135,40 +157,52 @@
             {#            window.location.reload();#}
         }
 
-        function getDocuments() {
-            $(".documents-view").load("/ ol", function () {
-                $(".documents-view ol a").attr('onclick', 'return false');
-                $('.documents-view a').click(function () {
 
-                    if (jQuery(this).attr('href') !== undefined) {
+        function getDocumentsList() {
+            $(".list").load("/ ol", function () {
+                $('.list a').wrap('<div class="spoiler"></div>');
+                $('.list a').after('\n <div class="box"></div>');
+                $('.list a').after('\n <input type="checkbox" onchange="checkboxOnChange(this)" >');
 
-                        console.log(jQuery(this).attr('href'))
-                        fullDocumentView(jQuery(this).attr('href'));
-                    }
-                })
+{#                $('.list a').one('jdfhvjf', function () {#}
+{#                    if (jQuery(this).attr('href') !== undefined) {#}
+{#                        fullDocumentView(jQuery(this).attr('href'));#}
+{#                    }#}
+{#                })#}
+
             });
         }
 
+        function checkboxOnChange(item){
+
+            var parentElement =  jQuery(item).context.parentElement;
+            var a = parentElement.getElementsByTagName('a');
+            var href = jQuery(a).attr('href');
+            fullDocumentView(href)
+            console.log(href);
+        }
+
         function fullDocumentView(id) {
-            $(".documents-view").load(id + " #contents");
+            $(".box").load(id + " #contents");
         }
 
         function handler(event) {
             var $target = $(event.target);
             if ($target.is("a")) {
-                $target.children().toggle();
+                $target.attr('onclick', 'return false');
             }
         }
-        $(".documents-view").click(handler).find("ul").hide();
 
-        function sendAjaxQuery() {
-            var data = { choice: 'test-ajax'};
-            var args = { type: "POST",
-                url: "/wrap_text/",
-                data: data
-            };
-            $.ajax(args);
+        function sender(event) {
+
+            var $target = $(event.target);
+            if ($target.is("a")) {
+                $('#url_id').attr('value', $target.attr('href'));
+            }
         }
+
+        $(".list").mouseover(handler);
+        $(".list").click(sender);
 
 
     </script>

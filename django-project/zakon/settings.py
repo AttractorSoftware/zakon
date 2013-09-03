@@ -11,7 +11,7 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-import os
+
 PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 DATABASES = {
     'default': {
