@@ -9,6 +9,7 @@ from django.utils import timezone
 from lxml.etree import tostring
 from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth.plugins.plaintext.writer import PlaintextWriter
+from document.add_reference import AddReference
 
 from forms import *
 from document.xslt_converter.converter import XsltTransformer
@@ -59,7 +60,7 @@ def law_detail(request, doc_id):
     doc = get_object_or_404(Document, pk=doc_id)
     html_content = XsltTransformer.transform_to_html(doc.content.encode('utf-8'))
     return render(request, 'document/document_view.html',
-                  {'document': doc, 'content': html_content, 'document_id': doc_id});
+                  {'document': doc, 'content': html_content, 'document_id': doc_id})
 
 
 def wrap_text_in_tag(request):
@@ -71,46 +72,15 @@ def wrap_text_in_tag(request):
             start_position = int(request.POST.get('start_position'))
             end_position = int(request.POST.get('length')) + start_position
             reference_url = request.POST.get('reference_url')
-            doc = Document.objects.get(id=doc_id)
 
-            doc_content = doc.content.encode('utf-8')
-            xml_parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
+            if end_position > start_position > -1:
+                document = Document.objects.get(id=doc_id)
+                document_content = document.content.encode('utf-8')
 
-            myxml = etree.fromstring(doc_content, parser=xml_parser)
+                add_reference = AddReference()
+                mxml = add_reference.add_node_reference(document_content, object_id, start_position, end_position)
 
-            expr = ".//*[@id='" + object_id + "']"
-
-            for item in myxml.xpath(expr):
-                if item.attrib['id'] == str(object_id):
-                    text = item.text
-                    item.text = ""
-                    print text, start_position
-                    item.text = text[:start_position]
-                    element = etree.Element('reference', document_id=str(doc_id), object_id=object_id)
-                    element.text = text[start_position:end_position]
-                    item.insert(0, element)
-                    element.tail = text[end_position:]
-                    # print 'finish_text => ', stringify_children(item)
-
-            doc.content = etree.tostring(myxml, encoding='utf-8')
-
-            # print doc.content
-
-            doc.save()
+                document.content = mxml
+                document.save()
 
     return render(request, 'document/list.html', {'documents': Document.objects.all()})
-
-
-
-def _add_node_reference(node, start_position, end_position):
-    # return "".join([x for x in node.itertext()])
-    parts = ([node.text] +
-             list(chain(*([tostring(c)] for c in node.getchildren()))) +
-             [node.tail])
-
-    text = node.text
-
-
-
-def _add_node(node, text):
-    pass
