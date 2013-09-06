@@ -1,19 +1,23 @@
 #coding=utf-8
+import os
 from lettuce import step, world
 from django.test import LiveServerTestCase
 from nose.tools import assert_equals
+from zakon.settings import PROJECT_ROOT
+FILE_ROOT_ADRESS = os.path.join(PROJECT_ROOT, '..','document/selenium_tests/features/')
 from view_law import ViewLaw
+from reference import ReferenceLaw
+
 
 class UploadLaw(LiveServerTestCase):
     @step(u'я нахожусь на странице загрузки закона')
     def i_stay_on_the_upload_page(step):
         world.browser.get("http://127.0.0.1:8000/upload/")
 
-    @step(u'я загружаю файл "zakon.rtf"')
-    def i_upload(step):
-
+    @step(u'я загружаю файл "(.*)"')
+    def i_upload(step, expected_file_name):
         elem_browse_file = world.browser.find_element_by_id('id_doc_file')
-        elem_browse_file.send_keys('~/projects/zakon/django-project/document/selenium_tests/features/zakon.rtf')
+        elem_browse_file.send_keys(FILE_ROOT_ADRESS+expected_file_name)
         elem_upload = world.browser.find_element_by_id('btn_upload')
         elem_upload.click()
 

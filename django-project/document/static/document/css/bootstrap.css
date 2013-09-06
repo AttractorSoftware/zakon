@@ -6214,9 +6214,9 @@ div [class$=_contents] {
 }
 
 
-/*.article_id {*/
-    /*float: left;*/
-    /*margin-right: 5px;*/
+.article_id {
+    float: left;
+    }
 
 .spoiler > ol > li > a {
     border-bottom: 1px dashed;

@@ -25,6 +25,5 @@ class ViewLaw(LiveServerTestCase):
 
     @step(u'вижу страницу с заголовком "(.*)"')
     def i_should_see_the_link_to_uploaded_law(step, expected_title):
-
         title = world.browser.find_element_by_tag_name('title')
         assert_equals(title.text, expected_title)
