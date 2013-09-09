@@ -13,7 +13,7 @@ class Parser(object):
         return Document(description, sections)
 
     def _build_description(self, builder):
-        name_of_the_document = builder.build_document_name()
+        name_of_the_document = builder.build_name()
         revisions_of_the_document = builder.build_revisions()
-        taking_place = builder.build_taking_place()
+        taking_place = builder.build_place_and_date()
         return Description(name_of_the_document, taking_place, revisions_of_the_document)

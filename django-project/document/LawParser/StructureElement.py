@@ -1,15 +1,19 @@
 import re
-class StructureElement(object):
-    def __init__(self, name, depth, regular_expression):
-        self._name = name
-        self._compiled_regular_expression = re.compile(regular_expression, re.MULTILINE | re.U | re.I)
-        self._depth = depth
 
-    def get_name(self):
-        return self._name
 
-    def get_compiled_regex(self):
-        return self._compiled_regular_expression
+class ElementBuild(object):
+    def __init__(self, regex, flags, level=None):
+        self._template = re.compile(regex, flags)
+        self._level = level
 
-    def get_depth(self):
-        return self._depth
+    @property
+    def template(self):
+        return self._template
+
+    @property
+    def level(self):
+        return self._level
+
+    @level.setter
+    def level(self, value):
+        self._level = value

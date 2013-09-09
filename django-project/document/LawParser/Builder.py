@@ -1,250 +1,233 @@
 #coding=utf-8
 import re
 import copy
+from nose import result
 from elements.section import Section
 from elements.text_section import TextSection
+from StructureElement import ElementBuild
 
+
+class ParserError(Exception):
+    pass
 
 class Builder(object):
     def __init__(self, text):
-        self._start_of_content_of_a_building_sections = []
-        self._end_of_content_of_a_building_sections = []
-        self._search_flags = re.M | re.DOTALL | re.U
-        self._name_pattern = u'^[ а-яА-Я]+?КЫРГЫЗСКОЙ РЕСПУБЛИКИ.*?(?=\n[ \t]*?\n\()'
-        self._revisions_pattern = u'^\(В редакции Законов КР от .+?\)'
-        self._taking_place_pattern = u'^г\.[а-яА-Я]+\n*?от.+?$'
-        self._article_pattern = u'(?P<name>^ *Статья (?P<number>\d+)\..+?(?=\n[ \t]*?\n))'
-        self._item_of_an_article_pattern_without_checking_end = u'^(?P<number>\d+)\.(?P<text>.+'
-        self._not_last_items_end_pattern = u'?)(?=^\d+\.)'
-        self._last_items_end_pattern = u')'
-        self._article_text_pattern = u'.+'
-        self._chapter_pattern = u'(?P<name>^ *?Глава (?P<number>\d+) *?\s*.*?$)'
-        self._division_pattern = u'(?P<name>^ *?РАЗДЕЛ (?P<number>[IVXLCDM]+) *?\s*.*?$)'
-        self._sub_division_pattern = u'(?P<name>^ *?Подраздел (?P<number>\d+)\.? *?\s*.*?$)'
-        self._part_pattern = u'(?P<name>^[\w ]*? *ЧАСТЬ.*?)(?P<number> )?$'
-        self._paragraph_pattern = u'(?P<name>^ *?Параграф (?P<number>\d+).+?(?=\n[ \t]*?\n))'
-        self._part_number = 1 #part usually does't contain number. We have to do number manually
-
+        # self._start_of_content_of_a_building_sections = []
+        # self._end_of_content_of_a_building_sections = []
         self._text = text
-        self._start_of_sections = self._determine_start_of_sections()
+        self._search_flags = re.M | re.DOTALL | re.U
 
-    def _get_first_highest_section_match_text(self):
-        result = self._get_match_text_for_this_pattern_if_param_is_None(None, self._part_pattern)
-        result = self._get_match_text_for_this_pattern_if_param_is_None(result, self._division_pattern)
-        result = self._get_match_text_for_this_pattern_if_param_is_None(result, self._chapter_pattern)
-        result = self._get_match_text_for_this_pattern_if_param_is_None(result, self._article_pattern)
-        return result
+        self._name_build_info = ElementBuild(u'^[ а-яА-Я]+?КЫРГЫЗСКОЙ РЕСПУБЛИКИ.*?(?=^\()', self._search_flags)
+        self._place_and_date_build_info = ElementBuild(u'^г\.[а-яА-Я]+\n*?от.+?$', self._search_flags)
+        self._revisions_build_info = ElementBuild(u'^\(В редакции Законов КР от .+?\)', self._search_flags)
 
-    def _determine_start_of_sections(self):
-        result = self._get_first_highest_section_match_text()
-        if result:
-            matches = self._get_matches_iterator(result, 0, len(self._text))
-            for match in matches:
-                temp = match
-            result = temp.start()
-        return result if result else len(self._text)
+        #part usually does't contain number. We have to do number manually
+        self._part_number = 1
 
-    def _get_match_text_for_this_pattern_if_param_is_None(self, param, pattern):
-        if param == None:
-            match = re.search(pattern, self._text, self._search_flags)
-            param = self._get_text_of_match_object_if_it_not_None(match)
-        return param
+        self._part_build_info = ElementBuild(u'(?P<name>^[\w ]*? *ЧАСТЬ.*?)(?P<number> )?$', self._search_flags, 'part')
 
-    def _get_text_of_match_object_if_it_not_None(self, match):
-        result = None
+        self._division_build_info =  ElementBuild(u'(?P<name>^ *?РАЗДЕЛ (?P<number>[IVXLCDM]+) *?\s*.*?$)', self._search_flags, 'division')
+
+        self._sub_division_build_info = ElementBuild(u'(?P<name>^ *?Подраздел (?P<number>\d+)\.? *?\s*.*?$)', self._search_flags)
+
+        self._chapter_build_info = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+) *?\s*.*?$)', self._search_flags, 'chapter')
+
+        self._paragraphs_build_info = ElementBuild(u'(?P<name>^ *?Параграф (?P<number>\d+).+?(?=\n[ \t]*?\n))', self._search_flags)
+
+        self._article_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+)\..+?(?=\n[ \t]*?\n))', self._search_flags, 'article')
+        self._article_text_build_info = ElementBuild(u'.+', self._search_flags)
+
+        self._last_item_build_info = ElementBuild(u'^(?P<number>\d+)\.(?P<text>.+)', self._search_flags)
+        self._not_last_item_build_info = ElementBuild(u'^(?P<number>\d+)\.(?P<text>.+?)(?=^\d+\.)', self._search_flags)
+
+        self._start_of_sections = self._find_start_of_sections()
+
+    def _get_match_text(self, template):
+        match = template.search(self._text)
         if match:
-            result = match.group()
-        return result
+            return match.group()
+
+    def _get_first_highest_section_text(self):
+        text = self._get_match_text(self._part_build_info.template)
+        if text is None:
+            text = self._get_match_text(self._division_build_info.template)
+        if text is None:
+            text = self._get_match_text(self._chapter_build_info.template)
+        if text is None:
+            text = self._get_match_text(self._article_build_info.template)
+        return text
+
+    def _find_start_of_sections(self):
+        highest_section_text = self._get_first_highest_section_text()
+        last_match_of_first_highest_section = None
+        if highest_section_text:
+            template = re.compile(highest_section_text, self._search_flags)
+            iterator = self._get_iterator(template, 0, len(self._text))
+            for match in iterator:
+                last_match_of_first_highest_section = match
+        return last_match_of_first_highest_section.start() if last_match_of_first_highest_section else len(self._text)
 
     def build_sections(self):
         sections = self.build_parts(self._start_of_sections)
         if sections == []:
-            sections = self.build_divisions(self._start_of_sections, len(self.text))
+            sections = self.build_divisions(self._start_of_sections, len(self._text))
             if sections == []:
-                sections = self.build_chapters(self._start_of_sections, len(self.text))
+                sections = self.build_chapters(self._start_of_sections, len(self._text))
                 if sections == []:
-                    sections = self.build_articles(self._start_of_sections, len(self.text))
+                    sections = self.build_articles(self._start_of_sections, len(self._text))
         return sections
 
-    def build_document_name(self):
-        result = re.search(self._name_pattern, self._text, self._search_flags)
-        if result:
-            result = re.sub('\n', ' ', result.group())
-            result = result.strip()
+    def _find_match_text_or_raise_error_with_msg(self, template, error_msg):
+        match = template.search(self._text)
+        if match:
+            result = match.group().strip()
         else:
-            result=u'Без имени.'
+            raise ParserError(error_msg)
         return result
 
+    def build_name(self):
+        return self._find_match_text_or_raise_error_with_msg(self._name_build_info.template, u'Не найдено наименование закона')
+
     def build_revisions(self):
-        result = re.search(self._revisions_pattern, self._text, self._search_flags)
-        return result.group() if result else u''
+        return self._find_match_text_or_raise_error_with_msg(self._revisions_build_info.template, u'Не найдены ревизии закона')
 
-    def build_taking_place(self):
-        result = re.search(self._taking_place_pattern, self._text, self._search_flags)
-        return result.group() if result else u''
+    def build_place_and_date(self):
+        return self._find_match_text_or_raise_error_with_msg(self._place_and_date_build_info.template, u'Не найдены место и дата принятия')
 
-    def build_parts(self, start_position):
+    def _get_iterator(self, template, start, end):
+        return template.finditer(self._text[start:end])
+
+    def build_parts(self, section_start):
         parts = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
-            u'part', self._part_pattern, start_position,  len(self._text), self.create_Section)
-
-        self._add_content_to_built_sections(parts, self.build_divisions)
+            self._part_build_info.level, self._part_build_info.template, section_start, len(self._text), self.create_Section
+        )
+        build_childer_methods = [self.build_divisions]
+        self._add_content_to_built_sections(parts, build_childer_methods, self._add_sub_sections)
 
         return parts
 
-    def build_divisions(self, start_of_section, end_of_section, parent_level_parent_number=None):
+    def build_divisions(self, section_start, section_end, parent_level_and_number=None):
         divisions = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
-            u'division', self._division_pattern, start_of_section,  end_of_section, self.create_Section)
-
-        self._add_content_to_built_divisions(divisions)
+            self._division_build_info.level, self._division_build_info.template, section_start, section_end, self.create_Section
+        )
+        build_children_methods = [self.build_sub_divisions, self.build_chapters]
+        self._add_content_to_built_sections(divisions, build_children_methods, self._add_sub_sections)
 
         return divisions
 
-    def _add_content_to_built_divisions(self, chapters):
-        i = 0
-        section_start_of_content_of_abuilding_sections = copy.copy(self._start_of_content_of_a_building_sections)
-        section_end_of_content_of_abuilding_sections = copy.copy(self._end_of_content_of_a_building_sections)
-        for j in chapters:
-            sub_sections = self._build_sub_divisions(
-                j.level+j.number+u'_sub_division', section_start_of_content_of_abuilding_sections[i], section_end_of_content_of_abuilding_sections[i])
-            if sub_sections == []:
-                sub_sections = self.build_chapters(section_start_of_content_of_abuilding_sections[i], section_end_of_content_of_abuilding_sections[i])
-            for sub_section in sub_sections:
-                j.add_section(sub_section)
-            i += 1
-
-    def _build_sub_divisions(self, level_name, start_of_section, end_of_section, parent_level_parent_number=None):
+    def build_sub_divisions(self, section_start, section_end, parent_level_and_number=None):
+        self._sub_division_build_info.level = parent_level_and_number + '_''sub_division'
         sub_divisions = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
-            level_name, self._sub_division_pattern, start_of_section, end_of_section, self.create_Section)
-
-        self._add_content_to_built_sections(sub_divisions, self.build_chapters)
+            self._sub_division_build_info.level, self._sub_division_build_info.template, section_start, section_end, self.create_Section
+        )
+        build_children_methods = [self.build_chapters]
+        self._add_content_to_built_sections(sub_divisions, build_children_methods, self._add_sub_sections)
 
         return sub_divisions
 
-    def build_chapters(self, start_of_section, end_of_section, parent_level_parent_number=None):
-        chapters = self._build_empty_chapters_and_save_its_start_and_end_of_content_positions(
-            u'chapter', self._chapter_pattern, start_of_section,  end_of_section)
+    def build_chapters(self, section_start, section_end, parent_level_and_number=None):
+        chapters = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
+            self._chapter_build_info.level, self._chapter_build_info.template, section_start, section_end, self.create_Section)
 
-        self._add_content_to_built_chapters(chapters)
-
+        build_children_methods = [self.build_paragraphs, self.build_articles]
+        self._add_content_to_built_sections(chapters, build_children_methods, self._add_sub_sections)
         return chapters
 
-    def _build_empty_chapters_and_save_its_start_and_end_of_content_positions(
-         self, level, search_pattern, start_of_section, end_of_section):
-        matches = self._get_matches_iterator(search_pattern, start_of_section, end_of_section)
-        sections = []
-        self._start_of_content_of_a_building_sections = []
-        self._end_of_content_of_a_building_sections = []
-        temp = []
-        for m in matches:
-            sections.append(Section(level=level, name=m.group('name').replace('\n', ' ').strip(), number=m.group('number')))
-            temp.append(m.start()+start_of_section)
-            self._start_of_content_of_a_building_sections.append(m.start() + start_of_section + len(m.group()))
-        if not temp == []:
-            temp.remove(temp[0])
-        i, length = 0, len(temp)
-        while i < length:
-            self._end_of_content_of_a_building_sections.append(temp[i])
-            i += 1
-        self._end_of_content_of_a_building_sections.append(end_of_section)
-        return sections
-
-    def _add_content_to_built_chapters(self, chapters):
-        i = 0
-        section_start_of_content_of_abuilding_sections = copy.copy(self._start_of_content_of_a_building_sections)
-        section_end_of_content_of_abuilding_sections = copy.copy(self._end_of_content_of_a_building_sections)
-        for j in chapters:
-            sub_sections = self.build_paragraphs(j.level+j.number+u'_paragraph',
-                                                 section_start_of_content_of_abuilding_sections[i], section_end_of_content_of_abuilding_sections[i])
-            if sub_sections == []:
-                sub_sections = self.build_articles(section_start_of_content_of_abuilding_sections[i], section_end_of_content_of_abuilding_sections[i])
-            for sub_section in sub_sections:
-                j.add_section(sub_section)
-            i += 1
-
-    def build_paragraphs(self, level_name,  start_of_section, end_of_section, parent_level_parent_number=None):
+    def build_paragraphs(self, section_start, section_end, parent_level_and_number=None):
+        self._paragraphs_build_info.level = parent_level_and_number + '_''paragraph'
         paragraphs = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
-            level_name, self._paragraph_pattern, start_of_section, end_of_section, self.create_Section)
-
-        self._add_content_to_built_sections(paragraphs, self.build_articles)
+            self._paragraphs_build_info.level, self._paragraphs_build_info.template, section_start, section_end, self.create_Section)
+        build_childer_methods = [self.build_articles]
+        self._add_content_to_built_sections(paragraphs, build_childer_methods, self._add_sub_sections)
 
         return paragraphs
 
-    def build_articles(self, start_of_sections, end_of_sections, parent_id=None):
+    def build_articles(self, start_of_sections, end_of_sections, parent_level_and_number=None):
         articles = self._build_empty_sections_and_save_its_start_and_end_of_content_positions(
-            u'article',self._article_pattern, start_of_sections,  end_of_sections, subsection_create_function=self.create_TextSection)
+            self._article_build_info.level, self._article_build_info.template, start_of_sections,  end_of_sections, self.create_TextSection)
 
-        self._add_content_to_built_sections(articles, self._build_items, template_method=self.article_template_method)
+        build_childer_methods = [self._build_items, self._build_article_text]
+
+        self._add_content_to_built_sections(articles, build_childer_methods, self._add_text_or_sub_sections)
 
         return articles
 
-    def _build_items(self, start, end, parent_level_parent_number):
+    def _add_sub_sections(self, section, sub_sections):
+        for sec in sub_sections:
+            section.add_section(sec)
+
+    def _add_text_or_sub_sections(self, article, sub_sections):
+        if type(sub_sections) is list:
+            self._add_sub_sections(article, sub_sections)
+        else:
+            article.text = sub_sections
+
+    def _build_items(self, content_start, content_end, parent_level_and_number):
+        self._not_last_item_build_info.level = parent_level_and_number + '_item'
         items = []
-        matches = self._get_matches_iterator(self._item_of_an_article_pattern_without_checking_end+self._not_last_items_end_pattern, start, end)
-        last_item_start = start
+
+        matches = self._get_iterator(self._not_last_item_build_info.template, content_start, content_end)
+        last_item_start = content_start
         for m in matches:
-            item = TextSection(level=parent_level_parent_number+'_item', name='', number=m.group('number'))
+            item = TextSection(self._not_last_item_build_info.level, name='', number=m.group('number'))
             item.text = m.group('text').strip()
             last_item_start += len(item.text)
             items.append(item)
-        matches = self._get_matches_iterator(self._item_of_an_article_pattern_without_checking_end + self._last_items_end_pattern, last_item_start, end)
+
+        self._last_item_build_info.level = parent_level_and_number + '_item'
+        matches = self._get_iterator(self._last_item_build_info.template, last_item_start, content_end)
         for m in matches:
-            item = TextSection(level=parent_level_parent_number+'_item', name='', number=m.group('number'))
+            item = TextSection(parent_level_and_number+'_item', name='', number=m.group('number'))
             item.text = m.group('text').strip()
             items.append(item)
         return items
 
-    def article_template_method(self, article, content_start, content_end):
-        text = self._build_article_text(content_start,  content_end)
-        article.text = text
+    def _build_article_text(self, start, end, parent_level_and_number=None):
+        match = self._article_text_build_info.template.search(self._text[start:end])
+        result = match.group().strip()
+        return result
 
-    def _build_article_text(self, start, end):
-        text = re.search(self._article_text_pattern, self._text[start:end], self.search_flags).group().strip()
-        return text
-
-    def _get_matches_iterator(self, pattern, start, end):
-        return re.finditer(pattern, self._text[start:end], self.search_flags)
-
-    #refactor functions
-    def _build_empty_sections_and_save_its_start_and_end_of_content_positions(
-            self, level_name, search_pattern, start_of_sections, end_of_sections, subsection_create_function):
-        matches = self._get_matches_iterator(search_pattern, start_of_sections, end_of_sections)
+    def _build_empty_sections_and_save_its_start_and_end_of_content_positions(self, level, template, section_start, section_end, create_section):
+        match_iterator = self._get_iterator(template, section_start, section_end)
         sections = []
-        self._start_of_content_of_a_building_sections = []
-        self._end_of_content_of_a_building_sections = []
-        temp = []
-        for m in matches:
-            sections.append(subsection_create_function(level_name, m))
-            temp.append(m.start()+start_of_sections)
-            self._start_of_content_of_a_building_sections.append(m.start() + start_of_sections+len(m.group()))
-        if not temp == []:
-            temp.remove(temp[0])
-        i, length = 0, len(temp)
-        while i < length:
-            self._end_of_content_of_a_building_sections.append(temp[i])
-            i += 1
-        self._end_of_content_of_a_building_sections.append(end_of_sections)
+        self._start_of_sections_content = []
+        self._end_of_sections_content= []
+        to_find_end_of_sections_content_list = []
+        for m in match_iterator:
+            sections.append(create_section(level, m))
+            to_find_end_of_sections_content_list.append(m.start()+section_start)
+            self._start_of_sections_content.append(m.start() + section_start+len(m.group()))
+        if not to_find_end_of_sections_content_list == []:
+            to_find_end_of_sections_content_list.remove(to_find_end_of_sections_content_list[0])
+        for i in to_find_end_of_sections_content_list:
+            self._end_of_sections_content.append(i)
+        self._end_of_sections_content.append(section_end)
         return sections
 
-    def _add_content_to_built_sections(self, sections, build_children_method, template_method = None):
+    def _add_content_to_built_sections(self, sections, build_children_methods, add_sub_sections_method):
         i = 0
-        start_content_of_a_building_sections = copy.copy(self._start_of_content_of_a_building_sections)
-        end_content_of_a_building_sections = copy.copy(self._end_of_content_of_a_building_sections)
-        for j in sections:
-            parent_level_parent_number = j.level+(j.number)
-            sub_sections = build_children_method(start_content_of_a_building_sections[i], end_content_of_a_building_sections[i], parent_level_parent_number)
-            if template_method and sub_sections == []:
-                template_method(j, start_content_of_a_building_sections[i], end_content_of_a_building_sections[i])
+        start_of_sections_content = copy.copy(self._start_of_sections_content)
+        end_of_sections_content= copy.copy(self._end_of_sections_content)
+        for section in sections:
+            parent_level_and_number = section.level+(section.number)
+
+            j = 0
+            sub_sections = []
+            while sub_sections == [] and j < len(build_children_methods):
+                sub_sections = build_children_methods[j](start_of_sections_content[i], end_of_sections_content[i], parent_level_and_number)
+                j += 1
+            if sub_sections:
+                add_sub_sections_method(section, sub_sections)
             else:
-                for sub_section in sub_sections:
-                    j.add_section(sub_section)
+                raise ParserError(u'Ошиибка! "{0}" пустая!'.format(section.name))
             i += 1
 
     def create_Section(self, level, match):
         number = match.group('number')
-        if not number:
+        if number is None:
             number = self._part_number
             self._part_number += 1
-        return Section(level=level, name=match.group('name').replace('\n', ' ').strip(), number=str(number))
+        return Section(level, match.group('name').replace('\n', ' ').strip(), number=str(number))
 
     def create_TextSection(self, level, match):
         return TextSection(level=level, name=match.group('name').replace('\n', ' ').strip(), number=match.group('number'))
@@ -253,54 +236,6 @@ class Builder(object):
     def text(self):
         return self._text
 
-    @property
-    def name_pattern(self):
-        return self._name_pattern
-
-    @property
-    def revisions_pattern (self):
-        return self._revisions_pattern
-
-    @property
-    def taking_place_pattern(self):
-        return self._taking_place_pattern
-
-    @property
-    def part_pattern(self):
-        return self._part_pattern
-
-    @property
-    def division_pattern(self):
-        return self._division_pattern
-
-    @property
-    def chapter_pattern(self):
-        return self._chapter_pattern
-
-    @property
-    def paragraph_pattern(self):
-        return self._paragraph_pattern
-
-    @property
-    def article_pattern(self):
-        return self._article_pattern
-
-    @property
-    def item_of_an_article_pattern_without_checking_end(self):
-        return self._item_of_an_article_pattern_without_checking_end
-
-    @property
-    def not_last_items_end_pattern(self):
-        return self._not_last_items_end_pattern
-
-    @property
-    def last_items_end_pattern(self):
-        return self._last_items_end_pattern
-
-    @property
-    def search_flags(self):
-        return self._search_flags
-
-    @property
-    def article_text_pattern(self):
-        return self._article_text_pattern
+    @text.setter
+    def text(self, a_text):
+        self._text = a_text
