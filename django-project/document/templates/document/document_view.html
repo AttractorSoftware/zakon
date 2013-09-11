@@ -9,18 +9,6 @@
 
     <form id="modal" class="modal hide" action="{% url 'document:wrap_text' %}" method="post">
         {% csrf_token %}
-        <div class="modal-header">
-            <h2>Lorem Ipsum</h2>
-        </div>
-{#        <div class="form-inline">#}
-{#            <input type="hidden" name="document_id" value="{{ document_id }}"/>#}
-{#            <input type="hidden" name="article_id" value="2112"/>#}
-{#            <input type="hidden" name="content" value=""/>#}
-{#            <input type="text" name="url" id="url_id" value=""/>#}
-{#            <button type="submit" data-dismiss="modal" aria-hidden="true"#}
-{#                    onClick="ReplaceSelectedText();return false;">Отправить#}
-{#            </button>#}
-{#        </div>#}
         <div class="modal-body">
 
             <div class="form-inline">
@@ -28,31 +16,18 @@
                 <input type="hidden" name="article_item_id" id="article_item_id" value=""/>
                 <input type="hidden" name="start_position" value="" id="start_position"/>
                 <input type="hidden" name="length" value="" id="length"/>
-                <input type="text" name="reference_url" id="reference_url" value=""/>
-                <button type="submit" data-dismiss="modal" aria-hidden="true"
-                        onClick="sendSelectionTextPositions();return false;">Отправить
-                </button>
+                <input type="hidden" name="link_document_id" id="link_document_id" value=""/>
+                <input type="hidden" name="link_object_id" id="link_object_id" value="">
             </div>
-
-
-
-            <div class="documents-view">
-
-                <div class="list">
-
-                </div>
+            <div class="accordion" id="accordion" style="margin-bottom: 0px !important;">
 
             </div>
-
         </div>
-
     </form>
 
-
     <a href="#modal" role="button" class="btn hide" id='ShowModalWindow' data-toggle="modal"
-       style="position: fixed; left: 40px;">Click Me</a>
+       style="position: fixed; left: 12px;">Добавить ссылку</a>
     <div id="list" style="width: 940px; background: #ffc; padding: 0 15px;">
-
         <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
 
         <div style="margin-top: 100px; padding-bottom: 50px;" document_id="{{ document_id }}">
@@ -62,58 +37,57 @@
         </div>
     </div>
     <script type="text/javascript">
-
         var selected;
-        var selRange;
+        var selRange, txt;
         $('document').ready(function () {
-
-
             $('#ShowModalWindow').click(function () {
                 $('#modal').modal();
-
-
                 showCaretPos();
                 $(".documents-view a").attr('onclick', 'return false');
             })
-                getDocumentsList();
+
+            getDocumentsList();
+
+            $('.add_link_btn').click(function () {
+                console.log('isabek');
+                {#                sendSelectionTextPositions();#}
             });
 
+        })
 
-            $('#list').mouseup(function () {
-                showClickMeButton();
-            });
-            $('#list').dblclick(function () {
-                showClickMeButton();
-            });
+        $('#list').mouseup(function () {
+            showClickMeButton();
+        });
+        $('#list').dblclick(function () {
+            showClickMeButton();
+        });
 
-            $('#list').click(function () {
-                if (selectedText().length <= 0 && !$('#ShowModalWindow').hasClass('hide')) {
-                    $('#ShowModalWindow').addClass('hide');
-                }
-            });
-
-            function showClickMeButton() {
-                if (selectedText().length > 0) {
-                    $('#ShowModalWindow').removeClass('hide');
-                    selected = window.getSelection();
-                    selRange = selected.getRangeAt(0);
-                }
-
+        $('#list').click(function () {
+            if (selectedText().length <= 0 && !$('#ShowModalWindow').hasClass('hide')) {
+                $('#ShowModalWindow').addClass('hide');
             }
+        });
 
-            function selectedText() {
-                if (window.getSelection)
-                    txt = window.getSelection().toString();
-                else if (document.getSelection)
-                    txt = document.getSelection();
-                else if (document.selection)
-                    txt = document.selection.createRange().text;
-                return txt;
-
+        function showClickMeButton() {
+            if (selectedText().length > 0) {
+                $('#ShowModalWindow').removeClass('hide');
+                selected = window.getSelection();
+                selRange = selected.getRangeAt(0);
             }
+        }
 
-{#        });#}
-        {#----------------------------------------------------------------------------------#}
+        function selectedText() {
+            if (window.getSelection)
+                txt = window.getSelection().toString();
+            else if (document.getSelection)
+                txt = document.getSelection();
+            else if (document.selection)
+                txt = document.selection.createRange().text;
+            return txt;
+        }
+
+        var link_document_id;
+
         function getCaretCharacterOffsetWithin(element) {
             var caretOffset = 0;
             var doc = element.ownerDocument || element.document;
@@ -138,73 +112,79 @@
         function showCaretPos() {
             var el = document.getElementById(selected.extentNode.parentElement.id);
             $('#length').val(selRange.endOffset - selRange.startOffset);
-            $('#start_position').val(getCaretCharacterOffsetWithin(el)-$('#length').val()-2);
+            $('#start_position').val(getCaretCharacterOffsetWithin(el) - $('#length').val());
 
 
             return getCaretCharacterOffsetWithin(el);
 
         }
 
-
-
-        {#------------------------------------------------------------------------------------#}
-
         function sendSelectionTextPositions() {
-
-            $('#ShowModalWindow').addClass('hide');
-            $('#article_item_id').val(selected.extentNode.parentElement.id);
-            $('#modal').submit();
-            {#            window.location.reload();#}
+            if (confirm("Вы хотите добавить ссылку?")) {
+                $('#ShowModalWindow').addClass('hide');
+                $('#article_item_id').val(selected.extentNode.parentElement.id);
+                $('#modal').submit();
+            }
         }
 
-
+        var fulUrl = "";
         function getDocumentsList() {
-            $(".list").load("/ ol", function () {
-                $('.list a').wrap('<div class="spoiler"></div>');
-                $('.list a').after('\n <div class="box"></div>');
-                $('.list a').after('\n <input type="checkbox" onchange="checkboxOnChange(this)" >');
 
-{#                $('.list a').one('jdfhvjf', function () {#}
-{#                    if (jQuery(this).attr('href') !== undefined) {#}
-{#                        fullDocumentView(jQuery(this).attr('href'));#}
-{#                    }#}
-{#                })#}
+            var div_class, id;
+
+            $("#accordion").load("/ ol li a", function () {
+
+                $('#accordion a').each(function (item) {
+
+                    div_class = (item == 0) ? 'in' : '';
+                    id = jQuery(this).attr('href');
+                    $('#link_document_id').attr('doc_id', link_document_id);
+
+                    jQuery(this).attr('href', '#collapse_' + item);
+                    jQuery(this).attr('doc_id', id.replace(/[^0-9\s]/gi, ''));
+                    jQuery(this).click(function () {
+                        $('#link_document_id').attr('value', jQuery(this).attr('doc_id'));
+                    });
+
+                    if (item == 0) {
+                        $('#link_document_id').attr('value', id.replace(/[^0-9\s]/gi, ''));
+                    }
+
+                    jQuery(this).attr('class', "accordion-toggle");
+                    jQuery(this).attr('data-toggle', "collapse");
+                    jQuery(this).attr('data-parent', "#accordion");
+                    jQuery(this).wrap('<div class="accordion-group"><div class="accordion-heading"></div></div>');
+                    jQuery(this).after('<button type="submit" class="btn btn-primary add_link_btn" onclick="sendSelectionTextPositions();  return false;" title="Добавить ссылку"><i class="icon-tags icon-white "></i></button>');
+                    jQuery(jQuery(this).context.parentElement).after('\n <div id=' + 'collapse_' + item + ' class="accordion-body collapse ' + div_class + ' "><div class="accordion-inner"></div></div>');
+
+                    fullDocumentView(id);
+                });
+
+                $('.accordion-inner').click(function (event) {
+                    var $target = $(event.target);
+
+                    if ($target.is("a")) {
+                        $('#link_object_id').attr('value', $target.attr('href'));
+                    }
+
+                    sendSelectionTextPositions();
+                });
 
             });
         }
 
-        function checkboxOnChange(item){
-
-            var parentElement =  jQuery(item).context.parentElement;
-            var a = parentElement.getElementsByTagName('a');
-            var href = jQuery(a).attr('href');
-            fullDocumentView(href)
-            console.log(href);
-        }
-
+        var elements;
         function fullDocumentView(id) {
-            $(".box").load(id + " #contents");
+
+            $(".accordion-inner").load(id + " .contents");
+
+            $('.accordion-inner').mouseover(function (event) {
+                var $target = $(event.target);
+                if ($target.is("a")) {
+                    $target.attr('onclick', 'return false');
+                }
+            });
         }
-
-        function handler(event) {
-            var $target = $(event.target);
-            if ($target.is("a")) {
-                $target.attr('onclick', 'return false');
-            }
-        }
-
-        function sender(event) {
-
-            var $target = $(event.target);
-            if ($target.is("a")) {
-                $('#url_id').attr('value', $target.attr('href'));
-            }
-        }
-
-        $(".list").mouseover(handler);
-        $(".list").click(sender);
-
-
     </script>
 {% endblock %}
 {% block footer %} {% endblock %}

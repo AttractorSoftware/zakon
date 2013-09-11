@@ -67,20 +67,26 @@ def wrap_text_in_tag(request):
     if request.method == 'POST':
         form = WrapTextForm(request.POST)
         if form.is_valid():
-            doc_id = int(request.POST.get('document_id'))
-            object_id = request.POST.get('article_item_id')
-            start_position = int(request.POST.get('start_position'))
-            end_position = int(request.POST.get('length')) + start_position
-            reference_url = request.POST.get('reference_url')
 
-            if end_position > start_position > -1:
-                document = Document.objects.get(id=doc_id)
-                document_content = document.content.encode('utf-8')
+            try:
+                doc_id = int(request.POST.get('document_id'))
+                object_id = request.POST.get('article_item_id')
+                start_position = int(request.POST.get('start_position'))
+                end_position = int(request.POST.get('length')) + start_position
+                link_document_id = str(request.POST.get('link_document_id'))
+                link_object_id = request.POST.get('link_object_id')
 
-                add_reference = AddReference()
-                mxml = add_reference.add_node_reference(document_content, object_id, start_position, end_position)
+                if (end_position > start_position > -1) and object_id:
+                    document = Document.objects.get(id=doc_id)
+                    document_content = document.content.encode('utf-8')
 
-                document.content = mxml
-                document.save()
+                    add_reference = AddReference()
+                    mxml = add_reference.add_node_reference(document_content, object_id, start_position, end_position,
+                                                            link_document_id, link_object_id)
+
+                    document.content = mxml
+                    document.save()
+            except:
+                raise StandardError('Except')
 
     return render(request, 'document/list.html', {'documents': Document.objects.all()})
