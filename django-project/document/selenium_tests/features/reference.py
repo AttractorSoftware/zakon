@@ -6,7 +6,7 @@ import os
 from lettuce import step, world
 from django.test import LiveServerTestCase
 from nose.tools import assert_equals
-
+from selenium.webdriver import ActionChains
 
 from zakon.settings import PROJECT_ROOT
 import time
@@ -39,21 +39,8 @@ class ReferenceLaw(LiveServerTestCase):
     @step(u'я нахожу текст "(.*)" и выделяю его')
     def i_select_text(step, name_of_law):
         el = world.browser.find_element_by_id('article4_item_2')
-        world.browser.execute_script("""alert("ysaysa;sdal");""")
-        text=world.browser.find_element_by_xpath("//a[contains(text(),'ЗАКОН КЫРГЫЗСКОЙ РЕСПУБЛИКИО государственной регистрации юридическихлиц, филиалов (представительств)')]")
-        time.sleep(6)
-        text.click()
-        time.sleep(6)
-        # mouse = webdriver.ActionChains(world.browser)
-        # mouse.double_click(el).perform()
-        time.sleep(5)
 
+        ActionChains(world.browser).click_and_hold(el).move_to_element_with_offset(el,30,0).perform()
 
-
-
-        addButton = world.browser.find_element_by_id('ShowModalWindow')
-        addButton.click()
-        link_law=world.browser.find_element_by_link_text('ЗАКОН КЫРГЫЗСКОЙ РЕСПУБЛИКИ О государственной регистрации юридических лиц, филиалов (представительств)')
-        link_law.click()
 
 
