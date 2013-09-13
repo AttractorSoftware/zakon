@@ -39,9 +39,11 @@
     <script type="text/javascript">
         var selected;
         var selRange, txt;
+        var parent;
         $('document').ready(function () {
             $('#ShowModalWindow').click(function () {
                 $('#modal').modal();
+                parent = selected.extentNode.parentElement.id;
                 showCaretPos();
                 $(".documents-view a").attr('onclick', 'return false');
             })
@@ -110,7 +112,7 @@
         }
 
         function showCaretPos() {
-            var el = document.getElementById(selected.extentNode.parentElement.id);
+            var el = document.getElementById(parent);
             $('#length').val(selRange.endOffset - selRange.startOffset);
             $('#start_position').val(getCaretCharacterOffsetWithin(el) - $('#length').val());
 
@@ -122,7 +124,7 @@
         function sendSelectionTextPositions() {
             if (confirm("Вы хотите добавить ссылку?")) {
                 $('#ShowModalWindow').addClass('hide');
-                $('#article_item_id').val(selected.extentNode.parentElement.id);
+                $('#article_item_id').val(parent);
                 $('#modal').submit();
             }
         }
