@@ -43,7 +43,7 @@
         $('document').ready(function () {
             $('#ShowModalWindow').click(function () {
                 $('#modal').modal();
-                parent = selected.extentNode.parentElement.id;
+                parent = selected.anchorNode.parentElement.id;
                 showCaretPos();
                 $(".documents-view a").attr('onclick', 'return false');
             })
