@@ -43,7 +43,13 @@
         $('document').ready(function () {
             $('#ShowModalWindow').click(function () {
                 $('#modal').modal();
-                parent = selected.anchorNode.parentElement.id;
+                var ua = navigator.userAgent;
+                if(ua.search(/MSIE/)) {
+                    parent = selected.anchorNode.parentNode.id;
+                }
+                else {
+                    parent = selected.anchorNode.parentElement.id;
+                }
                 showCaretPos();
                 $(".documents-view a").attr('onclick', 'return false');
             })
