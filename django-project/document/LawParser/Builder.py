@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #coding=utf-8
 import re
 import copy
@@ -12,8 +14,8 @@ class ParserError(Exception):
 
 class Builder(object):
     def __init__(self, text):
-        # self._start_of_content_of_a_building_sections = []
-        # self._end_of_content_of_a_building_sections = []
+        #self._start_of_content_of_a_building_sections = []
+        #self._end_of_content_of_a_building_sections = []
         self._text = text
         self._search_flags = re.M | re.DOTALL | re.U
 
@@ -58,6 +60,7 @@ class Builder(object):
     def _get_first_highest_section_text(self):
         section_text_and_start_positions = {}
         part_match = self._part_build_info.template.search(self._text)
+        print part_match
         if part_match:
             section_text_and_start_positions[part_match.start()] = part_match.group()
         division_match = self._division_build_info.template.search(self._text)
@@ -231,8 +234,8 @@ class Builder(object):
                 j += 1
             if sub_sections:
                 add_sub_sections_method(section, sub_sections)
-            else:
-                raise ParserError(u'Ошиибка! "{0}" не имеет содержимого!'.format(section.name))
+            #else:
+                #raise ParserError(u'Ошиибка! "{0}" не имеет содержимого!'.format(section.name))
             i += 1
 
     def create_Section(self, level, match):
@@ -254,3 +257,5 @@ class Builder(object):
         self._sections_start = self._find_start_of_sections()
         self._text = a_text
         self._sections_end = len(self._text)
+
+

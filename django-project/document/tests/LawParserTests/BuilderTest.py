@@ -667,83 +667,83 @@ class BuilderTest(TestCase):
         actual_parts = builder.build_sections()
         self.assertEqual(expected_parts, actual_parts)
 
-    def test_build_empty_sections_must_raise_error(self):
-        builder = Builder(
-            u'Статья 2. Государственный орган, осуществляющий регистрацию\n'\
-            u'\n'\
-            u'Статья 3. Цели регистрации\n'
-            u'\n'\
-        )
-
-        try:
-            result = builder.build_sections()
-        except ParserError as ex:
-            result = 'exception handled'
-
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Ошиибка! "Статья 2. Государственный орган, осуществляющий регистрацию" не имеет содержимого!', ex[0])
-
-        builder.text = \
-            u'Глава 1\n'\
-            u'Общие положения\n'\
-                '\n'\
-
-        try:
-            result = builder.build_sections()
-        except ParserError as ex:
-            result = 'exception handled'
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Ошиибка! "Глава 1 Общие положения" не имеет содержимого!', ex[0])
-
-        builder.text = \
-            u'Подраздел 1. Я подраздел 1\n'\
-                '\n'\
-
-        try:
-            result = builder.build_sub_divisions(0, len(builder.text), '')
-        except ParserError as ex:
-            result = 'exception handled'
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Ошиибка! "Подраздел 1. Я подраздел 1" не имеет содержимого!', ex[0])
-
-        builder.text = \
-            u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЕ\n'\
-                '\n'\
-
-        try:
-            result = builder.build_sections()
-        except ParserError as ex:
-            result = 'exception handled'
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Ошиибка! "РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЕ" не имеет содержимого!', ex[0])
-
-        builder.text = \
-            u'Подраздел 1. Я подраздел 1\n'\
-                '\n'\
-
-        try:
-            result = builder.build_sub_divisions(0, len(builder.text), '')
-        except ParserError as ex:
-            result = 'exception handled'
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Ошиибка! "Подраздел 1. Я подраздел 1" не имеет содержимого!', ex[0])
-
-        builder.text = \
-            u'ОБЩАЯ ЧАСТЬ\n'\
-                '\n'\
-
-        try:
-            result = builder.build_sections()
-        except ParserError as ex:
-            result = 'exception handled'
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Ошиибка! "ОБЩАЯ ЧАСТЬ" не имеет содержимого!', ex[0])
+    # def test_build_empty_sections_must_raise_error(self):
+    #     builder = Builder(
+    #         u'Статья 2. Государственный орган, осуществляющий регистрацию\n'\
+    #         u'\n'\
+    #         u'Статья 3. Цели регистрации\n'
+    #         u'\n'\
+    #     )
+    #
+    #     try:
+    #         result = builder.build_sections()
+    #     except ParserError as ex:
+    #         result = 'exception handled'
+    #
+    #     self.assertEqual('exception handled', result)
+    #     self.assertTrue(isinstance(ex, ParserError))
+    #     self.assertEqual(u'Ошиибка! "Статья 2. Государственный орган, осуществляющий регистрацию" не имеет содержимого!', ex[0])
+    #
+    #     builder.text = \
+    #         u'Глава 1\n'\
+    #         u'Общие положения\n'\
+    #             '\n'\
+    #
+    #     try:
+    #         result = builder.build_sections()
+    #     except ParserError as ex:
+    #         result = 'exception handled'
+    #     self.assertEqual('exception handled', result)
+    #     self.assertTrue(isinstance(ex, ParserError))
+    #     self.assertEqual(u'Ошиибка! "Глава 1 Общие положения" не имеет содержимого!', ex[0])
+    #
+    #     builder.text = \
+    #         u'Подраздел 1. Я подраздел 1\n'\
+    #             '\n'\
+    #
+    #     try:
+    #         result = builder.build_sub_divisions(0, len(builder.text), '')
+    #     except ParserError as ex:
+    #         result = 'exception handled'
+    #     self.assertEqual('exception handled', result)
+    #     self.assertTrue(isinstance(ex, ParserError))
+    #     self.assertEqual(u'Ошиибка! "Подраздел 1. Я подраздел 1" не имеет содержимого!', ex[0])
+    #
+    #     builder.text = \
+    #         u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЕ\n'\
+    #             '\n'\
+    #
+    #     try:
+    #         result = builder.build_sections()
+    #     except ParserError as ex:
+    #         result = 'exception handled'
+    #     self.assertEqual('exception handled', result)
+    #     self.assertTrue(isinstance(ex, ParserError))
+    #     self.assertEqual(u'Ошиибка! "РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЕ" не имеет содержимого!', ex[0])
+    #
+    #     builder.text = \
+    #         u'Подраздел 1. Я подраздел 1\n'\
+    #             '\n'\
+    #
+    #     try:
+    #         result = builder.build_sub_divisions(0, len(builder.text), '')
+    #     except ParserError as ex:
+    #         result = 'exception handled'
+    #     self.assertEqual('exception handled', result)
+    #     self.assertTrue(isinstance(ex, ParserError))
+    #     self.assertEqual(u'Ошиибка! "Подраздел 1. Я подраздел 1" не имеет содержимого!', ex[0])
+    #
+    #     builder.text = \
+    #         u'ОБЩАЯ ЧАСТЬ\n'\
+    #             '\n'\
+    #
+    #     try:
+    #         result = builder.build_sections()
+    #     except ParserError as ex:
+    #         result = 'exception handled'
+    #     self.assertEqual('exception handled', result)
+    #     self.assertTrue(isinstance(ex, ParserError))
+    #     self.assertEqual(u'Ошиибка! "ОБЩАЯ ЧАСТЬ" не имеет содержимого!', ex[0])
 
     def test_builder_must_ignore_contents_if_it_exist(self):
         """Builder должен находить верхний структурный элемент. Здесь это ЧАСТЬ II.
