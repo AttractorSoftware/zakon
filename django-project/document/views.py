@@ -15,7 +15,6 @@ from forms import *
 from document.xslt_converter.converter import XsltTransformer
 from forms import UploadForm
 from models import Document
-from models import References
 from LawParser.DOMParser import Parser
 
 
@@ -62,20 +61,3 @@ def law_detail(request, doc_id):
 	return render(request, 'document/document_view.html', {'document': doc, 'content': html_content, 'document_id': doc_id})
 
 
-def wrap_text_in_tag(request):
-	if request.method == 'POST':
-		form = WrapTextForm(request.POST)
-		if form.is_valid():
-
-			#try:
-			ref = References()
-			ref.reference_document_id = Document(request.POST.get('reference_document_id'))
-			ref.reference_element = request.POST.get('reference_element')
-			ref.linked_document_id = Document(request.POST.get('linked_document_id'))
-			ref.linked_element = request.POST.get('linked_element')
-
-			ref.save()
-			#except:
-				#raise StandardError('Except')
-
-	return render(request, 'document/list.html', {'documents': Document.objects.all()})
