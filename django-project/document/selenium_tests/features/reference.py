@@ -12,7 +12,7 @@ from zakon.settings import PROJECT_ROOT
 import time
 from selenium import webdriver
 
-FILE_ROOT_ADRESS = os.path.join(PROJECT_ROOT, '..', 'document/selenium_tests/features/')
+FILE_ROOT_ADRESS = os.path.join(PROJECT_ROOT, 'document/selenium_tests/features/')
 
 
 class ReferenceLaw(LiveServerTestCase):

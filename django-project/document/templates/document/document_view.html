@@ -12,12 +12,10 @@
         <div class="modal-body">
 
             <div class="form-inline">
-                <input type="hidden" name="document_id" value="{{ document_id }}"/>
-                <input type="hidden" name="article_item_id" id="article_item_id" value=""/>
-                <input type="hidden" name="start_position" value="" id="start_position"/>
-                <input type="hidden" name="length" value="" id="length"/>
-                <input type="hidden" name="link_document_id" id="link_document_id" value=""/>
-                <input type="hidden" name="link_object_id" id="link_object_id" value="">
+                <input type="hidden" name="reference_document_id" value="{{ document_id }}"/>
+                <input type="hidden" name="reference_element" id="reference_element" value=""/>
+                <input type="hidden" name="linked_document_id" value="" id="linked_document_id"/>
+                <input type="hidden" name="linked_element" value="" id="linked_element"/>
             </div>
             <div class="accordion" id="accordion" style="margin-bottom: 0px !important;">
 
@@ -25,8 +23,8 @@
         </div>
     </form>
 
-    <a href="#modal" role="button" class="btn hide" id='ShowModalWindow' data-toggle="modal"
-       style="position: fixed; left: 12px;">Добавить ссылку</a>
+{#    <a href="#modal" role="button" class="btn hide" id='ShowModalWindow' data-toggle="modal"#}
+{#       style="position: fixed; left: 12px;">Добавить ссылку</a>#}
     <div id="list" style="width: 940px; background: #ffc; padding: 0 15px;">
         <p style="margin-top: 20px; margin-left: 500px"> {{ document.uploaded_date }} </p>
 
@@ -41,18 +39,24 @@
         var selRange, txt;
         var parent;
         $('document').ready(function () {
-            $('#ShowModalWindow').click(function () {
-                $('#modal').modal();
-                var ua = navigator.userAgent;
-                if(ua.search(/MSIE/)) {
-                    parent = selected.anchorNode.parentNode.id;
-                }
-                else {
-                    parent = selected.anchorNode.parentElement.id;
-                }
-                showCaretPos();
-                $(".documents-view a").attr('onclick', 'return false');
-            })
+{#            $('#getWindow').click(function () {#}
+{#                $('#modal').modal();#}
+{#                var ua = navigator.userAgent;#}
+{#                if(ua.search(/MSIE/)) {#}
+{#                    parent = selected.anchorNode.parentNode.id;#}
+{#                }#}
+{#                else {#}
+{#                    parent = selected.anchorNode.parentElement.id;#}
+{#                }#}
+{#                showCaretPos();#}
+{#                $(".documents-view a").attr('onclick', 'return false');#}
+{#            })#}
+
+            $("a#getWindow").click(
+                    function(){
+                        $("#modal").modal()
+                    }
+            )
 
             getDocumentsList();
 
@@ -94,46 +98,46 @@
             return txt;
         }
 
-        var link_document_id;
+        var linked_document_id;
 
-        function getCaretCharacterOffsetWithin(element) {
-            var caretOffset = 0;
-            var doc = element.ownerDocument || element.document;
-            var win = doc.defaultView || doc.parentWindow;
-            var sel;
-            if (typeof win.getSelection != "undefined") {
-                var range = win.getSelection().getRangeAt(0);
-                var preCaretRange = range.cloneRange();
-                preCaretRange.selectNodeContents(element);
-                preCaretRange.setEnd(range.endContainer, range.endOffset);
-                caretOffset = preCaretRange.toString().length;
-            } else if ((sel = doc.selection) && sel.type != "Control") {
-                var textRange = sel.createRange();
-                var preCaretTextRange = doc.body.createTextRange();
-                preCaretTextRange.moveToElementText(element);
-                preCaretTextRange.setEndPoint("EndToEnd", textRange);
-                caretOffset = preCaretTextRange.text.length;
-            }
-            return caretOffset;
-        }
+{#        function getCaretCharacterOffsetWithin(element) {#}
+{#            var caretOffset = 0;#}
+{#            var doc = element.ownerDocument || element.document;#}
+{#            var win = doc.defaultView || doc.parentWindow;#}
+{#            var sel;#}
+{#            if (typeof win.getSelection != "undefined") {#}
+{#                var range = win.getSelection().getRangeAt(0);#}
+{#                var preCaretRange = range.cloneRange();#}
+{#                preCaretRange.selectNodeContents(element);#}
+{#                preCaretRange.setEnd(range.endContainer, range.endOffset);#}
+{#                caretOffset = preCaretRange.toString().length;#}
+{#            } else if ((sel = doc.selection) && sel.type != "Control") {#}
+{#                var textRange = sel.createRange();#}
+{#                var preCaretTextRange = doc.body.createTextRange();#}
+{#                preCaretTextRange.moveToElementText(element);#}
+{#                preCaretTextRange.setEndPoint("EndToEnd", textRange);#}
+{#                caretOffset = preCaretTextRange.text.length;#}
+{#            }#}
+{#            return caretOffset;#}
+{#        }#}
 
-        function showCaretPos() {
-            var el = document.getElementById(parent);
-            $('#length').val(selRange.endOffset - selRange.startOffset);
-            $('#start_position').val(getCaretCharacterOffsetWithin(el) - $('#length').val());
+{#        function showCaretPos() {#}
+{#            var el = document.getElementById(parent);#}
+{#            $('#length').val(selRange.endOffset - selRange.startOffset);#}
+{#            $('#start_position').val(getCaretCharacterOffsetWithin(el) - $('#length').val());#}
+{##}
+{##}
+{#            return getCaretCharacterOffsetWithin(el);#}
+{##}
+{#        }#}
 
-
-            return getCaretCharacterOffsetWithin(el);
-
-        }
-
-        function sendSelectionTextPositions() {
-            if (confirm("Вы хотите добавить ссылку?")) {
-                $('#ShowModalWindow').addClass('hide');
-                $('#article_item_id').val(parent);
-                $('#modal').submit();
-            }
-        }
+{#        function sendSelectionTextPositions() {#}
+{#            if (confirm("Вы хотите добавить ссылку?")) {#}
+{#                $('#ShowModalWindow').addClass('hide');#}
+{#                $('#article_item_id').val(parent);#}
+{#                $('#modal').submit();#}
+{#            }#}
+{#        }#}
 
         var fulUrl = "";
         function getDocumentsList() {
@@ -146,16 +150,16 @@
 
                     div_class = (item == 0) ? 'in' : '';
                     id = jQuery(this).attr('href');
-                    $('#link_document_id').attr('doc_id', link_document_id);
+                    $('#linked_documented_id').attr('doc_id', linked_document_id);
 
                     jQuery(this).attr('href', '#collapse_' + item);
                     jQuery(this).attr('doc_id', id.replace(/[^0-9\s]/gi, ''));
                     jQuery(this).click(function () {
-                        $('#link_document_id').attr('value', jQuery(this).attr('doc_id'));
+                        $('#linked_document_id').attr('value', jQuery(this).attr('doc_id'));
                     });
 
                     if (item == 0) {
-                        $('#link_document_id').attr('value', id.replace(/[^0-9\s]/gi, ''));
+                        $('#linked_document_id').attr('value', id.replace(/[^0-9\s]/gi, ''));
                     }
 
                     jQuery(this).attr('class', "accordion-toggle");
@@ -172,7 +176,7 @@
                     var $target = $(event.target);
 
                     if ($target.is("a")) {
-                        $('#link_object_id').attr('value', $target.attr('href'));
+                        $('#linked_object_id').attr('value', $target.attr('href'));
                     }
 
                     sendSelectionTextPositions();
