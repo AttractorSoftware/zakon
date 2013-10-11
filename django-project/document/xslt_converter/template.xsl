@@ -48,10 +48,11 @@
                                     <h3>
                                         <xsl:value-of select="@name"/>
                                     </h3>
+                                    <div id="{@id}">
                                     <a role="button" class="btn" id="getWindow" data-toggle="modal">
                                         Ссылка
                                     </a>
-                                    <div id="{@id}">
+                                        <br></br>
                                         <xsl:choose>
                                             <xsl:when test="./item">
                                                 <xsl:for-each select="./item">
