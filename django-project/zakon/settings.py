@@ -123,9 +123,8 @@ INSTALLED_APPS = (
 	# Uncomment the next line to enable admin documentation:
 	# 'django.contrib.admindocs',
 	'document',
-	'document.selenium_tests',
 	'References',
-	'lettuce.django'
+
 
 )
 
