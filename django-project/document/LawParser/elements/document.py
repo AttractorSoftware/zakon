@@ -28,7 +28,7 @@ class Document(object):
         for section in self._sections:
             root.append(etree.XML(section.to_xml()))
 
-        return etree.tostring(root, xml_declaration=True, encoding='utf-8')
+        return etree.tostring(root)
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
