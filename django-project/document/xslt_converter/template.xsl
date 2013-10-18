@@ -49,9 +49,9 @@
                                         <xsl:value-of select="@name"/>
                                     </h3>
                                     <div id="{@id}">
-                                    <a role="button" class="btn" id="getWindow" data-toggle="modal">
-                                        Ссылка
-                                    </a>
+                                        <a role="button" class="btn" id="getWindow" data-toggle="modal" name="btn_{@id}">
+                                            Ссылка
+                                        </a>
                                         <br></br>
                                         <xsl:choose>
                                             <xsl:when test="./item">
@@ -67,6 +67,27 @@
                                                 <xsl:apply-templates select="."/>
                                             </xsl:otherwise>
                                         </xsl:choose>
+
+                                        <div class="references">
+                                            <ul>
+                                                <xsl:for-each select="./references/reference">
+                                                    <b> Ссылки на другие законы </b>
+                                                    <li>
+                                                        <a href="/{@linked_doc_id}/#{@linked_element}">Документ № <xsl:value-of select="@linked_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@linked_element), '_')"/></a>
+                                                    </li>
+                                                </xsl:for-each>
+                                            </ul>
+                                        </div>
+                                        <div class="links">
+                                            <ul>
+                                                <xsl:for-each select="./links/link">
+                                                    <b> Документы которые ссылаются на данный закон </b>
+                                                    <li>
+                                                        <a href="/{@reference_doc_id}/#{@reference_element}">Документ № <xsl:value-of select="@reference_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@reference_element), '_')"/></a>
+                                                    </li>
+                                                </xsl:for-each>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </xsl:for-each>
                             </div>

@@ -86,10 +86,10 @@ def wrap_text_in_tag(request):
             reference_document.content = update_xml_of_reference_document(reference_document.content,
                                                                           ref.reference_element, ref.linked_document.id,
                                                                           ref.linked_element)
+            reference_document.save()
             linked_document.content = update_xml_of_linked_document(linked_document.content, ref.linked_element,
                                                                     ref.reference_document.id,
-ref.reference_element)
-            reference_document.save()
+                                                                    ref.reference_element)
             linked_document.save()
 
     return render(request, 'document/list.html', {'documents': Document.objects.all()})
