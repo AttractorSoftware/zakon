@@ -1,14 +1,14 @@
 from unittest import TestCase
-from elements.document import *
-from elements.description import *
-from elements.section import *
-from elements.text_section import TextSection
+from document.LawParser.elements.description import Description
+from document.LawParser.elements.document import *
+from document.LawParser.elements.section import Section
+from document.LawParser.elements.text_section import TextSection
 
 
 class ElementTests(TestCase):
     def test_document_to_xml(self):
         document = Document()
-        self.assertEqual('<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document/>', document.to_xml())
+        self.assertEqual('<document/>', document.to_xml())
 
     def test_description_to_xml(self):
         description = Description("name", "place")
@@ -140,4 +140,3 @@ class ElementTests(TestCase):
               'name="Article" number="1"><item id="item_1" level="item"' \
               ' number="1">dslkdsaldsads</item></article>'
         self.assertEqual(xml, article.to_xml())
-
