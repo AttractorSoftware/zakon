@@ -123,7 +123,7 @@
                                         <xsl:for-each select="./references/reference">
                                             <b> Ссылки на другие законы </b>
                                             <li>
-                                                <a href="/{@linked_doc_id}/#{@linked_element}">Документ № <xsl:value-of select="@linked_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@linked_element), '_')"/></a>
+                                              <a href="/{@linked_doc_id}/#{@linked_element}">Документ № <xsl:value-of select="@linked_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@linked_element), '_')"/></a>
                                             </li>
                                         </xsl:for-each>
                                     </ul>
