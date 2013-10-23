@@ -1,8 +1,8 @@
 from unittest import TestCase
-from document.LawParser.elements.description import Description
-from document.LawParser.elements.document import *
-from document.LawParser.elements.section import Section
-from document.LawParser.elements.text_section import TextSection
+from document.law_parser.elements.description import Description
+from document.law_parser.elements.document import *
+from document.law_parser.elements.section import Section
+from document.law_parser.elements.text_section import TextSection
 
 
 class ElementTests(TestCase):
@@ -26,7 +26,7 @@ class ElementTests(TestCase):
     def test_document_with_description(self):
         description = Description("name", "place")
         document = Document(description)
-        xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document>' \
+        xml = '<document>' \
               '<description><name>name</name><place>place</place></description>' \
               '</document>'
         self.assertEqual(xml, document.to_xml())
@@ -124,7 +124,7 @@ class ElementTests(TestCase):
         document = Document(description)
         section = Section("part", "name", "1")
         document.add_section(section)
-        xml = '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<document>' \
+        xml = '<document>' \
               '<description><name>name</name><place>place</place></description>' \
               '<section id="part_1" level="part" name="name" number="1"/>' \
               '</document>'

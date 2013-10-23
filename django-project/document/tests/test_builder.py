@@ -1,8 +1,8 @@
 #coding=utf-8
 from unittest import TestCase
-from document.LawParser.Builder import Builder, ParserError
-from document.LawParser.elements.section import Section
-from document.LawParser.elements.text_section import TextSection
+from document.law_parser.builder import Builder, ParserError
+from document.law_parser.elements.section import Section
+from document.law_parser.elements.text_section import TextSection
 
 
 class BuilderTest(TestCase):

@@ -1,5 +1,5 @@
 #coding=utf-8
-from Builder import Builder
+from builder import Builder
 from elements.document import Document
 from elements.description import Description
 
