@@ -34,7 +34,7 @@ class Builder(object):
         self._chapter_build_info = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+(-\d+)?) *?\s*.*?$)',
                                                 self._search_flags, 'chapter')
 
-        self._chapter_with_comment_build = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+(-\d+)?)\s*[\w\s,]*\s*?[\s]*(?P<comment>\(*[\w\s]*\)*))$',
+        self._chapter_with_comment_build = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+(-\d+)?)\s*[\w\s,]*\s*?[\s]*(?P<comment>\(*[\w\s]*\)*)$)',
                                                        self._search_flags, 'chapter')
 
         self._paragraphs_build_info = ElementBuild(u'(?P<name>^ *?Параграф (?P<number>\d+(-\d+)?).+?(?=\n[ \t]*?\n))',
