@@ -20,6 +20,19 @@ def get_file_type(url):
             return i
 
 
+def is_valid_xml_char_ordinal(i):
+        return (
+            0x20 <= i <= 0xD7FF
+            or i in (0x9, 0xA, 0xD)
+            or 0xE000 <= i <= 0xFFFD
+            or 0x10000 <= i <= 0x10FFFF
+            )
+
+
+def clean_xml_string(s):
+    return ''.join(c for c in s if is_valid_xml_char_ordinal(ord(c)))
+
+
 def upload_file(request):
     error_message = ''
     if request.method == 'POST':
@@ -34,7 +47,7 @@ def upload_file(request):
                 text_content = PlaintextWriter.write(temp).read()
             elif get_file_type(name_of_upload_file) == ".txt":
                 text_content = uploaded_file.read()
-            DOM_of_content = parser.parse(text_content.decode('utf-8'))
+            DOM_of_content = parser.parse(clean_xml_string(text_content.decode('utf-8')))
             doc = Document(name=DOM_of_content.name, content=DOM_of_content.to_xml(), uploaded_date=uploaded_date,
                            file=uploaded_file)
             doc.save()
