@@ -1229,18 +1229,3 @@ class BuilderTest(TestCase):
 
         actual_parts = builder.build_sections()
         self.assertEqual(expected_parts, actual_parts)
-
-
-    def test_build_chapter_comment(self):
-        builder = Builder(
-                u'Глава 58\n'\
-                u'Налог на специальные средства\n'\
-                    '\n'\
-                    u'(Утратила силу\n'\
-                        u'в соответствии с Законом КР от 3 декабря 2012 года N 191)\n'\
-                    u'\n'\
-                u'Глава 59\n'\
-                u'Налоговый режим в Парке высоких технологий\n'   )
-
-        self.assertEqual(u'(Утратила силу\n'\
-                        u'в соответствии с Законом КР от 3 декабря 2012 года N 191)', builder.build_chapter_comment_text())

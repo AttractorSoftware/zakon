@@ -34,7 +34,7 @@ class Builder(object):
         self._chapter_build_info = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+(-\d+)?) *?\s*.*?$)',
                                                 self._search_flags, 'chapter')
 
-        self._chapter_with_comment_build = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+(-\d+)?)\s*.*?[\w\s,]*\s*?[\s]*(?P<comment>\(*[\w\s]*\)*)$)',
+        self._chapter_with_comment_build = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+(-\d+)?)\s*.*?)(?=Параграф|Статья|См|Глава \d+)',
                                                        self._search_flags, 'chapter')
 
         self._paragraphs_build_info = ElementBuild(u'(?P<name>^ *?Параграф (?P<number>\d+(-\d+)?).+?(?=\n[ \t]*?\n))',
@@ -171,12 +171,6 @@ class Builder(object):
             self._sections_end = buffer_for_end
         return sections
 
-    # def _build_chapter_text(self, start, end):
-    #     match = self._chapter_with_comment_build.template.finditer(self._text[start:end])
-    #     for result in match:
-    #         print result.group()
-    #     return match
-
     def build_paragraphs(self, section_start, section_end, parent_level_and_number=None):
         level = parent_level_and_number + '_''paragraph'
         build_childer_methods = [self.build_articles]
@@ -283,12 +277,3 @@ class Builder(object):
         self._sections_start = self._find_start_of_sections()
         self._text = a_text
         self._sections_end = len(self._text)
-
-
-# a = open('/home/bolushbekov/Налоговый кодекс Кыргызской Республики.rtf')
-# temp = Rtf15Reader.read(a, errors='ignore')
-# text = PlaintextWriter.write(temp).read()
-# text = text.decode('utf-8')
-#
-# b = Builder(text)
-# print b._build_chapter_text(b._sections_start, b._sections_end)
