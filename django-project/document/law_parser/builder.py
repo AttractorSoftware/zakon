@@ -4,6 +4,8 @@ import copy
 from document.law_parser.structure_element import ElementBuild
 from elements.section import Section
 from elements.text_section import TextSection
+from pyth.plugins.rtf15.reader import Rtf15Reader
+from pyth.plugins.plaintext.writer import PlaintextWriter
 
 
 class ParserError(Exception):
@@ -31,6 +33,9 @@ class Builder(object):
 
         self._chapter_build_info = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+(-\d+)?) *?\s*.*?$)',
                                                 self._search_flags, 'chapter')
+
+        self._chapter_with_comment_build = ElementBuild(u'(?P<name>^ *?Глава (?P<number>\d+(-\d+)?)\s*[\w\s,]*\s*?[\s]*(?P<comment>\(*[\w\s]*\)*)$)',
+                                                       self._search_flags, 'chapter')
 
         self._paragraphs_build_info = ElementBuild(u'(?P<name>^ *?Параграф (?P<number>\d+(-\d+)?).+?(?=\n[ \t]*?\n))',
                                                    self._search_flags)
@@ -60,13 +65,13 @@ class Builder(object):
     def _get_first_highest_section_text(self):
         section_text_and_start_positions = {}
         part_match = self._part_build_info.template.search(self._text)
-        print part_match
+        # print part_match
         if part_match:
             section_text_and_start_positions[part_match.start()] = part_match.group()
         division_match = self._division_build_info.template.search(self._text)
         if division_match:
             section_text_and_start_positions[division_match.start()] = division_match.group()
-        chapter_match = self._chapter_build_info.template.search(self._text)
+        chapter_match = self._chapter_with_comment_build.template.search(self._text)
         if chapter_match:
             section_text_and_start_positions[chapter_match.start()] = chapter_match.group()
         article_match = self._article_build_info.template.search(self._text)
@@ -107,6 +112,7 @@ class Builder(object):
                 sections = self.build_chapters(self._sections_start, self._sections_end)
                 if sections == []:
                     sections = self.build_articles(self._sections_start, self._sections_end)
+        print sections
         return sections
 
     def _build_sections(self, level, template, build_childer_methods, section_start, section_end, create_section_method,
@@ -143,9 +149,9 @@ class Builder(object):
 
     def build_chapters(self, section_start, section_end, parent_level_and_number=None):
         sections = self.build_smaller_sections_in_this_level(section_start, section_end,
-                                                             self._chapter_build_info.template)
+                                                             self._chapter_with_comment_build.template)
         build_childer_methods = [self.build_paragraphs, self.build_articles]
-        chapters = self._build_sections(self._chapter_build_info.level, self._chapter_build_info.template,
+        chapters = self._build_sections(self._chapter_with_comment_build.level, self._chapter_with_comment_build.template,
                                         build_childer_methods,
                                         section_start, section_end, self.create_Section, self._add_sub_sections)
         for i in chapters:
@@ -164,6 +170,12 @@ class Builder(object):
             self._sections_start = buffer_for_start
             self._sections_end = buffer_for_end
         return sections
+
+    # def _build_chapter_text(self, start, end):
+    #     match = self._chapter_with_comment_build.template.finditer(self._text[start:end])
+    #     for result in match:
+    #         print result.group()
+    #     return match
 
     def build_paragraphs(self, section_start, section_end, parent_level_and_number=None):
         level = parent_level_and_number + '_''paragraph'
@@ -246,8 +258,9 @@ class Builder(object):
                 j += 1
             if sub_sections:
                 add_sub_sections_method(section, sub_sections)
-                #else:
-                #raise ParserError(u'Ошиибка! "{0}" не имеет содержимого!'.format(section.name))
+                # else:
+                # raise ParserError(u'Ошиибка! "{0}" не имеет содержимого!'.format(section.name))
+                # add_sub_sections_method( self.build_chapter_comment_text())
             i += 1
 
     def create_Section(self, level, match):
@@ -272,3 +285,10 @@ class Builder(object):
         self._sections_end = len(self._text)
 
 
+# a = open('/home/bolushbekov/Налоговый кодекс Кыргызской Республики.rtf')
+# temp = Rtf15Reader.read(a, errors='ignore')
+# text = PlaintextWriter.write(temp).read()
+# text = text.decode('utf-8')
+#
+# b = Builder(text)
+# print b._build_chapter_text(b._sections_start, b._sections_end)
