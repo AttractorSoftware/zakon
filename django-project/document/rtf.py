@@ -1,11 +1,10 @@
-from encodings import cp1251
-from encodings.cp1251 import decoding_table
+import struct
 import re
 
-def striprtf(text):
-    #pattern = re.compile(r"\\([a-z]{1,32})(-?\d{1,10})?[ ]?|(\\\'[0-9a-f]{2})|\\([^a-z])|([{}])|[\r\n]+|(.)", re.I)
+
+def rtf_text(text):
     pattern = re.compile(r"\\([a-z]{1,32})(-?\d{1,10})?[ ]?|\\'([0-9a-f]{2})|\\([^a-z])|([{}])|[\r\n]+|(.)", re.I)
-    # control words which specify a "destionation".
+
     destinations = frozenset((
         'aftncn', 'aftnsep', 'aftnsepc', 'annotation', 'atnauthor', 'atndate', 'atnicn', 'atnid',
         'atnparent', 'atnref', 'atntime', 'atrfend', 'atrfstart', 'author', 'background',
@@ -48,8 +47,8 @@ def striprtf(text):
         'xmlattrname', 'xmlattrvalue', 'xmlclose', 'xmlname', 'xmlnstbl',
         'xmlopen',
     ))
-    # Translation of some special characters.
-    specialchars = {
+
+    special_chars = {
         'par': '\n',
         'sect': '\n\n',
         'page': '\n\n',
@@ -68,21 +67,19 @@ def striprtf(text):
     }
     stack = []
     ignorable = False       # Whether this group (and all inside it) are "ignorable".
-    ucskip = 1              # Number of ASCII characters to skip after a unicode character.
-    curskip = 0             # Number of ASCII characters left to skip
+    uc_skip = 0             # Number of ASCII characters to skip after a unicode character.
+    cur_skip = 0            # Number of ASCII characters left to skip
     out = []                # Output buffer.
     for match in pattern.finditer(text):
-        word, arg, hex, char, brace, tchar = match.groups()
+        control_word, arg, hex, char, brace, tchar = match.groups()
         if brace:
-            curskip = 0
+            cur_skip = 0
             if brace == '{':
-                # Push state
-                stack.append((ucskip, ignorable))
+                stack.append((uc_skip, ignorable))
             elif brace == '}':
-                # Pop state
-                ucskip, ignorable = stack.pop()
-        elif char: # \x (not a letter)
-            curskip = 0
+                uc_skip, ignorable = stack.pop()
+        elif char:
+            cur_skip = 0
             if char == '~':
                 if not ignorable:
                     out.append(u"\xA0")
@@ -91,37 +88,41 @@ def striprtf(text):
                     out.append(char)
             elif char == '*':
                 ignorable = True
-        elif word: # \foo
-            curskip = 0
-            if word in destinations:
+        elif control_word:
+            #cur_skip = 0
+            if control_word in destinations:
                 ignorable = True
             elif ignorable:
                 pass
-            elif word in specialchars:
-                out.append(specialchars[word])
-            elif word == 'uc':
-                ucskip = int(arg)
-            elif word == 'u':
-                c = int(arg)
-                if c < 0: c += 0x10000
-                if c > 127:
-                    out.append(unichr(c))
+            elif control_word in special_chars:
+                out.append(special_chars[control_word])
+            elif control_word == 'uc':
+                uc_skip = int(arg)
+                cur_skip = uc_skip
+            elif control_word == 'u':
+                if cur_skip > 0:
+                    cur_skip -= 1
                 else:
-                    out.append(chr(c))
-                curskip = ucskip
-        elif hex: # \'xx
-            if curskip > 0:
-                curskip -= 1
+                    c = int(arg)
+                    if c < 0: c += 0x10000
+                    if c > 127:
+                        out.append(unichr(c))
+                    else:
+                        out.append(chr(c))
+                cur_skip = uc_skip
+        elif hex:
+            if cur_skip > 0:
+                cur_skip -= 1
             elif not ignorable:
                 c = int(hex, 16)
                 if c > 127:
-
-                    out.append(unichr(c))
+                    byte_string_symbol = struct.pack('B', c)
+                    out.append(byte_string_symbol.decode("cp1251"))
                 else:
                     out.append(chr(c))
         elif tchar:
-            if curskip > 0:
-                curskip -= 1
+            if cur_skip > 0:
+                cur_skip -= 1
             elif not ignorable:
                 out.append(tchar)
-    return ''.join(out).encode('latin1', errors='ignore').decode('cp1251', errors='ignore')
+    return ''.join(out)

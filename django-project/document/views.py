@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth.plugins.plaintext.writer import PlaintextWriter
-
+from rtf import rtf_text
 from document.xslt_converter.converter import XsltTransformer
 from forms import UploadForm
 from models import Document
@@ -19,20 +19,6 @@ def get_file_type(url):
         if name_file.endswith(i):
             return i
 
-
-def is_valid_xml_char_ordinal(i):
-        return (
-            0x20 <= i <= 0xD7FF
-            or i in (0x9, 0xA, 0xD)
-            or 0xE000 <= i <= 0xFFFD
-            or 0x10000 <= i <= 0x10FFFF
-            )
-
-
-def clean_xml_string(s):
-    return ''.join(c for c in s if is_valid_xml_char_ordinal(ord(c)))
-
-
 def upload_file(request):
     error_message = ''
     if request.method == 'POST':
@@ -43,11 +29,11 @@ def upload_file(request):
             uploaded_file = request.FILES['doc_file']
             parser = Parser()
             if get_file_type(name_of_upload_file) == ".rtf":
-                temp = Rtf15Reader.read(uploaded_file, errors='ignore')
-                text_content = PlaintextWriter.write(temp).read()
+                temp = uploaded_file.read()
+                text_content = rtf_text(temp)
             elif get_file_type(name_of_upload_file) == ".txt":
                 text_content = uploaded_file.read()
-            DOM_of_content = parser.parse(clean_xml_string(text_content.decode('utf-8')))
+            DOM_of_content = parser.parse(text_content)
             doc = Document(name=DOM_of_content.name, content=DOM_of_content.to_xml(), uploaded_date=uploaded_date,
                            file=uploaded_file)
             doc.save()
