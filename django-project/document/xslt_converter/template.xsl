@@ -49,16 +49,16 @@
                                         <xsl:value-of select="@name"/>
                                     </h3>
                                     <div id="{@id}">
-                                        <a role="button" class="btn" id="getWindow" data-toggle="modal" name="btn_{@id}">
-                                            Ссылка
-                                        </a>
+                                        <p><a role="button" class="btn" id="getWindow" data-toggle="modal" name="btn_{@id}">Ссылка</a></p>
                                         <br></br>
                                         <xsl:choose>
                                             <xsl:when test="./item">
                                                 <xsl:for-each select="./item">
-                                                    <div class="article_id"><xsl:apply-templates select="@number"/>.
+                                                    <div class="article_id">
+                                                        <xsl:apply-templates select="@number"/>.
                                                     </div>
-                                                    <article id="{@id}"><xsl:apply-templates select="."/>.
+                                                    <article id="{@id}">
+                                                        <xsl:value-of select='.'/>
                                                     </article>
                                                     <br/>
                                                 </xsl:for-each>
@@ -109,7 +109,7 @@
                                             <div class="article_id"><xsl:apply-templates select="@number"/>.
                                             </div>
                                             <article id="{@id}">
-                                                <xsl:apply-templates select="."/>.
+                                                <xsl:apply-templates select="."/>
                                             </article>
                                             <br/>
                                         </xsl:for-each>
@@ -123,7 +123,7 @@
                                         <xsl:for-each select="./references/reference">
                                             <b> Ссылки на другие законы </b>
                                             <li>
-                                              <a href="/{@linked_doc_id}/#{@linked_element}">Документ № <xsl:value-of select="@linked_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@linked_element), '_')"/></a>
+                                                <a href="/{@linked_doc_id}/#{@linked_element}">Документ № <xsl:value-of select="@linked_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@linked_element), '_')"/></a>
                                             </li>
                                         </xsl:for-each>
                                     </ul>
@@ -151,3 +151,4 @@
         </a>
     </xsl:template>
 </xsl:stylesheet>
+<!--    str:replace(., "&#xA;", string("we")) -->
