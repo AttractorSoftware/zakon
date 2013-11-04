@@ -6,7 +6,7 @@ from django.test import LiveServerTestCase
 from nose.tools import assert_equals
 from zakon.settings import PROJECT_ROOT
 from time import sleep
-FILE_ROOT_ADRESS = os.path.join(PROJECT_ROOT, '..','document/selenium_tests/features/')
+FILE_ROOT_ADRESS = os.path.join(PROJECT_ROOT, 'document/selenium_tests/features/')
 
 
 @step(u'я нахожусь на странице загрузки документа')

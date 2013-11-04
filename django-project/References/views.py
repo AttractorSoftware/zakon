@@ -10,7 +10,6 @@ def wrap_text_in_tag(request):
     if request.method == 'POST':
         form = WrapTextForm(request.POST)
         if form.is_valid():
-
             ref = Reference()
             ref.reference_document = Document.objects.get(pk=request.POST.get('reference_document_id'))
             ref.reference_element = request.POST.get('reference_element')
@@ -21,7 +20,6 @@ def wrap_text_in_tag(request):
             linked_document = ref.linked_document
 
             ref.save()
-            """Вызывать ID тебе нужно, юный падаван, вовсе не документа объект, бдителен будь!"""
             reference_document.content = update_xml_of_reference_document(reference_document.content,
                                                                           ref.reference_element, ref.linked_document.id,
                                                                           ref.linked_element)

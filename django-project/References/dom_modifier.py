@@ -10,7 +10,6 @@ def update_xml_of_reference_document(reference_content, reference_element, linke
      ID документа на кототорый ссылаемся,
      Элемент на который ссылаемся
      """
-
     parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
     tree = etree.parse(StringIO(reference_content), parser)
     root = tree.getroot()
@@ -32,19 +31,16 @@ def update_xml_of_linked_document(linked_content, linked_element, reference_doc_
      ID документа с кототорого ссылаемся,
      Элемент с которого ссылаемся
      """
-
     try:
         parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
         tree = etree.parse(StringIO(linked_content), parser)
         root = tree.getroot()
     except Exception as ex:
         return ex
-
     try:
         selected_reference_element = root.xpath("//article[@id='" + remove_sharp(linked_element) + "']")[0]
     except Exception as e:
         return e
-
     if selected_reference_element.find("links") is None:
         links_tag = etree.SubElement(selected_reference_element, "links")
         add_sub_links(reference_doc_id, remove_sharp(reference_element), links_tag)
