@@ -446,28 +446,28 @@ class BuilderTest(TestCase):
 
         actual_chapters = builder.build_sections()
         self.assertEqual(expected_chapters, actual_chapters)
-
-    def test_build_chapter_with_comments(self):
-        builder = Builder(
-            u'Глава 58\n'\
-            u'Общие положения\n'\
-                u'\n'\
-                u'(Утратила силу в соответствии с Законом КР от 3 декабря \n'
-                u'2012 года N 191)\n'\
-            u'Глава 59\n'\
-            u'Налоговый режим в Парке высоких технологий\n'\
-            u'\n'\
-                u'(Глава\n'\
-                u'в редакции Закона КР от 8 июля 2011 года N 87)\n'
-
-        )
-
-        comment = Comment(u'(Утратила силу в соответствии с Законом КР от 3 декабря \n'\
-                          u'2012 года N 191)')
-        chapter = Section('chapter', name= u'Глава 58 Общие положения', number='1', comment = comment)
-
-        actual_chapters = builder.build_sections()
-        self.assertEqual(chapter.comment, actual_chapters)
+    #
+    # def test_build_chapter_with_comments(self):
+    #     builder = Builder(
+    #         u'Глава 58\n'\
+    #         u'Общие положения\n'\
+    #             u'\n'\
+    #             u'(Утратила силу в соответствии с Законом КР от 3 декабря \n'
+    #             u'2012 года N 191)\n'\
+    #         u'Глава 59\n'\
+    #         u'Налоговый режим в Парке высоких технологий\n'\
+    #         u'\n'\
+    #             u'(Глава\n'\
+    #             u'в редакции Закона КР от 8 июля 2011 года N 87)\n'
+    #
+    #     )
+    #
+    #     comment = Comment(u'(Утратила силу в соответствии с Законом КР от 3 декабря \n'\
+    #                       u'2012 года N 191)')
+    #     chapter = Section('chapter', name= u'Глава 58 Общие положения', number='1', comment = comment)
+    #
+    #     actual_chapters = builder.build_sections()
+    #     self.assertEqual(chapter.comment, actual_chapters)
 
     def test_build_division_with_chapters(self):
         builder = Builder(
