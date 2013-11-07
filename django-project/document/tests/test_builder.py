@@ -690,6 +690,230 @@ class BuilderTest(TestCase):
         actual_parts = builder.build_sections()
         self.assertEqual(expected_parts, actual_parts)
 
+    def test_build_division_contains_article(self):
+        builder = Builder(
+            u'ОБЩАЯ ЧАСТЬ\n'\
+                '\n' \
+                u'РАЗДЕЛ I\n'\
+                u'ОБЩИЕ ПОЛОЖЕНИЯ\n'\
+                '\n' \
+                    u'Глава 1\n' \
+                    u'Общие положения\n'\
+                        u'\n'\
+                        u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...\n'\
+                            u'\n'\
+            u'ОСОБЕННАЯ ЧАСТЬ\n'\
+                '\n' \
+                u'РАЗДЕЛ I\n'\
+                u'ОБЩИЕ ПОЛОЖЕНИЯ\n'\
+                        u'\n'\
+                        u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...\n'\
+                            u'\n'\
+                    u'Глава 1\n' \
+                    u'Общие положения\n'\
+                        u'\n'\
+                        u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...\n'\
+                            u'\n'\
+        )
+
+        expected_parts = []
+
+        part = Section('part', name=u'ОБЩАЯ ЧАСТЬ', number='1')
+        division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
+        chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
+
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
+
+        item = TextSection(level='article1_item', name='', number='1')
+        item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
+        article.add_section(item)
+
+        chapter.add_section(article)
+        division.add_section(chapter)
+        part.add_section(division)
+
+        expected_parts.append(part)
+
+        part = Section('part', name=u'ОСОБЕННАЯ ЧАСТЬ', number='2')
+        division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
+        chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
+
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
+        item = TextSection(level='article1_item', name='', number='1')
+        item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
+        article.add_section(item)
+
+        chapter.add_section(article)
+        division.add_section(article)
+        division.add_section(chapter)
+        part.add_section(division)
+
+        expected_parts.append(part)
+
+        actual_parts = builder.build_sections()
+        self.assertEqual(expected_parts, actual_parts)
+
+    def test_build_part_not_contains_division(self):
+        builder = Builder(
+            u'ОБЩАЯ ЧАСТЬ\n'\
+                '\n' \
+                u'РАЗДЕЛ I\n'\
+                u'ОБЩИЕ ПОЛОЖЕНИЯ\n'\
+                '\n' \
+                    u'Глава 1\n' \
+                    u'Общие положения\n'\
+                        u'\n'\
+                        u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...\n'\
+                            u'\n'\
+            u'ОСОБЕННАЯ ЧАСТЬ\n'\
+                        u'\n'\
+                        u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...\n'\
+                            u'\n'\
+                '\n' \
+                    u'Глава 1\n' \
+                    u'Общие положения\n'\
+                        u'\n'\
+                        u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...\n'\
+                            u'\n'\
+        )
+
+        expected_parts = []
+
+        part = Section('part', name=u'ОБЩАЯ ЧАСТЬ', number='1')
+        division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
+        chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
+
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
+
+        item = TextSection(level='article1_item', name='', number='1')
+        item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
+        article.add_section(item)
+
+        chapter.add_section(article)
+        division.add_section(chapter)
+        part.add_section(division)
+
+        expected_parts.append(part)
+
+        part = Section('part', name=u'ОСОБЕННАЯ ЧАСТЬ', number='2')
+        chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
+
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
+        item = TextSection(level='article1_item', name='', number='1')
+        item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
+        article.add_section(item)
+
+        chapter.add_section(article)
+        part.add_section(article)
+        part.add_section(chapter)
+
+        expected_parts.append(part)
+
+        actual_parts = builder.build_sections()
+        self.assertEqual(expected_parts, actual_parts)
+
+    def test_build_part_contains_article_and_chapter(self):
+        builder = Builder(
+            u'ОБЩАЯ ЧАСТЬ\n'\
+                '\n' \
+                u'РАЗДЕЛ I\n'\
+                u'ОБЩИЕ ПОЛОЖЕНИЯ\n'\
+                '\n' \
+                    u'Глава 1\n' \
+                    u'Общие положения\n'\
+                        u'\n'\
+                        u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики регулирует отношения...\n'\
+                            u'\n'\
+            u'ОСОБЕННАЯ ЧАСТЬ\n'\
+                        '\n' \
+                        u'Статья 2. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики регулирует отношения...\n'\
+                            u'\n'\
+                    u'Глава 2\n' \
+                    u'Общие положения\n'\
+                    '\n' \
+                        u'Статья 3. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\
+                        u'Республики\n'\
+                            u'\n'\
+                            u'1. Налоговый кодекс Кыргызской Республики регулирует отношения...\n'\
+                '\n' \
+                u'РАЗДЕЛ II\n'\
+                u'ОБЩИЕ ПОЛОЖЕНИЯ\n'\
+        )
+
+        expected_parts = []
+
+        part = Section('part', name=u'ОБЩАЯ ЧАСТЬ', number='1')
+        division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
+        chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
+
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
+
+        item = TextSection(level='article1_item', name='', number='1')
+        item.text = u'Налоговый кодекс Кыргызской Республики регулирует отношения...'
+        article.add_section(item)
+
+        chapter.add_section(article)
+        division.add_section(chapter)
+        part.add_section(division)
+
+        expected_parts.append(part)
+
+        part = Section('part', name=u'ОСОБЕННАЯ ЧАСТЬ', number='2')
+
+        article = TextSection(level='article', name=u'Статья 2. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='2')
+
+        item = TextSection(level='article2_item', name='', number='1')
+        item.text = u'Налоговый кодекс Кыргызской Республики регулирует отношения...'
+        article.add_section(item)
+
+        part.add_section(article)
+
+        chapter = Section('chapter', name= u'Глава 2 Общие положения', number='2')
+
+        article = TextSection(level='article', name=u'Статья 3. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='3')
+
+        item = TextSection(level='article3_item', name='', number='1')
+        item.text = u'Налоговый кодекс Кыргызской Республики регулирует отношения...'
+        article.add_section(item)
+
+        chapter.add_section(article)
+        part.add_section(chapter)
+
+        division = Section('division', name= u'РАЗДЕЛ II ОБЩИЕ ПОЛОЖЕНИЯ', number='II')
+
+        part.add_section(division)
+
+        expected_parts.append(part)
+
+        actual_parts = builder.build_sections()
+        self.assertEqual(expected_parts[0], actual_parts[0])
+        self.assertEqual(expected_parts[1].sections[0], actual_parts[1].sections[0])
+        self.assertEqual(expected_parts, actual_parts)
+
     def test_builder_must_ignore_contents_if_it_exist(self):
         """Builder должен находить верхний структурный элемент. Здесь это ЧАСТЬ II.
         И начать строить объекты с последнего совпадения с заголовком "ЧАСТЬ II".
