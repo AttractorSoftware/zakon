@@ -2,7 +2,6 @@
 import re
 import copy
 from document.law_parser.structure_element import ElementBuild
-from document.rtf import rtf_text
 from elements.section import Section
 from elements.text_section import TextSection
 
@@ -165,7 +164,7 @@ class Builder(object):
             buffer_for_start = self._sections_start
             self._sections_start = section_start
             buffer_for_end = self._sections_end
-            self._sections_end = match.start()
+            self._sections_end = match.start() + section_start
             sections = self.build_sections()
             self._sections_start = buffer_for_start
             self._sections_end = buffer_for_end
@@ -252,9 +251,6 @@ class Builder(object):
                 j += 1
             if sub_sections:
                 add_sub_sections_method(section, sub_sections)
-                # else:
-                # raise ParserError(u'Ошиибка! "{0}" не имеет содержимого!'.format(section.name))
-                # add_sub_sections_method( self.build_chapter_comment_text())
             i += 1
 
     def create_Section(self, level, match):
