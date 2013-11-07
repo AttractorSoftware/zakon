@@ -1,4 +1,5 @@
 from unittest import TestCase
+from document.law_parser.elements.comment import Comment
 from document.law_parser.elements.description import Description
 from document.law_parser.elements.document import *
 from document.law_parser.elements.section import Section
@@ -140,3 +141,15 @@ class ElementTests(TestCase):
               'name="Article" number="1"><item id="item_1" level="item"' \
               ' number="1">dslkdsaldsads</item></article>'
         self.assertEqual(xml, article.to_xml())
+
+    def test_article_with_comment(self):
+        article = TextSection("article", "1", "Article", comment=Comment("(asdhsjkl)"))
+
+        xml = '<article id="article_1" level="article" ' \
+              'name="Article" number="1"><comment>(asdhsjkl)</comment></article>'
+        self.assertEqual(xml, article.to_xml())
+
+    def test_comments_in_chapter(self):
+        section = Section("chapter", 'chapter1', "1", comment=Comment(u"(qwerty)"))
+        xml = '<section id="chapter_1" level="chapter" name="chapter1" number="1"><comment>(qwerty)</comment></section>'
+        self.assertEqual(xml, section.to_xml())

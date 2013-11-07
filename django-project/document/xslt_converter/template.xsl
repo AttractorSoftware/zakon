@@ -44,10 +44,24 @@
                                 <h2>
                                     <xsl:value-of select="@name"/>
                                 </h2>
+                                <xsl:for-each select="comment">
+                                <div class="comment">
+                                    <h4>
+                                        <xsl:value-of select="."/>
+                                    </h4>
+                                </div>
+                                </xsl:for-each>
                                 <xsl:for-each select="./article">
                                     <h3>
                                         <xsl:value-of select="@name"/>
                                     </h3>
+                                <xsl:for-each select="comment">
+                                <div class="comment">
+                                    <h4>
+                                        <xsl:value-of select="."/>
+                                    </h4>
+                                </div>
+                                    </xsl:for-each>
                                     <div id="{@id}">
                                         <p><a role="button" class="btn" id="getWindow" data-toggle="modal" name="btn_{@id}">Ссылка</a></p>
                                         <br></br>

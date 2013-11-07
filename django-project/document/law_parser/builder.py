@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
 import copy
+from document.law_parser.elements.comment import Comment
 from document.law_parser.structure_element import ElementBuild
 from elements.section import Section
 from elements.text_section import TextSection
+from document.rtfparser import RTFParser
 
 
 class ParserError(Exception):
@@ -40,6 +42,8 @@ class Builder(object):
         self._paragraphs_build_info = ElementBuild(u'(?P<name>^ *?Параграф (?P<number>\d+(-\d+)?).+?(?=\n[ \t]*?\n))',
                                                    self._search_flags)
 
+        self._article_with_comment_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\n *\n)',
+                                                self._search_flags, 'article')
         self._article_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\(|\n\n)',
                                                 self._search_flags, 'article')
         self._article_text_build_info = ElementBuild(u'.+', self._search_flags)
@@ -50,13 +54,17 @@ class Builder(object):
         self._sections_start = self._find_start_of_sections()
         self._sections_end = len(self._text)
 
+    def escape_braces(self, highest_section_text):
+        return highest_section_text.replace("(", "\(").replace(")", "\)")
+
     def _find_start_of_sections(self):
         highest_section_text = self._get_first_highest_section_text()
         if highest_section_text is None:
             return 0
         last_match_of_first_highest_section = None
         if highest_section_text:
-            template = re.compile(highest_section_text, self._search_flags)
+
+            template = re.compile(self.escape_braces(highest_section_text), self._search_flags)
             iterator = self._get_iterator(template, 0, len(self._text))
             for match in iterator:
                 last_match_of_first_highest_section = match
@@ -179,7 +187,7 @@ class Builder(object):
 
     def build_articles(self, section_start, section_end, parent_level_and_number=None):
         build_childer_methods = [self._build_items, self._build_article_text]
-        articles = self._build_sections(self._article_build_info.level, self._article_build_info.template,
+        articles = self._build_sections(self._article_with_comment_build_info.level, self._article_with_comment_build_info.template,
                                         build_childer_methods,
                                         section_start, section_end, self.create_TextSection,
                                         self._add_text_or_sub_sections)
@@ -254,7 +262,6 @@ class Builder(object):
             i += 1
 
     def create_Section(self, level, match):
-        name=''
         text = match.group()
         result = self._chapter_build_info.template.search(text)
         if result:
@@ -265,19 +272,27 @@ class Builder(object):
         if number is None:
             number = self._part_number
             self._part_number += 1
-        return Section(level, name.replace('\n', ' ').strip(), number=str(number))
+        comment = self.create_Comment(match)
+        return Section(level, name = name.replace('\n', ' ').strip(), number=str(number), comment=comment)
 
     def create_TextSection(self, level, match):
-        return TextSection(level=level, name=match.group('name').replace('\n', ' ').strip(),
-                           number=match.group('number'))
+        text = match.group()
+        result = self._article_build_info.template.search(text)
+        if result:
+            name = result.group()
+        else: name=match.group()
+        comment = self.create_Comment(match)
+        return TextSection(level=level, name=name.replace('\n', ' ').strip(),
+                           number=match.group('number'), comment=comment)
 
-    # def create_Comment(self, match, level):
-    #     comment = ''
-    #     text = match.group()
-    #     result = self._comment_build_info.template.search(text)
-    #     if result:
-    #         comment = result.group()
-    #     return Comment
+    def create_Comment(self, match):
+        section_name = match.group()
+        result = self._comment_build_info.template.search(section_name)
+        if result:
+            comment = result.group()
+            return Comment(content = comment)
+        else:
+            return None
 
     @property
     def text(self):
@@ -288,15 +303,3 @@ class Builder(object):
         self._sections_start = self._find_start_of_sections()
         self._text = a_text
         self._sections_end = len(self._text)
-
-#     def comments(self, section_start, section_end ):
-#         match = self._chapter_with_comment_build_info.template.finditer(self._text[section_start:section_end])
-#
-#         for text in match:
-#             text = text.group()
-#             result = self._comment_build_info.template.search(text)
-#             if result:
-#                 result= result.group()
-#             print result
-#
-

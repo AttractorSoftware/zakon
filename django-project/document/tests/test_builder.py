@@ -1,6 +1,7 @@
 #coding=utf-8
 from unittest import TestCase
 from document.law_parser.builder import Builder, ParserError
+from document.law_parser.elements.comment import Comment
 from document.law_parser.elements.section import Section
 from document.law_parser.elements.text_section import TextSection
 
@@ -446,28 +447,43 @@ class BuilderTest(TestCase):
 
         actual_chapters = builder.build_sections()
         self.assertEqual(expected_chapters, actual_chapters)
-    #
-    # def test_build_chapter_with_comments(self):
-    #     builder = Builder(
-    #         u'Глава 58\n'\
-    #         u'Общие положения\n'\
-    #             u'\n'\
-    #             u'(Утратила силу в соответствии с Законом КР от 3 декабря \n'
-    #             u'2012 года N 191)\n'\
-    #         u'Глава 59\n'\
-    #         u'Налоговый режим в Парке высоких технологий\n'\
-    #         u'\n'\
-    #             u'(Глава\n'\
-    #             u'в редакции Закона КР от 8 июля 2011 года N 87)\n'
-    #
-    #     )
-    #
-    #     comment = Comment(u'(Утратила силу в соответствии с Законом КР от 3 декабря \n'\
-    #                       u'2012 года N 191)')
-    #     chapter = Section('chapter', name= u'Глава 58 Общие положения', number='1', comment = comment)
-    #
-    #     actual_chapters = builder.build_sections()
-    #     self.assertEqual(chapter.comment, actual_chapters)
+
+    def test_build_chapter_with_comments(self):
+        builder = Builder(u'\nГлава 58\n'\
+        u'Налог на специальные средства\n'\
+        u'\n'\
+        u'(Утратила силу\n'\
+        u'в соответствии с Законом КР от 3 декабря 2012 года N 191)\n'\
+        u'\n'\
+            u'Глава 59\n'\
+            u'Налоговый режим в Парке высоких технологий\n'\
+            u'\n'\
+                u'(Глава\n' \
+                u'в редакции Закона КР от 8 июля 2011 года N 87)\n' \
+                u'\n' \
+                u'Статья 386. Общие положения'
+        )
+
+        comment = Comment(u'(Глава в редакции Закона КР от 8 июля 2011 года N 87)')
+        chapter = Section('chapter', name= u'Глава 59 Налоговый режим в Парке высоких технологий', number='1', comment = comment)
+
+        actual_chapters = builder.build_sections()
+        self.assertEqual(chapter.comment.content, actual_chapters[1].comment.content.replace("\n", " "))
+
+    def test_build_article_with_comments(self):
+        builder = Builder(u'Статья 51. Обязанности органов налоговой службы и их должностных'\
+                            u'лиц\n'\
+                                u'(Название статьи в редакции Закона КР от\n'\
+                                    u'27 июля 2009 года N 255)\n'\
+                            u'\n'\
+                            u'1. Органы налоговой службы и их должностные лица обязаны:'
+        )
+
+        comment = Comment(u'(Название статьи в редакции Закона КР от 27 июля 2009 года N 255)')
+        article = TextSection('article', name= u'Статья 51. Обязанности органов налоговой службы и их должностных лиц', number='51', comment = comment)
+
+        actual_chapters = builder.build_articles(builder._sections_start, builder._sections_end)
+        self.assertEqual(article.comment.content, actual_chapters[0].comment.content.replace("\n", " "))
 
     def test_build_division_with_chapters(self):
         builder = Builder(
