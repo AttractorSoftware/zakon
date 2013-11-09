@@ -83,7 +83,8 @@ def i_see_modal_window(step):
 
 @step(u'вижу окно подтверждения')
 def i_see_alert(step):
-    pass
+    alert = world.browser.switch_to_alert()
+    assert_equals(u'Вы хотите добавить ссылку?', alert.text)
 
 @step(u'Если я кликаю "ОК')
 def i_click_ok(step):
