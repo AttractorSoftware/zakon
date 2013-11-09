@@ -3,7 +3,7 @@
 VIRT_ENV_DIR="/home/itattractor/.virtualenvs/zakon-env/bin/activate"
 DEMO_DIR='projects/zakon/www/demo/django-project'
 SETTINGS="zakon.settings_production"
-STATIC_DIR='projects/zakon/www/demo/django-project/document/static'
+STATIC_DIR='document/static'
 
 
 cd ${DEMO_DIR}
