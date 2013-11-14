@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+from django.shortcuts import redirect
 from References.dom_modifier import update_xml_of_linked_document, update_xml_of_reference_document
 from document.models import Document
 from References.models import Reference
-from document.views import render
 from References.forms import WrapTextForm
 
 
@@ -28,5 +28,4 @@ def wrap_text_in_tag(request):
                                                                     ref.reference_document.id,
                                                                     ref.reference_element)
             linked_document.save()
-
-    return render(request, 'document/list.html', {'documents': Document.objects.all()})
+    return redirect(request.META.get("HTTP_REFERER") + ref.reference_element)
