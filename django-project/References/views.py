@@ -20,22 +20,16 @@ def wrap_text_in_tag(request):
             linked_document = ref.linked_document
 
             ref.save()
-            if reference_document == linked_document:
-                reference_document.content = update_xml_of_reference_document(reference_document.content,
-                                                                          ref.reference_element, ref.linked_document.id,
-                                                                          ref.linked_element)
+            reference_document.content = update_xml_of_reference_document(reference_document.content,
+                                                                      ref.reference_element, ref.linked_document.id,
+                                                                      ref.linked_element)
+            reference_document.save()
+
+            if reference_document.id == linked_document.id:
                 linked_document.content = reference_document.content
-                linked_document.content = update_xml_of_linked_document(linked_document.content, ref.linked_element,
-                                                                    ref.reference_document.id,
-                                                                    ref.reference_element)
-                linked_document.save()
-            else:
-                reference_document.content = update_xml_of_reference_document(reference_document.content,
-                                                                              ref.reference_element, ref.linked_document.id,
-                                                                              ref.linked_element)
-                reference_document.save()
-                linked_document.content = update_xml_of_linked_document(linked_document.content, ref.linked_element,
-                                                                        ref.reference_document.id,
-                                                                        ref.reference_element)
-                linked_document.save()
+
+            linked_document.content = update_xml_of_linked_document(linked_document.content, ref.linked_element,
+                                                                ref.reference_document.id,
+                                                                ref.reference_element)
+            linked_document.save()
     return redirect(request.META.get("HTTP_REFERER") + ref.reference_element)
