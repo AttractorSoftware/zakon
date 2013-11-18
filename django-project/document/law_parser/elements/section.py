@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from lxml import etree
 from comment import Comment
 
@@ -5,9 +6,14 @@ class Section(object):
     def __init__(self, level, name, number, comment=None):
         self._sections = []
         self._level = level
-        self._number = number if number else ''
+        self._number = self.string_number(number)
         self._name = name
         self._comment = comment
+
+    def string_number(self, number):
+        if number:
+            number= number.decode('utf-8')
+            return number
 
     @property
     def comment(self):

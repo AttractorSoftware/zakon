@@ -11,6 +11,7 @@ def update_xml_of_reference_document(reference_content, reference_element, linke
      Элемент на который ссылаемся
      """
     parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
+    print parser
     tree = etree.parse(StringIO(reference_content), parser)
     root = tree.getroot()
     selected_reference_element = root.xpath("//article[@id='" + remove_sharp(reference_element) + "']")[0]
