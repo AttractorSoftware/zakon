@@ -10,6 +10,7 @@
     <form id="modal" class="modal hide" action="{% url 'references:wrap_text' %}" method="post">
         {% csrf_token %}
         <div class="modal-body">
+            <h2>Список документов</h2>
 
             <div class="form-inline">
                 <input type="hidden" name="reference_document_id" value="{{ document_id }}"/>
@@ -44,13 +45,7 @@
                     }
 
             )
-
             getDocumentsList();
-
-            $('.add_link_btn').click(function () {
-{#                sendSelectionTextPositions();#}
-            });
-
         })
 
         $('#list').mouseup(function () {
@@ -102,7 +97,6 @@
 
                 $('#accordion a').each(function (item) {
 
-                    div_class = (item == 0) ? 'in' : '';
                     id = jQuery(this).attr('href');
                     $('#linked_documented_id').attr('doc_id', linked_document_id);
 
