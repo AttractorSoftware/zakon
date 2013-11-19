@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Подтверждение загрузки</title>
+    <style type="text/css">
+        .error {
+            padding: 10px;
+            background-color: #ffdcc8;
+            color: #f00;
+            width: 70%;
+            border: 1px solid;
+        }
+    </style>
+</head>
+<body>
+<h2>
+    Оформление документа не соотвествует требованиям. Найдены следующие ошибки:
+</h2>
+{% if error_messages %}
+    {% for error_message in error_messages %}
+        <li><p class="error">{{ error_message }}</p></li>
+    {% endfor %}
+{% endif %}
+<p>
+
+<form method="post">
+    {% csrf_token %}
+    <input style="width: 70%" type="hidden" name="upload_anyway_file_name" value="{{ upload_anyway_file_name }}"/>
+    <button type="button" onclick="window.location = '/';">Отменить</button>
+    <input type="submit" value="Загрузить с ошибками"/>
+</form>
+</p>
+</body>
+</html>

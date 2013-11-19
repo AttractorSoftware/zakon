@@ -15,7 +15,7 @@ class ParserError(Exception):
 class Builder(object):
     def __init__(self, text):
         self._text = text
-        self._search_flags = re.M | re.DOTALL | re.U |re.I
+        self._search_flags = re.M | re.DOTALL | re.U | re.I
 
         self._name_build_info = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?=\()', self._search_flags)
         self._place_and_date_build_info = ElementBuild(u'^г\.[а-яА-Я,]*\s*?от.+?$', self._search_flags)
@@ -23,7 +23,8 @@ class Builder(object):
 
         self._part_number = 1
 
-        self._part_build_info = ElementBuild(u'(?P<name>^[\w ]*? *ЧАСТЬ[\sIVXLCDM]*?)(?P<number> )?$', self._search_flags, 'part')
+        self._part_build_info = ElementBuild(u'(?P<name>^[\w ]*? *ЧАСТЬ[\sIVXLCDM]*?)(?P<number> )?$',
+                                             self._search_flags, 'part')
 
         self._division_build_info = ElementBuild(u'(?P<name>^ *?РАЗДЕЛ (?P<number>[IVXLCDM]+) *?\s*.*?$)',
                                                  self._search_flags, 'division')
@@ -34,16 +35,16 @@ class Builder(object):
         self._chapter_build_info = ElementBuild(u'(?P<name>^ *?Глава (?P<number>[\w\d-]*)\s*.*?)(?=\()',
                                                 self._search_flags, 'chapter')
 
-        self._chapter_with_comment_build_info = ElementBuild(u'(?P<name>^ *?Глава (?P<number>[\w\d]+(-\d+)?)\s*.*?)(?=Параграф|Статья|См|Глава \d+)',
-                                                       self._search_flags, 'chapter')
-        self._comment_build_info = ElementBuild(u'(?P<name>^\(.*?\))$',self._search_flags)
-
+        self._chapter_with_comment_build_info = ElementBuild(
+            u'(?P<name>^ *?Глава (?P<number>[\w\d]+(-\d+)?)\s*.*?)(?=Параграф|Статья|См|Глава \d+)',
+            self._search_flags, 'chapter')
+        self._comment_build_info = ElementBuild(u'(?P<name>^\(.*?\))$', self._search_flags)
 
         self._paragraphs_build_info = ElementBuild(u'(?P<name>^ *?Параграф (?P<number>\d+(-\d+)?).+?(?=\n[ \t]*?\n))',
                                                    self._search_flags)
 
         self._article_with_comment_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)$',
-                                                self._search_flags, 'article')
+                                                             self._search_flags, 'article')
         self._article_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\(|$)',
                                                 self._search_flags, 'article')
         self._article_text_build_info = ElementBuild(u'.+', self._search_flags)
@@ -53,6 +54,7 @@ class Builder(object):
 
         self._sections_start = self._find_start_of_sections()
         self._sections_end = len(self._text)
+        self.errors = []
 
     def escape_braces(self, highest_section_text):
         return highest_section_text.replace("(", "\(").replace(")", "\)")
@@ -93,7 +95,8 @@ class Builder(object):
         if match:
             result = match.strip()
         else:
-            raise ParserError(error_msg)
+            self.errors.append(ParserError(error_msg))
+            return ''
         return result
 
     def build_name(self):
@@ -105,7 +108,7 @@ class Builder(object):
         name = self._name_build_info.template.search(self._text)
         if name:
             name = name.group()
-            name = name.replace(place_and_date,'')
+            name = name.replace(place_and_date, '')
         return self._find_match_text_or_raise_error_with_msg(name,
                                                              u'Не найдено наименование закона')
 
@@ -174,7 +177,8 @@ class Builder(object):
         sections = self.build_smaller_sections_in_this_level(section_start, section_end,
                                                              self._chapter_with_comment_build_info.template)
         build_childer_methods = [self.build_paragraphs, self.build_articles]
-        chapters = self._build_sections(self._chapter_with_comment_build_info.level, self._chapter_with_comment_build_info.template,
+        chapters = self._build_sections(self._chapter_with_comment_build_info.level,
+                                        self._chapter_with_comment_build_info.template,
                                         build_childer_methods,
                                         section_start, section_end, self.create_Section, self._add_sub_sections)
         for i in chapters:
@@ -203,7 +207,8 @@ class Builder(object):
 
     def build_articles(self, section_start, section_end, parent_level_and_number=None):
         build_childer_methods = [self._build_items, self._build_article_text]
-        articles = self._build_sections(self._article_with_comment_build_info.level, self._article_with_comment_build_info.template,
+        articles = self._build_sections(self._article_with_comment_build_info.level,
+                                        self._article_with_comment_build_info.template,
                                         build_childer_methods,
                                         section_start, section_end, self.create_TextSection,
                                         self._add_text_or_sub_sections)
@@ -282,7 +287,8 @@ class Builder(object):
         result = self._chapter_build_info.template.search(text)
         if result:
             name = result.group()
-        else: name=match.group()
+        else:
+            name = match.group()
 
         number = match.group('number')
         if number:
@@ -291,14 +297,15 @@ class Builder(object):
             number = self._part_number
             self._part_number += 1
         comment = self.create_Comment(match)
-        return Section(level, name = name.replace('\n', ' ').strip(), number=str(number), comment=comment)
+        return Section(level, name=name.replace('\n', ' ').strip(), number=str(number), comment=comment)
 
     def create_TextSection(self, level, match):
         text = match.group()
         result = self._article_build_info.template.search(text)
         if result:
             name = result.group()
-        else: name=match.group()
+        else:
+            name = match.group()
         comment = self.create_Comment(match)
         return TextSection(level=level, name=name.replace('\n', ' ').strip(),
                            number=match.group('number'), comment=comment)
@@ -308,7 +315,7 @@ class Builder(object):
         result = self._comment_build_info.template.search(section_name)
         if result:
             comment = result.group()
-            return Comment(content = comment)
+            return Comment(content=comment)
         else:
             return None
 
@@ -324,22 +331,22 @@ class Builder(object):
 
     def filter_invalid_strings(k, v):
         return (k, filter(lambda x: x != u'\x0b', v)
-                if isinstance(v, basestring) else v)
+        if isinstance(v, basestring) else v)
 
-    # def Tprint(self):
-    #     template = self._place_and_date_build_info.template.search(self._text)
-    #     place_and_date = template.group()
-    #     print place_and_date+'\n'
-    #     template = self._revisions_build_info.template.search(self._text)
-    #     revision = template.group()
-    #     revision = revision.replace('(', '\(')
-    #     revision = revision.replace(')', '\)')
-    #     print revision
-    #     name_build = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?='+revision+u')', self._search_flags)
-    #     name = name_build.template.search(self._text)
-    #     name = name.group()
-    #     name = name.replace(place_and_date,'')
-    #     print name
+        # def Tprint(self):
+        #     template = self._place_and_date_build_info.template.search(self._text)
+        #     place_and_date = template.group()
+        #     print place_and_date+'\n'
+        #     template = self._revisions_build_info.template.search(self._text)
+        #     revision = template.group()
+        #     revision = revision.replace('(', '\(')
+        #     revision = revision.replace(')', '\)')
+        #     print revision
+        #     name_build = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?='+revision+u')', self._search_flags)
+        #     name = name_build.template.search(self._text)
+        #     name = name.group()
+        #     name = name.replace(place_and_date,'')
+        #     print name
 
 # a=open('/home/bolushbekov/projects/zakon/django-project/document/selenium_tests/features/zakon.rtf')
 # temp = a.read()
