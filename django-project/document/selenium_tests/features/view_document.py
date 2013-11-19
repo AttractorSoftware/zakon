@@ -1,5 +1,6 @@
 #coding=utf-8
 import os
+from django.core.management import call_command
 from lettuce import *
 from selenium.webdriver.common.action_chains import ActionChains
 from django.test import LiveServerTestCase
@@ -44,6 +45,7 @@ def i_go_to_the_main_page(step):
     world.browser.get("http://127.0.0.1:8000/")
 
 @step(u'вижу страницу с заголовком "(.*)"')
+@step(u'вижу что нахожусь на странице "(.*)"')
 def i_should_see_the_link_to_uploaded_law(step, expected_title):
     title = world.browser.find_element_by_tag_name('title')
     assert_equals(title.text, expected_title)
@@ -54,14 +56,14 @@ def i_should_see_the_link_text(step, expected_link_text):
     assert_equals(type(uploaded_law_link)==None, False)
 
 @step(u'я кликаю на ссылку "(.*)"')
+@step(u'я выбираю страницу "(.*)"')
 def i_should_see_the_link_to_uploaded_law(step, expected_response):
     elem_href = world.browser.find_element_by_link_text(expected_response)
     elem_href.click()
 
 @step(u'я нахожусь на странице с заголовком "(.*)"')
-def im_on_law_page(step, expected_response):
-    i_am_on_upload_page(step)
-    upload_document(step, "zakon.rtf")
+def i_am_on_law_page(step, expected_response):
+    i_go_to_the_main_page(step)
     elem_href = world.browser.find_element_by_link_text(expected_response)
     elem_href.click()
 
@@ -72,7 +74,7 @@ def i_see_text(step, expected_response):
     assert expected_response in text
 
 @step(u'вижу кнопку')
-@step(u'я нажимаю на кнопку')
+@step(u'нажимаю на кнопку')
 def i_see_and_click_button(step):
     btn = world.browser.find_element_by_name("btn_article_1")
     btn.click()
@@ -86,7 +88,7 @@ def i_see_alert(step):
     alert = world.browser.switch_to_alert()
     assert_equals(u'Вы хотите добавить ссылку?', alert.text)
 
-@step(u'Если я кликаю "ОК')
+@step(u'нажимаю "ОК" в окне подтверждения')
 def i_click_ok(step):
     alert = world.browser.switch_to_alert()
     alert.accept()
@@ -94,3 +96,7 @@ def i_click_ok(step):
 @step(u'вижу ссылку с текстом "(.*)"')
 def i_see_link(step, expected_response):
     world.browser.find_element_by_link_text(expected_response)
+
+@step(u'нету загруженных файлов')
+def clear_db(step):
+    call_command('sqlflush',interactive=False, verbosity=1)
