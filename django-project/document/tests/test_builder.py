@@ -65,51 +65,6 @@ class BuilderTest(TestCase):
         self.assertEqual(u"""г.Бишкек
 от 17 октября 2008 года N 230""", builder.build_place_and_date())
 
-    def test_build_name_with_incorrect_text_must_raise_error(self):
-        builder = Builder(
-            u'Закон закон неправильный закон\n'
-            u'Нету имени закона'
-        )
-
-        try:
-            result = builder.build_name()
-        except ParserError as ex:
-            result = 'exception handled'
-
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Не найдено наименование закона', ex[0])
-
-    def test_build_revisions_with_incorrect_text_must_raise_error(self):
-        builder = Builder(
-            u'Закон закон неправильный закон\n'
-            u'Нету ревизий закона'
-        )
-
-        try:
-            result = builder.build_revisions()
-        except ParserError as ex:
-            result = 'exception handled'
-
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Не найдены ревизии закона', ex[0])
-
-    def test_build_place_and_date_with_incorrect_text_must_raise_error(self):
-        builder = Builder(
-            u'Закон закон неправильный закон\n'
-            u'Нету ревизий закона'
-        )
-
-        try:
-            result = builder.build_place_and_date()
-        except ParserError as ex:
-            result = 'exception handled'
-
-        self.assertEqual('exception handled', result)
-        self.assertTrue(isinstance(ex, ParserError))
-        self.assertEqual(u'Не найдены место и дата принятия', ex[0])
-
     def test_build_articles_with_items(self):
         builder = Builder(
             u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\

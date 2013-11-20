@@ -19,7 +19,7 @@ class Builder(object):
 
         self._name_build_info = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?=\()', self._search_flags)
         self._place_and_date_build_info = ElementBuild(u'^г\.[а-яА-Я,]*\s*?от.+?$', self._search_flags)
-        self._revisions_build_info = ElementBuild(u'^\(В редакции Закон.*? КР от .*?\)', self._search_flags)
+        self._revisions_build_info = ElementBuild(u'^\s*\(В редакции Закон.*? КР от .*?\)', self._search_flags)
 
         self._part_number = 1
 
@@ -100,15 +100,30 @@ class Builder(object):
         return result
 
     def build_name(self):
-        place_and_date = ''
         template = self._place_and_date_build_info.template.search(self._text)
         if template:
             place_and_date = template.group()
+        else: place_and_date = ''
 
-        name = self._name_build_info.template.search(self._text)
+        template = self._revisions_build_info.template.search(self._text)
+        if template:
+            revision = template.group()
+            revision = revision.replace('(','\(')
+            revision = revision.replace(')','\)')
+        else: revision = ''
+
+        name_build_info = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?='+revision+u')', self._search_flags)
+        name = name_build_info.template.search(self._text)
         if name:
             name = name.group()
             name = name.replace(place_and_date, '')
+        else: name = ''
+
+        comment  = self._comment_build_info.template.search(name)
+        if comment:
+            comment = comment.group()
+            name = name.replace(comment, '')
+
         return self._find_match_text_or_raise_error_with_msg(name,
                                                              u'Не найдено наименование закона')
 
