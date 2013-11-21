@@ -122,7 +122,15 @@ def i_see_link_under_section(step, link_text, section):
     article_element = world.browser.find_element_by_xpath('//*/h3[text()="' + section + '"]/following-sibling::div[1]//a[text()="'+link_text+'"]')
     assert_equals(link_text, article_element.text)
 
+@step(u'вижу комментарий к главе с текстом "(.*)"')
+def i_see_comment_to_chapter(step, expected_comment):
+    comment = world.browser.find_element_by_xpath('//div[@id="chapter_10"]/div[@class="comment"]/h4').text
+    assert_equals(expected_comment, comment.replace('\n', " "))
 
+@step(u'вижу комментарий к статье с текстом "(.*)"')
+def i_see_comment_to_article(step, expected_comment):
+    comment = world.browser.find_element_by_xpath('//h3[text()="Статья 144. Ответственность банка"]/preceding-sibling::div[@class="comment"]/h4').text
+    assert_equals(expected_comment, comment.replace('\n', " "))
 
 def navigate_to_page(expected_response):
     elem_href = world.browser.find_element_by_link_text(expected_response)
