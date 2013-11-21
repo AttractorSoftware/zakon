@@ -38,13 +38,10 @@
         var selRange, txt;
         $('document').ready(function () {
 
-            $("a#getWindow").click(
-                    function(){
-                        $("#modal").modal();
-                        $("#reference_element").val('#' + $(this).parent().attr("id"));
-                    }
-
-            )
+            $("a#getWindow").click(function () {
+                $("#modal").modal();
+                $("#reference_element").val('#' + $(this).parent().attr("id"));
+            })
             getDocumentsList();
         })
 
@@ -110,7 +107,7 @@
                         $('#linked_document_id').attr('value', id.replace(/[^0-9\s]/gi, ''));
                     }
 
-                    jQuery(this).attr('class', "accordion-toggle");
+                    jQuery(this).addClass("accordion-toggle");
                     jQuery(this).attr('data-toggle', "collapse");
                     jQuery(this).attr('data-parent', "#accordion");
                     jQuery(this).wrap('<div class="accordion-group"><div class="accordion-heading"></div></div>');
@@ -136,7 +133,9 @@
         var elements;
         function fullDocumentView(id) {
 
-            $(".accordion-inner").load(id + " .contents");
+            parsedIntId = parseInt(id.replace(/\//g, ''))
+            $(".accordion-inner").append("<div id='contents" + parsedIntId + "'></div>");
+            $(".accordion-inner #contents" + parsedIntId).load(id + " .contents");
 
             $('.accordion-inner').mouseover(function (event) {
                 var $target = $(event.target);
