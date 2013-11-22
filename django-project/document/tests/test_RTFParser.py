@@ -38,4 +38,11 @@ class RTFParserTests(unittest.TestCase):
                    u"kdaskdjaksdjskajdjadkasldsa\n"
         self.assertEqual(expected, self.rtf_parser.parse(str))
 
+    def test_rtf_with_hyperlink(self):
+        str = r'{\rtf1{\field{\*\fldinst{HYPERLINK "http://www.test.com/"}}{\fldrslt{test}}}}'
+        expected = u"test"
+        self.assertEqual(expected, self.rtf_parser.parse(str))
 
+    def test_rtf_wint_hyperlink_from_toktom(self):
+        str = r'{\field\fldedit{\*\fldinst{\rtlch\fcs1\af1\ltrch\fcs0\insrsid1716831\hich\af1\dbch\af31505\loch\f1\hich\af1\dbch\af31505\loch\f1 HYPERLINK "toktom://db/1837"\hich\af1\dbch\af31505\loch\f1}}{\fldrslt{\rtlch\fcs1\af1\ltrch\fcs0\cs15\cf1\insrsid1716831\hich\af1\dbch\af31505\loch\f1 \hich\f1 19 \'e4\'e5\'ea\'e0\'e1\'f0\'ff\loch\f1\hich\f1  1996 \'e3\'ee\'e4\'e0\loch\f1  N 65}}}'
+        self.assertEquals(u"19 декабря 1996 года N 65", self.rtf_parser.parse(str))

@@ -8,14 +8,13 @@ SPECIAL_CHARS = {'par': '\n', 'sect': '\n\n', 'page': '\n\n', 'line': '\n', 'tab
                  'lquote': u'\u2018',
                  'rquote': u'\u2019', 'ldblquote': u'\201C', 'rdblquote': u'\u201D', }
 
-RTF_SPECIAL_WORDS = frozenset((
+RTF_CONTROL_WORDS = frozenset((
     'aftncn', 'aftnsep', 'aftnsepc', 'annotation', 'atnauthor', 'atndate', 'atnicn', 'atnid', 'atnparent', 'atnref',
     'atntime', 'atrfend', 'atrfstart', 'author', 'background', 'bkmkend', 'bkmkstart', 'blipuid', 'buptim', 'category',
     'colorschememapping', 'colortbl', 'comment', 'company', 'creatim', 'datafield', 'datastore', 'defchp', 'defpap',
     'do',
     'doccomm', 'docvar', 'dptxbxtext', 'ebcend', 'ebcstart', 'factoidname', 'falt', 'fchars', 'ffdeftext', 'ffentrymcr',
-    'ffexitmcr', 'ffformat', 'ffhelptext', 'ffl', 'ffname', 'ffstattext', 'field', 'file', 'filetbl', 'fldinst',
-    'fldrslt',
+    'ffexitmcr', 'ffformat', 'ffhelptext', 'ffl', 'ffname', 'ffstattext', 'file', 'filetbl',
     'fldtype', 'fname', 'fontemb', 'fontfile', 'fonttbl', 'footer', 'footerf', 'footerl', 'footerr', 'footnote',
     'formfield', 'ftncn', 'ftnsep', 'ftnsepc', 'g', 'generator', 'gridtbl', 'header', 'headerf', 'headerl', 'headerr',
     'hl',
@@ -81,7 +80,7 @@ class RTFParser(object):
                     ignorable = True
             elif control_word:
                 #cur_skip = 0
-                if control_word in RTF_SPECIAL_WORDS:
+                if control_word in RTF_CONTROL_WORDS:
                     ignorable = True
                 elif ignorable:
                     pass
