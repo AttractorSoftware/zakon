@@ -27,7 +27,7 @@
     {% csrf_token %}
     <input style="width: 70%" type="hidden" name="upload_anyway_file_name" value="{{ upload_anyway_file_name }}"/>
     <button type="button" onclick="window.location = '/';">Отменить</button>
-    <input type="submit" value="Загрузить с ошибками"/>
+    <input type="submit" id="upload_anyway_button" value="Загрузить с ошибками"/>
 </form>
 </p>
 </body>
