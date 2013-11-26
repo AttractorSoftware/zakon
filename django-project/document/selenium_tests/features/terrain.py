@@ -10,10 +10,6 @@ def initial_setup():
     world.browser = webdriver.Firefox()
     world.browser.implicitly_wait(10)
 
-@before.each_scenario
-def clean_up_db(scenario):
-    call_command('flush',interactive=False, verbosity=1)
-
 @after.all
 def teardown_browser(total):
     connection.creation.destroy_test_db(settings.DATABASES['default']['NAME'])

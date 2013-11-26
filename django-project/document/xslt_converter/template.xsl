@@ -2,11 +2,15 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="/">{#without html tag xsl work incorrect#}
         <html>
-            <xsl:value-of select="document/description/place"/>
+            <p id="place">
+                <xsl:value-of select="document/description/place"/>
+            </p>
             <h1>
                 <xsl:value-of select="document/description/name"/>
             </h1>
-            <xsl:value-of select="document/description/revisions"/>
+            <p id="revisions">
+                <xsl:value-of select="document/description/revisions"/>
+            </p>
             <div id="contents" class="contents">
                 <xsl:choose>
                     <xsl:when test="//section">

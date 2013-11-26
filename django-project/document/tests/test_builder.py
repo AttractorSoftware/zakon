@@ -530,6 +530,36 @@ class BuilderTest(TestCase):
         actual_chapters = builder.build_sections()
         self.assertEqual(chapter.comment.content, actual_chapters[1].comment.content.replace("\n", " "))
 
+    def test_build_article_with_comments(self):
+        builder = Builder(u'Глава 58\n'\
+        u'Налог на специальные средства\n'\
+        u'\n'\
+        u'(Утратила силу\n'\
+        u'в соответствии с Законом КР от 3 декабря 2012 года N 191)\n'\
+        u'\n'\
+           u'Статья 51. Обязанности органов налоговой службы и их должностных\n'
+           u'лиц\n'\
+                u'(Название статьи в редакции Закона КР от 27 июля \n'
+                u'2009 года N 255)\n'\
+                u'\n'\
+                u'1. Налоговое законодательство Кыргызской Республики - это система нормативных правовых...'
+        )
+        expected_chapter = []
+        comment = Comment(u'(Утратила силу в соответствии с Законом КР от 3 декабря 2012 года N 191)')
+        chapter = Section('chapter' , name=u'Глава 58 Налог на специальные средства', number='58', comment= comment)
+
+        comment = Comment(u'(Название статьи в редакции Закона КР от 27 июля 2009 года N 255)')
+        article = TextSection('article', name= u'Статья 51. Обязанности органов налоговой службы и их должностных лиц', number='51', comment = comment)
+
+        item = TextSection(level='article51_item', name='', number='1')
+        item.text = u'Налоговое законодательство Кыргызской Республики - это система нормативных правовых...'
+        article.add_section(item)
+        chapter.add_section(article)
+        expected_chapter.append(chapter)
+
+        actual_chapters = builder.build_sections()
+        self.assertEqual(expected_chapter, actual_chapters)
+
     def test_build_division_with_chapters(self):
         builder = Builder(
             u'РАЗДЕЛ I\n'\

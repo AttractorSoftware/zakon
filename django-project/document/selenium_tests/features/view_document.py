@@ -170,7 +170,7 @@ def click_the_link(header_name):
 
 def i_see_link(header_name):
     elem_href = world.browser.find_element_by_link_text(header_name)
-    assert_equals(elem_href.text, header_name)
+    assert_equals(elem_href.text.strip(), header_name)
 
 
 def expand_collapse_list(list_name):

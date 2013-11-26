@@ -5,11 +5,6 @@ from document.law_parser.elements.comment import Comment
 from document.law_parser.structure_element import ElementBuild
 from elements.section import Section
 from elements.text_section import TextSection
-from document.rtfparser import RTFParser
-
-
-class ParserError(Exception):
-    pass
 
 
 class Builder(object):
@@ -17,7 +12,6 @@ class Builder(object):
         self._text = text
         self._search_flags = re.M | re.DOTALL | re.U | re.I
 
-        self._name_build_info = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?=\()', self._search_flags)
         self._place_and_date_build_info = ElementBuild(u'^г\.[а-яА-Я,]*\s*?от.+?$', self._search_flags)
         self._revisions_build_info = ElementBuild(u'^\s*\(В редакции Закон.*? КР от .*?\)', self._search_flags)
 
@@ -35,17 +29,16 @@ class Builder(object):
         self._chapter_build_info = ElementBuild(u'(?P<name>^ *?Глава (?P<number>[\w\d-]*)\s*.*?)(?=\()',
                                                 self._search_flags, 'chapter')
 
-        self._chapter_with_comment_build_info = ElementBuild(
-            u'(?P<name>^ *?Глава (?P<number>[\w\d]+(-\d+)?)\s*.*?)(?=Параграф|Статья|См|Глава \d+)',
-            self._search_flags, 'chapter')
+        self._chapter_with_comment_build_info = ElementBuild(u'(?P<name>^ *?Глава (?P<number>[\w\d]+(-\d+)?)\s*.*?)(?=Параграф|Статья|См|Глава \d+)',
+                                                self._search_flags, 'chapter')
         self._comment_build_info = ElementBuild(u'(?P<name>^\(.*?\))$', self._search_flags)
 
         self._paragraphs_build_info = ElementBuild(u'(?P<name>^ *?Параграф (?P<number>\d+(-\d+)?).+?(?=\n[ \t]*?\n))',
                                                    self._search_flags)
 
-        self._article_with_comment_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)$',
+        self._article_with_comment_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\n)',
                                                              self._search_flags, 'article')
-        self._article_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\(|$)',
+        self._article_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\(|\n)',
                                                 self._search_flags, 'article')
         self._article_text_build_info = ElementBuild(u'.+', self._search_flags)
 
@@ -95,8 +88,8 @@ class Builder(object):
         if match:
             result = match.strip()
         else:
-            self.errors.append(ParserError(error_msg))
-            return ''
+            self.errors.append(error_msg)
+            result = ''
         return result
 
     def build_name(self):
@@ -128,18 +121,18 @@ class Builder(object):
                                                              u'Не найдено наименование закона')
 
     def build_revisions(self):
-        revision = ''
         template = self._revisions_build_info.template.search(self._text)
         if template:
             revision = template.group()
+        else: revision = ''
         return self._find_match_text_or_raise_error_with_msg(revision,
                                                              u'Не найдены ревизии закона')
 
     def build_place_and_date(self):
-        place_and_data = ''
         template = self._place_and_date_build_info.template.search(self._text)
         if template:
             place_and_data = template.group()
+        else: place_and_data = ''
         return self._find_match_text_or_raise_error_with_msg(place_and_data,
                                                              u'Не найдены место и дата принятия')
 
@@ -343,30 +336,3 @@ class Builder(object):
         self._sections_start = self._find_start_of_sections()
         self._text = a_text
         self._sections_end = len(self._text)
-
-    def filter_invalid_strings(k, v):
-        return (k, filter(lambda x: x != u'\x0b', v)
-        if isinstance(v, basestring) else v)
-
-        # def Tprint(self):
-        #     template = self._place_and_date_build_info.template.search(self._text)
-        #     place_and_date = template.group()
-        #     print place_and_date+'\n'
-        #     template = self._revisions_build_info.template.search(self._text)
-        #     revision = template.group()
-        #     revision = revision.replace('(', '\(')
-        #     revision = revision.replace(')', '\)')
-        #     print revision
-        #     name_build = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?='+revision+u')', self._search_flags)
-        #     name = name_build.template.search(self._text)
-        #     name = name.group()
-        #     name = name.replace(place_and_date,'')
-        #     print name
-
-# a=open('/home/bolushbekov/projects/zakon/django-project/document/selenium_tests/features/zakon.rtf')
-# temp = a.read()
-# parser=RTFParser()
-# text_content = parser.parse(temp)
-#
-# b=Builder(text_content)
-# b.Tprint()
