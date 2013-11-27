@@ -85,7 +85,6 @@
             }
         }
 
-        var fulUrl = "";
         function getDocumentsList() {
 
             var div_class, id;
@@ -112,7 +111,8 @@
                     jQuery(this).attr('data-parent', "#accordion");
                     jQuery(this).wrap('<div class="accordion-group"><div class="accordion-heading"></div></div>');
                     jQuery(this).after('<button type="submit" class="btn btn-primary add_link_btn" onclick="sendSelectionTextPositions();  return false;" title="Добавить ссылку"><i class="icon-tags icon-white "></i></button>');
-                    jQuery(jQuery(this).context.parentElement).after('\n <div id=' + 'collapse_' + item + ' class="accordion-body collapse ' + div_class + ' "><div class="accordion-inner"></div></div>');
+                    var parsedIntId = parseInt(id.replace(/\//g, ''))
+                    jQuery(jQuery(this).context.parentElement).after('\n <div id=' + 'collapse_' + item + ' class="accordion-body collapse ' + div_class + ' "><div class="accordion-inner accordion-inner-doc' + parsedIntId + '"></div></div>');
 
                     fullDocumentView(id);
                 });
@@ -134,8 +134,7 @@
         function fullDocumentView(id) {
 
             parsedIntId = parseInt(id.replace(/\//g, ''))
-            $(".accordion-inner").append("<div id='contents" + parsedIntId + "'></div>");
-            $(".accordion-inner #contents" + parsedIntId).load(id + " .contents");
+            $(".accordion-inner-doc" + parsedIntId).load(id + " .contents");
 
             $('.accordion-inner').mouseover(function (event) {
                 var $target = $(event.target);

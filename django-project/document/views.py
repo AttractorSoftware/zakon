@@ -100,8 +100,15 @@ def nl2br(content):
 def law_detail(request, doc_id):
     doc = get_object_or_404(Document, pk=doc_id)
     html_content = nl2br(XsltTransformer.transform_to_html(doc.content.encode('utf-8')))
-    return render(request, 'document/document_view.html',
-                  {'document': doc, 'content': html_content, 'document_id': doc_id})
+    return render(
+        request,
+        'document/document_view.html',
+        {
+            'document': doc,
+            'content': html_content,
+            'document_id': doc_id
+        }
+    )
 
 
 def upload_view(request):
