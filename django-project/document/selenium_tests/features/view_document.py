@@ -140,17 +140,16 @@ def i_see_link_under_section(step, link_text, section):
     assert_equals(link_text, article_element.text)
 
 
-@step(u'вижу комментарий к главе с текстом "(.*)"')
-def i_see_comment_to_chapter(step, expected_comment):
-    comment = world.browser.find_element_by_xpath('//div[@id="chapter_10"]/div[@class="comment"]/h4').text
+@step(u'вижу комментарий к "(.*)"-главе с текстом "(.*)"')
+def i_see_comment_to_chapter(step, chapter_number, expected_comment):
+    comment = world.browser.find_element_by_xpath('//div[@id="chapter_'+chapter_number+'"]/div[@class="comment"]/h4').text
     assert_equals(expected_comment, comment.replace('\n', " "))
 
 
-@step(u'вижу комментарий к статье с текстом "(.*)"')
-def i_see_comment_to_article(step, expected_comment):
-    comment = world.browser.find_element_by_xpath(
-        '//h3[text()="Статья 144. Ответственность банка"]/preceding-sibling::div[@class="comment"]/h4').text
-    assert_equals(expected_comment, comment.replace('\n', " "))
+@step(u'вижу комментарий к "(.*)"-статье с текстом "(.*)"')
+def i_see_comment_to_article(step, article_number, expected_comment):
+    comment = world.browser.find_element_by_xpath('//div[@id="article_'+article_number+'"]').text
+    assert_equals(expected_comment, comment.replace('\n', " ")[7:])
 
 
 def navigate_to_page(expected_response):
