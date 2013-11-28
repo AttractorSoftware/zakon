@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
-import views
+from views import  AddReferenceView
 
 urlpatterns = patterns('',
-                       url(r'^wrap_text/$', views.wrap_text_in_tag, name='wrap_text')
+                       url(r'^wrap_text/$', AddReferenceView.as_view(), name='wrap_text')
 )

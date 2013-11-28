@@ -13,10 +13,10 @@
             <h2>Список документов</h2>
 
             <div class="form-inline">
-                <input type="hidden" name="reference_document_id" value="{{ document_id }}"/>
-                <input type="hidden" name="reference_element" id="reference_element" value=/>
-                <input type="hidden" name="linked_document_id" value="" id="linked_document_id"/>
-                <input type="hidden" name="linked_element" value="" id="linked_element"/>
+                <input type="hidden" name="source_document_id" value="{{ document_id }}"/>
+                <input type="hidden" name="source_element" id="source_element" value=/>
+                <input type="hidden" name="target_document_id" value="" id="target_document_id"/>
+                <input type="hidden" name="target_element" value="" id="target_element"/>
             </div>
             <div class="accordion" id="accordion" style="margin-bottom: 0px !important;">
 
@@ -40,7 +40,7 @@
 
             $("a#getWindow").click(function () {
                 $("#modal").modal();
-                $("#reference_element").val('#' + $(this).parent().attr("id"));
+                $("#source_element").val('#' + $(this).parent().attr("id"));
             })
             getDocumentsList();
         })
@@ -76,7 +76,7 @@
             return txt;
         }
 
-        var linked_document_id;
+        var target_document_id;
 
         function sendSelectionTextPositions() {
             if (confirm("Вы хотите добавить ссылку?")) {
@@ -94,16 +94,16 @@
                 $('#accordion a').each(function (item) {
 
                     id = jQuery(this).attr('href');
-                    $('#linked_documented_id').attr('doc_id', linked_document_id);
+                    $('#target_document_id').attr('doc_id', target_document_id);
 
                     jQuery(this).attr('href', '#collapse_' + item);
                     jQuery(this).attr('doc_id', id.replace(/[^0-9\s]/gi, ''));
                     jQuery(this).click(function () {
-                        $('#linked_document_id').attr('value', jQuery(this).attr('doc_id'));
+                        $('#target_document_id').attr('value', jQuery(this).attr('doc_id'));
                     });
 
                     if (item == 0) {
-                        $('#linked_document_id').attr('value', id.replace(/[^0-9\s]/gi, ''));
+                        $('#target_document_id').attr('value', id.replace(/[^0-9\s]/gi, ''));
                     }
 
                     jQuery(this).addClass("accordion-toggle");
@@ -121,7 +121,7 @@
                     var $target = $(event.target);
 
                     if ($target.is("a")) {
-                        $('#linked_element').attr('value', $target.attr('href'));
+                        $('#target_element').attr('value', $target.attr('href'));
                     }
 
                     sendSelectionTextPositions();

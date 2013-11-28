@@ -1,8 +1,8 @@
 from django import forms
 
 
-class WrapTextForm(forms.Form):
-    reference_document_id = forms.HiddenInput()
-    reference_element = forms.HiddenInput()
-    linked_document_id = forms.HiddenInput()
-    linked_element = forms.HiddenInput()
+class ReferenceForm(forms.Form):
+    source_document_id = forms.HiddenInput()
+    source_element = forms.HiddenInput()
+    target_document_id = forms.HiddenInput()
+    target_element = forms.HiddenInput()

@@ -85,27 +85,30 @@
                                                 <xsl:apply-templates select="."/>
                                             </xsl:otherwise>
                                         </xsl:choose>
-
-                                        <div class="references">
-                                            <ul>
-                                                <xsl:for-each select="./references/reference">
-                                                    <b> Ссылки на другие законы </b>
-                                                    <li>
-                                                        <a href="/{@linked_doc_id}/#{@linked_element}">Документ № <xsl:value-of select="@linked_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@linked_element), '_')"/></a>
-                                                    </li>
-                                                </xsl:for-each>
-                                            </ul>
-                                        </div>
-                                        <div class="links">
-                                            <ul>
-                                                <xsl:for-each select="./links/link">
-                                                    <b> Документы которые ссылаются на данный закон </b>
-                                                    <li>
-                                                        <a href="/{@reference_doc_id}/#{@reference_element}">Документ № <xsl:value-of select="@reference_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@reference_element), '_')"/></a>
-                                                    </li>
-                                                </xsl:for-each>
-                                            </ul>
-                                        </div>
+                                        <xsl:for-each select="./references">
+                                            <div class="references">
+                                                <b> Ссылки на другие законы </b>
+                                                <ul>
+                                                    <xsl:for-each select="./reference">
+                                                        <li>
+                                                            <a href="/{@doc_id}/#{@element}">Документ № <xsl:value-of select="@doc_id"/> Статья № <xsl:value-of select="substring-after(string(@element), '_')"/></a>
+                                                        </li>
+                                                    </xsl:for-each>
+                                                </ul>
+                                            </div>
+                                        </xsl:for-each>
+                                        <xsl:for-each select="./links">
+                                            <div class="links">
+                                                <b> Документы которые ссылаются на данный закон </b>
+                                                <ul>
+                                                    <xsl:for-each select="./link">
+                                                        <li>
+                                                            <a href="/{@doc_id}/#{@element}">Документ № <xsl:value-of select="@doc_id"/> Статья № <xsl:value-of select="substring-after(string(@element), '_')"/></a>
+                                                        </li>
+                                                    </xsl:for-each>
+                                                </ul>
+                                            </div>
+                                        </xsl:for-each>
                                     </div>
                                 </xsl:for-each>
                             </div>
@@ -134,26 +137,30 @@
                                         <xsl:apply-templates select="."/>
                                     </xsl:otherwise>
                                 </xsl:choose>
-                                <div class="references">
-                                    <ul>
-                                        <xsl:for-each select="./references/reference">
-                                            <b> Ссылки на другие законы </b>
-                                            <li>
-                                                <a href="/{@linked_doc_id}/#{@linked_element}">Документ № <xsl:value-of select="@linked_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@linked_element), '_')"/></a>
-                                            </li>
-                                        </xsl:for-each>
-                                    </ul>
-                                </div>
-                                <div class="links">
-                                    <ul>
-                                        <xsl:for-each select="./links/link">
-                                            <b> Документы которые ссылаются на данный закон </b>
-                                            <li>
-                                                <a href="/{@reference_doc_id}/#{@reference_element}">Документ № <xsl:value-of select="@reference_doc_id"/> Статья № <xsl:value-of select="substring-after(string(@reference_element), '_')"/></a>
-                                            </li>
-                                        </xsl:for-each>
-                                    </ul>
-                                </div>
+                                <xsl:for-each select="./references">
+                                    <div class="references">
+                                        <b> Ссылки на другие законы </b>
+                                        <ul>
+                                            <xsl:for-each select="./reference">
+                                                <li>
+                                                    <a href="/{@doc_id}/#{@element}">Документ № <xsl:value-of select="@doc_id"/> Статья № <xsl:value-of select="substring-after(string(@element), '_')"/></a>
+                                                </li>
+                                            </xsl:for-each>
+                                        </ul>
+                                    </div>
+                                </xsl:for-each>
+                                <xsl:for-each select="./links">
+                                    <div class="links">
+                                        <b> Документы которые ссылаются на данный закон </b>
+                                        <ul>
+                                            <xsl:for-each select="./link">
+                                                <li>
+                                                    <a href="/{@doc_id}/#{@element}">Документ № <xsl:value-of select="@doc_id"/> Статья № <xsl:value-of select="substring-after(string(@element), '_')"/></a>
+                                                </li>
+                                            </xsl:for-each>
+                                        </ul>
+                                    </div>
+                                </xsl:for-each>
                             </div>
                         </xsl:for-each>
                     </xsl:otherwise>
@@ -167,4 +174,3 @@
         </a>
     </xsl:template>
 </xsl:stylesheet>
-<!--    str:replace(., "&#xA;", string("we")) -->

@@ -1,35 +1,58 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect
-from References.dom_modifier import update_xml_of_linked_document, update_xml_of_reference_document
 from document.models import Document
 from References.models import Reference
-from References.forms import WrapTextForm
+from References.forms import ReferenceForm
+from django.views.generic import View
+from update_content import XMLReferenceAdder
+
+SOURCE_DOCUMENT_ID = 'source_document_id'
+SOURCE_ELEMENT = 'source_element'
+TARGET_DOCUMENT_ID = 'target_document_id'
+TARGET_ELEMENT = 'target_element'
+HTTP_METHOD_POST = 'POST'
+HTTP_REFERER = "HTTP_REFERER"
 
 
-def wrap_text_in_tag(request):
-    if request.method == 'POST':
-        form = WrapTextForm(request.POST)
-        if form.is_valid():
-            ref = Reference()
-            ref.reference_document = Document.objects.get(pk=request.POST.get('reference_document_id'))
-            ref.reference_element = request.POST.get('reference_element')
-            ref.linked_document = Document.objects.get(pk=request.POST.get('linked_document_id'))
-            ref.linked_element = request.POST.get('linked_element')
+class AddReferenceView(View):
+    def post(self, request):
+        ReferenceAdder(request).add_reference()
+        return redirect(request.META.get(HTTP_REFERER) + request.POST.get(SOURCE_ELEMENT))
 
-            reference_document = ref.reference_document
-            linked_document = ref.linked_document
 
-            ref.save()
-            reference_document.content = update_xml_of_reference_document(reference_document.content,
-                                                                      ref.reference_element, ref.linked_document.id,
-                                                                      ref.linked_element)
-            reference_document.save()
+class ReferenceAdder(object):
+    def __init__(self, request):
+        self.request = request
+        self.target_element = self.request.POST.get(TARGET_ELEMENT)
+        self.target_document = Document.objects.get(pk=self.request.POST.get(TARGET_DOCUMENT_ID))
+        self.source_element = self.request.POST.get(SOURCE_ELEMENT)
+        self.source_document = Document.objects.get(pk=self.request.POST.get(SOURCE_DOCUMENT_ID))
+        self.form = ReferenceForm(self.request.POST)
 
-            if reference_document.id == linked_document.id:
-                linked_document.content = reference_document.content
+    def add_reference(self):
+        self.validate_form()
+        self.add_reference_and_update_documents()
 
-            linked_document.content = update_xml_of_linked_document(linked_document.content, ref.linked_element,
-                                                                ref.reference_document.id,
-                                                                ref.reference_element)
-            linked_document.save()
-    return redirect(request.META.get("HTTP_REFERER") + ref.reference_element)
+    def validate_form(self):
+        if self.form.is_valid() is False:
+            raise self.form.error
+
+    def add_reference_and_update_documents(self):
+        self.create_reference()
+        self.update_documents()
+        self.save_reference()
+
+    def create_reference(self):
+        reference = Reference()
+        reference.source_document = self.source_document
+        reference.source_element = self.source_element
+        reference.target_document = self.target_document
+        reference.target_element = self.target_element
+        self.reference = reference
+
+    def update_documents(self):
+        XMLReferenceAdder(self.reference).go()
+
+    def save_reference(self):
+        self.reference.save()
+
