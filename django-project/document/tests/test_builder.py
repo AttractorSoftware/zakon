@@ -1,6 +1,6 @@
 #coding=utf-8
 from unittest import TestCase
-from document.law_parser.builder import Builder, ParserError
+from document.law_parser.builder import Builder
 from document.law_parser.elements.comment import Comment
 from document.law_parser.elements.section import Section
 from document.law_parser.elements.text_section import TextSection
@@ -19,13 +19,13 @@ class BuilderTest(TestCase):
 
         self.assertEqual(u'НАЛОГОВЫЙ КОДЕКС КЫРГЫЗСКОЙ РЕСПУБЛИКИ', builder.build_name())
 
-        builder.text = \
+        builder= Builder(
             u'г.Бишкек\n'\
             u'от 5 января 1998 года N 1\n'\
             u'\n'\
             u'ГРАЖДАНСКИЙ КОДЕКС КЫРГЫЗСКОЙ РЕСПУБЛИКИ\n'\
             u'\n'\
-            u'(В редакции Законов КР от )\n'
+            u'(В редакции Законов КР от wqewqe)\n')
 
         self.assertEqual(u'ГРАЖДАНСКИЙ КОДЕКС КЫРГЫЗСКОЙ РЕСПУБЛИКИ', builder.build_name())
 
@@ -48,7 +48,7 @@ class BuilderTest(TestCase):
             u'18 декабря 2009 года N 313, 21 декабря 2011 года N 241,\n'\
             u'13 апреля 2012 года N 35, 13 декабря 2012 года N 199)\n'\
             u'\n'\
-            u'Статья 1.')
+            u'Статья 1.\n')
 
         self.assertEqual(
             u'(В редакции Законов КР от 15 июля 2009 года N 207,\n'\
@@ -62,8 +62,8 @@ class BuilderTest(TestCase):
             u'\n'\
             u'НАЛОГОВЫЙ')
 
-        self.assertEqual(u"""г.Бишкек
-от 17 октября 2008 года N 230""", builder.build_place_and_date())
+        self.assertEqual(u'г.Бишкек\n'
+u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
     def test_build_articles_with_items(self):
         builder = Builder(
