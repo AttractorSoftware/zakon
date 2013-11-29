@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from django.test import LiveServerTestCase
 from nose.tools import assert_equals
+from document.selenium_tests.features.modal import i_load_the_document_zakon, i_load_the_document_Nalogovij_Kodeks
 from document.selenium_tests.features.view_document import i_go_to_the_main_page, i_am_on_upload_page, upload_document
 from zakon.settings import PROJECT_ROOT
 from time import sleep
@@ -50,6 +51,7 @@ def i_click_the_link(step, link_text):
 
 @step(u'открыто окно подтверждения на странице "(.*)"')
 def opened_confirm_form(step, page_name):
+    i_load_the_documents_zakon_and_Nalogovij_Kodeks(step)
     i_am_on_page(step, page_name)
     i_click_the_add_link_button(step, '1')
     i_click_the_link(step, 'НАЛОГОВЫЙ КОДЕКС КЫРГЫЗСКОЙ РЕСПУБЛИКИ')
@@ -76,6 +78,11 @@ def i_add_link_to_document(step, source_article_number, target_article_name, doc
 def i_see_link_in_the_content_of_article(step, article_number, link_text):
     article_content = world.browser.find_element_by_id('article_'+article_number)
     assert article_content.find_element_by_partial_link_text(link_text)
+
+@step(u'загружены документы НАЛОГОВЫЙ КОДЕКС, ЗАКОН КЫРГЫЗСКОЙ РЕСПУБЛИКИ О государственной регистрации юридических лиц')
+def i_load_the_documents_zakon_and_Nalogovij_Kodeks(step):
+    i_load_the_document_zakon(step)
+    i_load_the_document_Nalogovij_Kodeks(step)
 
 
 

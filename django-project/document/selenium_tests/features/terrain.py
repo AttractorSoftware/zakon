@@ -16,6 +16,6 @@ def teardown_browser(total):
     call_command('syncdb', interactive=False, verbosity=1)
     world.browser.quit()
 
-@after.each_feature
-def after_feature(feature):
+@after.each_scenario
+def after_scenario(scenario):
     call_command('flush', interactive=False, verbosity=1)

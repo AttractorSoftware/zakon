@@ -79,3 +79,8 @@ def i_see_next_articles(step, page_name):
 @step(u'вижу статью "(.*)" в контенте документа "(.*)"')
 def i_see_article_in_content_of_document(step, article_name, law_name):
     world.browser.find_element_by_xpath('//*[@id="accordion"]//a[normalize-space(text())="'+law_name+'"]/../../div[2]//a[text()="'+article_name+'"]')
+
+@step(u'вижу следующие статьи в модальном окне')
+def i_see_next_links_on_modal_form(step):
+    for link_dictionary in step.hashes:
+        world.browser.find_element_by_xpath('//*[@id="accordion"]//a[normalize-space(text())="'+link_dictionary['law_name']+'"]/../../div[2]//a[text()="'+link_dictionary['article_name']+'"]')
