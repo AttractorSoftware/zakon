@@ -12,8 +12,8 @@ class Builder(object):
         self._text = text
         self._search_flags = re.M | re.DOTALL | re.U | re.I
 
-        self._place_and_date_build_info = ElementBuild(u'^г\.[а-яА-Я,]*\s*?от.+?$', self._search_flags)
-        self._revisions_build_info = ElementBuild(u'^\s*\(В редакции Закон.*? КР от .*?\)', self._search_flags)
+        self._place_and_date_build_info = ElementBuild(u'(^г\.[а-яА-Я,]*\s*?от.+?$)', self._search_flags)
+        self._revisions_build_info = ElementBuild(u'(^\s*\(В редакции Закон.*? КР от .*?\))', self._search_flags)
 
         self._part_number = 1
 
@@ -48,9 +48,10 @@ class Builder(object):
         self._sections_start = self._find_start_of_sections()
         self._sections_end = len(self._text)
         self.errors = []
+        self._header_text = self.find_header_text()
 
-    def escape_braces(self, highest_section_text):
-        return highest_section_text.replace("(", "\(").replace(")", "\)")
+    def escape_braces(self, text):
+        return text.replace("(", "\(").replace(")", "\)")
 
     def _find_start_of_sections(self):
         highest_section_text = self._get_first_highest_section_text()
@@ -65,10 +66,21 @@ class Builder(object):
                 last_match_of_first_highest_section = match
         return last_match_of_first_highest_section.start() if last_match_of_first_highest_section else len(self._text)
 
+    def find_header_text(self):
+        highest_section_text = self._get_first_highest_section_text()
+        if highest_section_text:
+            match= ElementBuild(u'(^.+?)(?='+highest_section_text+u')', self._search_flags)
+            text=match.template.search(self._text)
+            if text:
+                header_text=text.group()
+            else: header_text = ''
+        else: header_text = self._text
+
+        return header_text
+
     def _get_first_highest_section_text(self):
         section_text_and_start_positions = {}
         part_match = self._part_build_info.template.search(self._text)
-        # print part_match
         if part_match:
             section_text_and_start_positions[part_match.start()] = part_match.group()
         division_match = self._division_build_info.template.search(self._text)
@@ -84,56 +96,55 @@ class Builder(object):
         keys.sort()
         return section_text_and_start_positions[keys[0]] if keys else None
 
-    def _find_match_text_or_raise_error_with_msg(self, match, error_msg):
+    def _remove_space_on_both_sides_or_saves_error_with_msg(self, match, error_msg):
         if match:
             result = match.strip()
         else:
             self.errors.append(error_msg)
-            result = ''
+            result = error_msg
         return result
 
+    def delete_text_in_the_name(self, name, text):
+        name = name.replace(text, '')
+        return name
+
+    def search_element_in_the_text(self, text, template):
+        match= template.search(text)
+        if match:
+            element = match.group()
+        else: element=''
+        return element
+
+    def create_name_ElementBuild(self):
+        revision = self.search_element_in_the_text(self._header_text,self._revisions_build_info.template)
+        if revision:
+            revision = self.escape_braces(revision)
+            name_build_info = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?=' + revision + u')', self._search_flags)
+        else:
+            name_build_info = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*)', self._search_flags)
+
+        name = self.search_element_in_the_text(self._header_text, name_build_info.template)
+        return name
+
     def build_name(self):
-        template = self._place_and_date_build_info.template.search(self._text)
-        if template:
-            place_and_date = template.group()
-        else: place_and_date = ''
+        place_and_date = self.search_element_in_the_text(self._header_text,self._place_and_date_build_info.template)
 
-        template = self._revisions_build_info.template.search(self._text)
-        if template:
-            revision = template.group()
-            revision = revision.replace('(','\(')
-            revision = revision.replace(')','\)')
-        else: revision = ''
+        name = self.create_name_ElementBuild()
+        name = self.delete_text_in_the_name(name, place_and_date)
 
-        name_build_info = ElementBuild(u'(^[ а-яА-Я]+? РЕСПУБЛИКИ.*?)(?='+revision+u')', self._search_flags)
-        name = name_build_info.template.search(self._text)
-        if name:
-            name = name.group()
-            name = name.replace(place_and_date, '')
-        else: name = ''
+        comment= self.search_element_in_the_text(name, self._comment_build_info.template)
+        name = self.delete_text_in_the_name(name, comment)
 
-        comment  = self._comment_build_info.template.search(name)
-        if comment:
-            comment = comment.group()
-            name = name.replace(comment, '')
-
-        return self._find_match_text_or_raise_error_with_msg(name,
+        return self._remove_space_on_both_sides_or_saves_error_with_msg(name,
                                                              u'Не найдено наименование закона')
 
     def build_revisions(self):
-        template = self._revisions_build_info.template.search(self._text)
-        if template:
-            revision = template.group()
-        else: revision = ''
-        return self._find_match_text_or_raise_error_with_msg(revision,
+        revision = self.search_element_in_the_text(self._header_text,self._revisions_build_info.template)
+        return self._remove_space_on_both_sides_or_saves_error_with_msg(revision,
                                                              u'Не найдены ревизии закона')
-
     def build_place_and_date(self):
-        template = self._place_and_date_build_info.template.search(self._text)
-        if template:
-            place_and_data = template.group()
-        else: place_and_data = ''
-        return self._find_match_text_or_raise_error_with_msg(place_and_data,
+        place_and_data = self.search_element_in_the_text(self._header_text,self._place_and_date_build_info.template)
+        return self._remove_space_on_both_sides_or_saves_error_with_msg(place_and_data,
                                                              u'Не найдены место и дата принятия')
 
     def _get_iterator(self, template, start, end):

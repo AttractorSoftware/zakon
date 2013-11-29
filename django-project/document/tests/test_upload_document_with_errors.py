@@ -9,12 +9,11 @@ class Test_UploadDocument_WithError(TestCase):
             u'Закон закон неправильный закон\n'
             u'Нету имени закона'
             )
-        result = builder.build_name()
-        self.assertEqual(u'Не найдено наименование закона', result)
-
         error = []
-        error_msg = u'Не найдено наименование закона'
-        error.append(error_msg)
+        result = builder.build_revisions()
+        self.assertEqual(u'Не найдены ревизии закона', result)
+        error.append(result)
+
         result =builder.errors
         self.assertEqual(error, result)
 
@@ -23,12 +22,11 @@ class Test_UploadDocument_WithError(TestCase):
             u'Закон закон неправильный закон\n'
             u'Нету место и дата принятие закона'
             )
-        result = builder.build_place_and_date()
-        self.assertEqual(u'Не найдены место и дата принятия', result)
-
         error = []
-        error_msg= u'Не найдены место и дата принятия'
-        error.append(error_msg)
+        result = builder.build_revisions()
+        self.assertEqual(u'Не найдены ревизии закона', result)
+        error.append(result)
+
         result =builder.errors
         self.assertEqual(error,result)
 
@@ -37,12 +35,12 @@ class Test_UploadDocument_WithError(TestCase):
             u'Закон закон неправильный закон\n'
             u'Нету ревизии закона'
             )
-        result = builder.build_revisions()
-        self.assertEqual(u'Не найдены ревизии закона', result)
 
         error = []
-        error_msg= u'Не найдены ревизии закона'
-        error.append(error_msg)
+        result = builder.build_revisions()
+        self.assertEqual(u'Не найдены ревизии закона', result)
+        error.append(result)
+
         result =builder.errors
         self.assertEqual(error,result)
 
