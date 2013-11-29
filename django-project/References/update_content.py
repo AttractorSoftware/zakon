@@ -2,8 +2,8 @@
 from StringIO import StringIO
 from lxml import etree
 
-PARAMETER_ID = "doc_id"
-PARAMETER_ELEMENT = "element"
+DOCUMENT_ID_ATTRIBUTE_NAME = "doc_id"
+LINKED_ELEMENT_ATTRIBUTE_NAME = "element"
 
 
 class XMLReferenceAdder:
@@ -34,27 +34,20 @@ class XMLReferenceAdder:
         self.target_document.save()
 
     def add_reference(self, selected_element):
-        NODE_NAME = "references"
-        XPATH_EXPRESSION = "//references"
-
-        if selected_element.find(NODE_NAME) is None:
-            parent_node = etree.SubElement(selected_element, NODE_NAME)
-            self.add_sub_node(self.target_document, self.target_element, parent_node)
-        else:
-            parent_node = selected_element.xpath(XPATH_EXPRESSION)[0]
-            self.add_sub_node(self.target_document, self.target_element, parent_node)
-
+        parent_element = self.find_or_create_subelement_in_element("references", selected_element)
+        self.add_sub_node(self.target_document, self.target_element, parent_element)
 
     def add_link(self, selected_element):
-        NODE_NAME = "links"
-        XPATH_EXPRESSION = "//links"
+        parent_element = self.find_or_create_subelement_in_element("links", selected_element)
+        self.add_sub_node(self.source_document, self.source_element, parent_element)
 
-        if selected_element.find(NODE_NAME) is None:
-            parent_node = etree.SubElement(selected_element, NODE_NAME)
-            self.add_sub_node(self.source_document, self.source_element, parent_node)
+    def find_or_create_subelement_in_element(self, element_name, selected_element):
+        XPATH_EXPRESSION = "//" + element_name
+        if selected_element.find(element_name) is None:
+            parent_node = etree.SubElement(selected_element, element_name)
         else:
             parent_node = selected_element.xpath(XPATH_EXPRESSION)[0]
-            self.add_sub_node(self.source_document, self.source_element, parent_node)
+        return parent_node
 
     def add_sub_node(self, document, element, parent_node):
         if parent_node.tag == "references":
@@ -62,9 +55,9 @@ class XMLReferenceAdder:
         else:
             childnode_name = "link"
 
-        child_node = etree.SubElement(parent_node, childnode_name)
-        child_node.set(PARAMETER_ID, document.id.__str__())
-        child_node.set(PARAMETER_ELEMENT, element.__str__())
+        child_element = etree.SubElement(parent_node, childnode_name)
+        child_element.set(DOCUMENT_ID_ATTRIBUTE_NAME, document.id.__str__())
+        child_element.set(LINKED_ELEMENT_ATTRIBUTE_NAME, element.__str__())
 
     def get_document_root(self, document_content):
         parser = etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
