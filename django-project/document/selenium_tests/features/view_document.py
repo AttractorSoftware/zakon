@@ -34,7 +34,7 @@ def i_see_document_link(step, expected_response):
     i_see_link(expected_response)
 
 
-@step(u'я загрузил документ "(.*)"')
+@step(u'я загрузил документ "(.*)"$')
 def i_have_uploaded_document(step, doc_name):
     i_am_on_upload_page(step)
     upload_document(step, doc_name)

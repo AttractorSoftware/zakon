@@ -31,7 +31,6 @@ def i_have_uploaded_document(step, docs_dir):
           u"Количество загруженных с ошибками: " + docsUploadedWithoutErrorCount + "\r\n"
 
 
-@step(u'загружаю документ "(.*?)"')
 def upload_document(step, expected_file_name):
     global docsUploadedWithErrorCount
     elem_browse_file = world.browser.find_element_by_id('id_doc_file')

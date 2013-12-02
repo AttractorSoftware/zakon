@@ -28,7 +28,7 @@ def i_see_page_with_header(step, expected_title):
 def i_see_error_text_instead_of_the_name(step, header_name):
     check_the_header(header_name)
 
-@step(u'вижу текст "(.*)" вместо даты и место принятия закона')
+@step(u'вижу текст "(.*)" вместо даты и места принятия закона')
 def i_dont_see_name_of_law(step, error_text):
     found_text = world.browser.find_element_by_xpath('//*[@id="list"]/div/p[@id="place"]')
     assert_equals(found_text.text.strip(), error_text)
@@ -60,4 +60,14 @@ def i_push_cancel_button(step):
     found_button.click()
     wait_for()
 
+@step(u'я загрузил документ "(.*)" с ошибками')
+def i_load_the_document_with_errors(step, file_name):
+    i_am_on_upload_page(step)
+    upload_document(step, file_name)
+    i_push_upload_button(step, 'Загрузить с ошибками')
+
+@step(u'вижу документ загруженный с ошибками:')
+def i_see_uploaded_document_with_errors(step):
+    law_link_text = step.multiline.replace('\n', " ")
+    world.browser.find_element_by_link_text(law_link_text)
 
