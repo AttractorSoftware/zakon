@@ -34,8 +34,8 @@
         </div>
     </div>
     <script type="text/javascript">
-        var selected;
-        var selRange, txt;
+        var target_document_id;
+
         $('document').ready(function () {
 
             $("a#getWindow").click(function () {
@@ -45,40 +45,7 @@
             getDocumentsList();
         })
 
-        $('#list').mouseup(function () {
-            showClickMeButton();
-        });
-        $('#list').dblclick(function () {
-            showClickMeButton();
-        });
-
-        $('#list').click(function () {
-            if (selectedText().length <= 0 && !$('#ShowModalWindow').hasClass('hide')) {
-                $('#ShowModalWindow').addClass('hide');
-            }
-        });
-
-        function showClickMeButton() {
-            if (selectedText().length > 0) {
-                $('#ShowModalWindow').removeClass('hide');
-                selected = window.getSelection();
-                selRange = selected.getRangeAt(0);
-            }
-        }
-
-        function selectedText() {
-            if (window.getSelection)
-                txt = window.getSelection().toString();
-            else if (document.getSelection)
-                txt = document.getSelection();
-            else if (document.selection)
-                txt = document.selection.createRange().text;
-            return txt;
-        }
-
-        var target_document_id;
-
-        function sendSelectionTextPositions() {
+        function showConfirmDialog() {
             if (confirm("Вы хотите добавить ссылку?")) {
                 $('#getWindow').addClass('hide');
                 $('#modal').submit();
@@ -100,6 +67,7 @@
                     jQuery(this).attr('doc_id', id.replace(/[^0-9\s]/gi, ''));
                     jQuery(this).click(function () {
                         $('#target_document_id').attr('value', jQuery(this).attr('doc_id'));
+                        loadContentOfLawOnModalForm($('#target_document_id').attr('value'));
                     });
 
                     if (item == 0) {
@@ -110,11 +78,11 @@
                     jQuery(this).attr('data-toggle', "collapse");
                     jQuery(this).attr('data-parent', "#accordion");
                     jQuery(this).wrap('<div class="accordion-group"><div class="accordion-heading"></div></div>');
-                    jQuery(this).after('<button type="submit" class="btn btn-primary add_link_btn" onclick="sendSelectionTextPositions();  return false;" title="Добавить ссылку"><i class="icon-tags icon-white "></i></button>');
+                    jQuery(this).after('<button type="submit" class="btn btn-primary add_link_btn" onclick="showConfirmDialog();  return false;" title="Добавить ссылку"><i class="icon-tags icon-white "></i></button>');
                     var parsedIntId = parseInt(id.replace(/\//g, ''))
                     jQuery(jQuery(this).context.parentElement).after('\n <div id=' + 'collapse_' + item + ' class="accordion-body collapse ' + div_class + ' "><div class="accordion-inner accordion-inner-doc' + parsedIntId + '"></div></div>');
 
-                    fullDocumentView(id);
+
                 });
 
                 $('.accordion-inner').click(function (event) {
@@ -124,17 +92,17 @@
                         $('#target_element').attr('value', $target.attr('href'));
                     }
 
-                    sendSelectionTextPositions();
+                    showConfirmDialog();
                 });
 
             });
         }
 
         var elements;
-        function fullDocumentView(id) {
+        function loadContentOfLawOnModalForm(id) {
 
             parsedIntId = parseInt(id.replace(/\//g, ''))
-            $(".accordion-inner-doc" + parsedIntId).load(id + " .contents");
+            $(".accordion-inner-doc" + parsedIntId).load("/" + id + " #contents");
 
             $('.accordion-inner').mouseover(function (event) {
                 var $target = $(event.target);
