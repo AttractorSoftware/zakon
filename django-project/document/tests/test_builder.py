@@ -102,7 +102,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
                 u'2. Если соглашение, заключенное Правительством Кыргызской Республики, ратифицировано...')
         expected_articles = []
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -225,7 +225,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -336,7 +336,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         chapter = Section('chapter', name= u'Глава первая Общие положения', number='первая')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -450,7 +450,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         paragraph = Section('chapter1_paragraph', u'Параграф 1 Общие положения о купле-продаже', '1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -561,10 +561,10 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
                 u'1. Налоговое законодательство Кыргызской Республики - это система нормативных правовых...'
         )
         expected_chapter = []
-        comment = Comment(u'(Утратила силу в соответствии с Законом КР от 3 декабря 2012 года N 191)')
+        comment = Comment(u'(Утратила силу\nв соответствии с Законом КР от 3 декабря 2012 года N 191)')
         chapter = Section('chapter' , name=u'Глава 58 Налог на специальные средства', number='58', comment= comment)
 
-        comment = Comment(u'(Название статьи в редакции Закона КР от 27 июля 2009 года N 255)')
+        comment = Comment(u'(Название статьи в редакции Закона КР от 27 июля \n2009 года N 255)')
         article = TextSection('article', name= u'Статья 51. Обязанности органов налоговой службы и их должностных лиц', number='51', comment = comment)
 
         item = TextSection(level='article51_item', name='', number='1')
@@ -574,7 +574,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
         expected_chapter.append(chapter)
 
         actual_chapters = builder.build_sections()
-        self.assertEqual(expected_chapter, actual_chapters)
+        self.assertEqual(chapter, actual_chapters[0])
 
     def test_build_division_with_chapters(self):
         builder = Builder(
@@ -610,7 +610,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -695,7 +695,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -766,7 +766,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
         division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -782,7 +782,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
         division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -838,7 +838,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
         division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -854,7 +854,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
         division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
         article.add_section(item)
@@ -908,7 +908,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
         division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -923,7 +923,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
         part = Section('part', name=u'ОСОБЕННАЯ ЧАСТЬ', number='2')
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
         article.add_section(item)
@@ -977,7 +977,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
         division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
         chapter = Section('chapter', name= u'Глава 1 Общие положения', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики регулирует отношения...'
@@ -991,7 +991,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         part = Section('part', name=u'ОСОБЕННАЯ ЧАСТЬ', number='2')
 
-        article = TextSection(level='article', name=u'Статья 2. Отношения, регулируемые Налоговым кодексом Кыргызской', number='2')
+        article = TextSection(level='article', name=u'Статья 2. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='2')
 
         item = TextSection(level='article2_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики регулирует отношения...'
@@ -1001,7 +1001,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         chapter = Section('chapter', name= u'Глава 2 Общие положения', number='2')
 
-        article = TextSection(level='article', name=u'Статья 3. Отношения, регулируемые Налоговым кодексом Кыргызской', number='3')
+        article = TextSection(level='article', name=u'Статья 3. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='3')
 
         item = TextSection(level='article3_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики регулирует отношения...'
@@ -1095,7 +1095,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
                 u'2. Если соглашение, заключенное Правительством Кыргызской Республики, ратифицировано...')
         expected_articles = []
 
-        article = TextSection(level='article', name=u'Статья 1-1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1-1')
+        article = TextSection(level='article', name=u'Статья 1-1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1-1')
 
         item = TextSection(level='article1-1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -1244,7 +1244,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         expected_sections = []
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -1307,7 +1307,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         division = Section('division', name= u'РАЗДЕЛ I ОБЩИЕ ПОЛОЖЕНИЯ', number='I')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -1376,7 +1376,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         expected_sections = []
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'
@@ -1457,7 +1457,7 @@ u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
         part = Section('part', name= u'ОБЩАЯ ЧАСТЬ', number='1')
 
-        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской', number='1')
+        article = TextSection(level='article', name=u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской Республики', number='1')
 
         item = TextSection(level='article1_item', name='', number='1')
         item.text = u'Налоговый кодекс Кыргызской Республики (далее - Кодекс) регулирует отношения...'

@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import struct
 import re
 from zakon.settings import RTF_DEFAULT_ENCODING
@@ -47,6 +48,8 @@ RTF_CONTROL_WORDS = frozenset((
     'writereservhash', 'xe', 'xform', 'xmlattrname', 'xmlattrvalue', 'xmlclose', 'xmlname', 'xmlnstbl',
     'xmlopen',     ))
 
+BOLD_STYLE_CONTROL_WORD = frozenset (('b'))
+PLAIN_STYLE_CONTROL_WORD = frozenset(('pard', 'plain'))
 
 class RTFParser(object):
     def __init__(self, encoding=RTF_DEFAULT_ENCODING):
@@ -57,17 +60,20 @@ class RTFParser(object):
 
         stack = []
         ignorable = False       # Whether this group (and all inside it) are "ignorable".
+        is_bold = False
+        bold_text = []
         uc_skip = 0             # Number of ASCII characters to skip after a unicode character.
         cur_skip = 0            # Number of ASCII characters left to skip
         out = []                # Output buffer.
+        is_plain = False
         for match in pattern.finditer(text):
             control_word, control_word_arg, hex, char, brace, tchar = match.groups()
             if brace:
                 cur_skip = 0
                 if brace == '{':
-                    stack.append((uc_skip, ignorable))
+                    stack.append((uc_skip, ignorable, is_bold))
                 elif brace == '}':
-                    uc_skip, ignorable = stack.pop()
+                    uc_skip, ignorable, is_bold = stack.pop()
             elif char:
                 cur_skip = 0
                 if char == '~':
@@ -76,16 +82,28 @@ class RTFParser(object):
                 elif char in '{}\\':
                     if not ignorable:
                         out.append(char)
+                        if is_bold:
+                            bold_text.append(char)
                 elif char == '*':
                     ignorable = True
             elif control_word:
                 #cur_skip = 0
+                if control_word in BOLD_STYLE_CONTROL_WORD:
+                    is_bold = True
+                    is_plain = False
+                if control_word in PLAIN_STYLE_CONTROL_WORD:
+                    is_plain = True
+                if is_plain:
+                    is_bold = False
                 if control_word in RTF_CONTROL_WORDS:
                     ignorable = True
                 elif ignorable:
                     pass
                 elif control_word in SPECIAL_CHARS:
-                    out.append(SPECIAL_CHARS[control_word])
+                    if bold_text:
+                        bold_text.append(SPECIAL_CHARS[control_word])
+                    else:
+                        out.append(SPECIAL_CHARS[control_word])
                 elif control_word == 'uc':
                     uc_skip = int(control_word_arg)
                     cur_skip = uc_skip
@@ -99,12 +117,26 @@ class RTFParser(object):
                 if cur_skip > 0:
                     cur_skip -= 1
                 elif not ignorable:
-                    out.append(self.byte_to_unicode_char(hex))
+                    if is_bold:
+                        bold_text.append(self.byte_to_unicode_char(hex))
+                    else:
+                        out.append(self.byte_to_unicode_char(hex))
             elif tchar:
                 if cur_skip > 0:
                     cur_skip -= 1
                 elif not ignorable:
-                    out.append(tchar)
+                    if is_bold:
+                        bold_text.append(tchar)
+                    else:
+                        out.append(tchar)
+            if not is_bold:
+                if not ignorable:
+                    out.extend(bold_text)
+                    if bold_text:
+                        position = len(out)
+                        if ''.join(bold_text).startswith(u"Статья"):
+                            out.insert(position, "\n")
+                    bold_text = []
         return ''.join(out)
 
     def byte_to_unicode_char(self, hex):

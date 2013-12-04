@@ -39,9 +39,9 @@ class Builder(object):
         self._paragraphs_build_info = ElementBuild(u'(?P<name>^ *?Параграф (?P<number>\d+(-\d+)?).+?(?=\n[ \t]*?\n))',
                                                    self._search_flags)
 
-        self._article_with_comment_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\n)',
+        self._article_with_comment_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\n\n)',
                                                              self._search_flags, 'article')
-        self._article_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\(|\n)',
+        self._article_build_info = ElementBuild(u'(?P<name>^ *Статья (?P<number>\d+(-\d+)?) *?\s*.*?)(?=\(|\n\n)',
                                                 self._search_flags, 'article')
         self._article_text_build_info = ElementBuild(u'.+', self._search_flags)
 

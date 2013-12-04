@@ -13,22 +13,22 @@ class ElementTests(TestCase):
 
     def test_description_to_xml(self):
         description = Header("name", "place")
-        self.assertEqual('<description><name>name</name><place>place</place></description>', description.to_xml())
+        self.assertEqual('<header><name>name</name><place>place</place></header>', description.to_xml())
 
     def test_description_with_revisions_to_xml(self):
         description = Header("name", "place", "(from 1995 year);(from 1997 year)")
-        xml = '<description>' \
+        xml = '<header>' \
               '<name>name</name>' \
               '<place>place</place>' \
               '<revisions>(from 1995 year);(from 1997 year)</revisions>' \
-              '</description>'
+              '</header>'
         self.assertEqual(xml, description.to_xml())
 
     def test_document_with_description(self):
         description = Header("name", "place")
         document = Document(description)
         xml = '<document>' \
-              '<description><name>name</name><place>place</place></description>' \
+              '<header><name>name</name><place>place</place></header>' \
               '</document>'
         self.assertEqual(xml, document.to_xml())
 
@@ -126,7 +126,7 @@ class ElementTests(TestCase):
         section = Section("part", "name", "1")
         document.add_section(section)
         xml = '<document>' \
-              '<description><name>name</name><place>place</place></description>' \
+              '<header><name>name</name><place>place</place></header>' \
               '<section id="part_1" level="part" name="name" number="1"/>' \
               '</document>'
         self.assertEqual(xml, document.to_xml())
