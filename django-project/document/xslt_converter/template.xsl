@@ -3,14 +3,19 @@
     <xsl:template match="/">{#without html tag xsl work incorrect#}
         <html>
             <p id="place">
-                <xsl:value-of select="document/description/place"/>
+                <xsl:value-of select="document/header/place"/>
             </p>
             <h1>
-                <xsl:value-of select="document/description/name"/>
+                <xsl:value-of select="document/header/name"/>
             </h1>
             <p id="revisions">
-                <xsl:value-of select="document/description/revisions"/>
+                <xsl:value-of select="document/header/revisions"/>
             </p>
+
+            <p id="description">
+                <xsl:value-of select="document/header/description"/>
+            </p>
+
             <div id="contents" class="contents">
                 <xsl:choose>
                     <xsl:when test="//section">

@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <document>
-    <description>
+    <header>
         <name>ГРАЖДАНСКИЙ КОДЕКС КЫРГЫЗСКОЙ РЕСПУБЛИКИ</name>
         <place>г.Бишкек
 
             от 5 января 1998 года N 1
         </place>
         <revisions>(В редакции Законов КР от 19 марта 2008 года N 24, 30 марта 2009 года N 104)</revisions>
-    </description>
+    </header>
     <section id="part:" level="part" name="ЧАСТЬ II" number="">
         <section id="division:IV" level="division" name="РАЗДЕЛ IV  ОТДЕЛЬНЫЕ ВИДЫ ОБЯЗАТЕЛЬСТВ" number="IV">
             <section id="chapter:23" level="chapter" name="Глава 23  Купля-продажа" number="23">

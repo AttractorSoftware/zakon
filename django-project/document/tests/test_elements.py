@@ -1,6 +1,6 @@
 from unittest import TestCase
 from document.law_parser.elements.comment import Comment
-from document.law_parser.elements.description import Description
+from document.law_parser.elements.header import Header
 from document.law_parser.elements.document import *
 from document.law_parser.elements.section import Section
 from document.law_parser.elements.text_section import TextSection
@@ -12,11 +12,11 @@ class ElementTests(TestCase):
         self.assertEqual('<document/>', document.to_xml())
 
     def test_description_to_xml(self):
-        description = Description("name", "place")
+        description = Header("name", "place")
         self.assertEqual('<description><name>name</name><place>place</place></description>', description.to_xml())
 
     def test_description_with_revisions_to_xml(self):
-        description = Description("name", "place", "(from 1995 year);(from 1997 year)")
+        description = Header("name", "place", "(from 1995 year);(from 1997 year)")
         xml = '<description>' \
               '<name>name</name>' \
               '<place>place</place>' \
@@ -25,7 +25,7 @@ class ElementTests(TestCase):
         self.assertEqual(xml, description.to_xml())
 
     def test_document_with_description(self):
-        description = Description("name", "place")
+        description = Header("name", "place")
         document = Document(description)
         xml = '<document>' \
               '<description><name>name</name><place>place</place></description>' \
@@ -121,7 +121,7 @@ class ElementTests(TestCase):
 
 
     def test_document_with_sections(self):
-        description = Description("name", "place")
+        description = Header("name", "place")
         document = Document(description)
         section = Section("part", "name", "1")
         document.add_section(section)

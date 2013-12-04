@@ -65,6 +65,22 @@ class BuilderTest(TestCase):
         self.assertEqual(u'г.Бишкек\n'
 u'от 17 октября 2008 года N 230', builder.build_place_and_date())
 
+    def test_build_if_description_true(self):
+        builder = Builder(
+            u'Настоящий Кодекс регулирует земельные отношения в Кыргызской Республике, а также\n'\
+            u'направлен на создание рационального использования земли и ее\n'\
+            u'охраны.\n'\
+            u'РАЗДЕЛ I')
+
+        self.assertEqual(u'Настоящий Кодекс регулирует земельные отношения в Кыргызской Республике, а также\n'\
+            u'направлен на создание рационального использования земли и ее\n'\
+            u'охраны.', builder.build_description())
+
+    def test_build_if_description_false(self):
+        builder = Builder(u'Для целей настоящего Закона используются следующие понятия:')
+
+        self.assertEqual(u'', builder.build_description())
+
     def test_build_articles_with_items(self):
         builder = Builder(
             u'Статья 1. Отношения, регулируемые Налоговым кодексом Кыргызской\n'\

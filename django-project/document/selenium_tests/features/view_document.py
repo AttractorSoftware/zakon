@@ -152,6 +152,12 @@ def i_see_comment_to_article(step, article_number, expected_comment):
     assert_equals(expected_comment, comment.replace('\n', " ")[7:])
 
 
+
+@step(u'вижу описание к заголовку "(.*)" с текстом "(.*)"')
+def i_see_description_to_header(step, doc_name, description_text):
+    world.browser.find_element_by_xpath('//*[@id="list"]/div/h1[text()="'+doc_name+'"]/following-sibling::p[contains(text(),"'+description_text+'")]')
+
+
 def navigate_to_page(expected_response):
     elem_href = world.browser.find_element_by_link_text(expected_response)
     elem_href.click()

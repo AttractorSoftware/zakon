@@ -13,14 +13,17 @@ class Builder(object):
         self._search_flags = re.M | re.DOTALL | re.U | re.I
 
         self._place_and_date_build_info = ElementBuild(u'(^г\.[а-яА-Я,]*\s*?от.+?$)', self._search_flags)
+
         self._revisions_build_info = ElementBuild(u'(^\s*\(В редакции Закон.*? КР от .*?\))', self._search_flags)
+
+        self._description_build_info = ElementBuild(u'(^Настоящий.*)', self._search_flags)
 
         self._part_number = 1
 
         self._part_build_info = ElementBuild(u'(?P<name>^[\w ]*? *ЧАСТЬ[\sIVXLCDM]*?)(?P<number> )?$',
                                              self._search_flags, 'part')
 
-        self._division_build_info = ElementBuild(u'(?P<name>^ *?РАЗДЕЛ (?P<number>[IVXLCDM]+) *?\s*.*?$)',
+        self._division_build_info = ElementBuild(u'(?P<name>^ *?РАЗДЕЛ (?P<number>[IVXLCDM\w\d]+(-\d+)?) *?\s*.*?$)',
                                                  self._search_flags, 'division')
 
         self._sub_division_build_info = ElementBuild(u'(?P<name>^ *?Подраздел (?P<number>\d+)\.? *?\s*.*?$)',
@@ -146,6 +149,11 @@ class Builder(object):
         place_and_data = self.search_element_in_the_text(self._header_text,self._place_and_date_build_info.template)
         return self._remove_space_on_both_sides_or_saves_error_with_msg(place_and_data,
                                                              u'Не найдены место и дата принятия')
+    def build_description(self):
+        description = self.search_element_in_the_text(self._header_text, self._description_build_info.template)
+        if description:
+            description = description.strip()
+        return description
 
     def _get_iterator(self, template, start, end):
         return template.finditer(self._text[start:end])
