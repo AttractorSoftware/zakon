@@ -1,5 +1,4 @@
-from django.conf.urls import patterns, url
-from References.urls import *
+from reference.urls import *
 
 import views
 

@@ -1,16 +1,18 @@
 import os
 from string import replace
+import time
+
 from django.core.files.uploadedfile import UploadedFile
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from document.rtfparser import RTFParser
-from document.xslt_converter.converter import XsltTransformer
+
+from common.rtf.parser import RTFParser
+from common.xslt.converter import XsltTransformer
 from forms import UploadForm
 from models import Document
-from law_parser.dom_parser import Parser
-import time
+from common.dom.parser import Parser
 
 
 def get_file_type(url):
