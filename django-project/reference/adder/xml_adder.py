@@ -6,7 +6,7 @@ DOCUMENT_ID_ATTRIBUTE_NAME = "doc_id"
 LINKED_ELEMENT_ATTRIBUTE_NAME = "element"
 
 
-class XMLReferenceAdder:
+class XMLReferenceAdder(object):
     def __init__(self, reference_object):
         self.source_document = reference_object.source_document
         self.source_element = self.remove_sharp(reference_object.source_element)
